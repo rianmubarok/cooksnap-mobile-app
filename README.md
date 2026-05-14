@@ -22,7 +22,9 @@ CookSnap adalah aplikasi mobile berbasis AI untuk mendeteksi bahan makanan melal
 - Splash Screen
 - Onboarding
 - Login & Register
+- Home
 - Camera Scanner
+- Scan Result
 - Recipe Recommendation
 - Recipe Detail
 - Favorite
@@ -30,23 +32,131 @@ CookSnap adalah aplikasi mobile berbasis AI untuk mendeteksi bahan makanan melal
 
 ---
 
-# Team Members
+# Project Setup
 
-| Nama | Role |
-|---|---|
-| Muhammad Fitrian Mubarok | Team Leader, UI/UX |
-| Muhammad Chaska Syahdiladarama | Frontend |
-| Genard Arya Djaya | Backend & Database |
-| Muhammad Ashab Ibnu Abdul Aziz | AI Integration |
-| Astrit Dwi Antika | Recipe Data & QA |
+## 1. Clone Repository
+
+```bash
+git clone https://github.com/rianmubarok/cooksnap-mobile-app.git
+```
+
+Masuk ke folder project:
+
+```bash
+cd cooksnap-mobile-app
+```
 
 ---
 
-# Setup Project
+## 2. Install Dependencies
 
 ```bash
 flutter pub get
+```
+
+---
+
+## 3. Run Project
+
+```bash
 flutter run
+```
+
+---
+
+# Main Development Flow
+
+1. Setup project
+2. Static UI
+3. Navigation
+4. Dummy data
+5. Database integration
+6. AI integration
+7. Testing
+
+---
+
+# Git Workflow
+
+## Main Branch
+
+| Branch      | Fungsi            |
+| ----------- | ----------------- |
+| main        | versi stabil/demo |
+| development | development utama |
+
+---
+
+## Pull Latest Changes
+
+Sebelum mulai kerja:
+
+```bash
+git pull origin development
+```
+
+---
+
+## Push Changes
+
+```bash
+git add .
+git commit -m "your commit message"
+git push origin development
+```
+
+---
+
+# Commit Rules
+
+Gunakan commit yang jelas.
+
+Contoh:
+
+```bash
+git commit -m "setup flutter structure"
+```
+
+```bash
+git commit -m "implement login ui"
+```
+
+Hindari:
+
+```bash
+git commit -m "fix"
+```
+
+atau:
+
+```bash
+git commit -m "update"
+```
+
+---
+
+# Folder Structure
+
+```text
+lib/
+│
+├── core/
+├── models/
+├── providers/
+├── screens/
+├── services/
+├── widgets/
+└── main.dart
+```
+
+---
+
+# Documentation
+
+Dokumentasi lengkap tersedia pada folder:
+
+```text
+docs/
 ```
 
 ---
@@ -55,5 +165,6 @@ flutter run
 
 - Fokus ke MVP
 - Jangan menambah fitur besar di tengah development
-- Gunakan dummy data terlebih dahulu jika backend belum siap
+- Gunakan dummy data jika backend belum siap
 - Semua perubahan database harus diskusi terlebih dahulu
+- Prioritaskan aplikasi stabil untuk demo
