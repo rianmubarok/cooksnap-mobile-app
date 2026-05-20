@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 import 'app_constants.dart';
 
@@ -8,10 +9,33 @@ import 'app_constants.dart';
 class AppTheme {
   AppTheme._();
 
+  static TextTheme _buildTighterTextTheme(TextTheme base) {
+    return base.copyWith(
+      displayLarge: base.displayLarge?.copyWith(letterSpacing: -2.0, height: 0.95, fontWeight: FontWeight.w900),
+      displayMedium: base.displayMedium?.copyWith(letterSpacing: -1.6, height: 0.95, fontWeight: FontWeight.w900),
+      displaySmall: base.displaySmall?.copyWith(letterSpacing: -1.2, height: 1.0, fontWeight: FontWeight.w800),
+      headlineLarge: base.headlineLarge?.copyWith(letterSpacing: -1.2, height: 1.0, fontWeight: FontWeight.w800),
+      headlineMedium: base.headlineMedium?.copyWith(letterSpacing: -1.0, height: 1.0, fontWeight: FontWeight.w800),
+      headlineSmall: base.headlineSmall?.copyWith(letterSpacing: -0.8, height: 1.05, fontWeight: FontWeight.w700),
+      titleLarge: base.titleLarge?.copyWith(letterSpacing: -0.8, height: 1.05, fontWeight: FontWeight.w700),
+      titleMedium: base.titleMedium?.copyWith(letterSpacing: -0.6, height: 1.05, fontWeight: FontWeight.w700),
+      titleSmall: base.titleSmall?.copyWith(letterSpacing: -0.5, height: 1.1, fontWeight: FontWeight.w600),
+      bodyLarge: base.bodyLarge?.copyWith(letterSpacing: -0.5, height: 1.15),
+      bodyMedium: base.bodyMedium?.copyWith(letterSpacing: -0.4, height: 1.15),
+      bodySmall: base.bodySmall?.copyWith(letterSpacing: -0.3, height: 1.15),
+      labelLarge: base.labelLarge?.copyWith(letterSpacing: -0.5, fontWeight: FontWeight.w700),
+      labelMedium: base.labelMedium?.copyWith(letterSpacing: -0.4, fontWeight: FontWeight.w600),
+      labelSmall: base.labelSmall?.copyWith(letterSpacing: -0.3, fontWeight: FontWeight.w500),
+    );
+  }
+
   static ThemeData get lightTheme {
+    final baseTextTheme = GoogleFonts.workSansTextTheme(ThemeData.light().textTheme);
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
+      fontFamily: GoogleFonts.workSans().fontFamily,
+      textTheme: _buildTighterTextTheme(baseTextTheme),
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: AppColors.background,
 
@@ -54,7 +78,7 @@ class AppTheme {
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
+            letterSpacing: -0.6,
           ),
         ),
       ),
@@ -71,7 +95,7 @@ class AppTheme {
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
+            letterSpacing: -0.6,
           ),
         ),
       ),
@@ -83,6 +107,7 @@ class AppTheme {
           textStyle: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
+            letterSpacing: -0.5,
           ),
         ),
       ),
@@ -120,7 +145,7 @@ class AppTheme {
       // Card
       cardTheme: CardThemeData(
         color: AppColors.cardBackground,
-        elevation: AppConstants.elevationSm,
+        elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusLg),
         ),
@@ -133,7 +158,7 @@ class AppTheme {
         selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.textHint,
         type: BottomNavigationBarType.fixed,
-        elevation: 8,
+        elevation: 0,
         selectedLabelStyle: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,

@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Navigator.pushNamed(context, AppRoutes.scanner);
         },
         backgroundColor: AppColors.primary,
-        elevation: 8,
+        elevation: 0,
         shape: const CircleBorder(),
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
         shape: const CircularNotchedRectangle(),
         notchMargin: 8,
         color: AppColors.white,
-        elevation: 12,
+        elevation: 0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -302,13 +302,6 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(AppConstants.radiusLg),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 12,
-            offset: Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -415,13 +408,6 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(AppConstants.radiusMd),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
       ),
       child: Row(
         children: [

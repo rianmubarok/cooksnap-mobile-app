@@ -33,15 +33,6 @@ class PrimaryButton extends StatelessWidget {
                   AppColors.textHint,
                 ]),
           borderRadius: BorderRadius.circular(AppConstants.radiusMd),
-          boxShadow: onPressed != null
-              ? [
-                  BoxShadow(
-                    color: AppColors.primary.withOpacity(0.3),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : null,
         ),
         child: Material(
           color: Colors.transparent,
@@ -71,7 +62,7 @@ class PrimaryButton extends StatelessWidget {
                             color: AppColors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5,
+                            letterSpacing: -0.6,
                           ),
                         ),
                       ],
