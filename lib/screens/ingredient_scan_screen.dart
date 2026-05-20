@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../providers/ai_detection_provider.dart';
+import 'recipe_recommendation_screen.dart';
 
 class IngredientScanScreen extends StatefulWidget {
   const IngredientScanScreen({super.key});
@@ -325,6 +326,34 @@ class _IngredientScanScreenState extends State<IngredientScanScreen> {
                               .toList(),
                         ),
                       ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RecipeRecommendationScreen(
+                            ingredients: provider.scanResult!.detectedIngredients,
+                          ),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      '🍳 Cari Resep dengan Bahan Ini',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
