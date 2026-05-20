@@ -4,6 +4,8 @@ import 'core/app_theme.dart';
 import 'core/app_routes.dart';
 import 'core/app_constants.dart';
 import 'providers/ai_detection_provider.dart';
+import 'providers/favorites_provider.dart';
+import 'providers/user_provider.dart';
 
 void main() {
   runApp(const CookSnapApp());
@@ -17,6 +19,8 @@ class CookSnapApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AiDetectionProvider()),
+        ChangeNotifierProvider(create: (_) => FavoritesProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
       child: MaterialApp(
         title: AppConstants.appName,
@@ -28,3 +32,4 @@ class CookSnapApp extends StatelessWidget {
     );
   }
 }
+
