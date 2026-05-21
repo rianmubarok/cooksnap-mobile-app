@@ -25,6 +25,10 @@ class AppColors {
   static const Color surface = Color(0xFFFFFAF5);
   static const Color cardBackground = Color(0xFFFFFFFF);
 
+  // Brand extras
+  static const Color grey666 = Color(0xFF666666);
+  static const Color brandOrange = Color(0xFFF58700);
+
   // Text
   static const Color textPrimary = Color(0xFF1A1A1A);
   static const Color textSecondary = Color(0xFF555555);

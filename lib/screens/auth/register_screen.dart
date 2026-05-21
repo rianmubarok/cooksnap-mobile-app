@@ -5,7 +5,6 @@ import '../../core/app_routes.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
 
-/// Register Screen
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -20,9 +19,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   bool _isLoading = false;
+  bool _agreedToTerms = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController.addListener(_onFormChanged);
+    _emailController.addListener(_onFormChanged);
+    _passwordController.addListener(_onFormChanged);
+    _confirmPasswordController.addListener(_onFormChanged);
+  }
 
   @override
   void dispose() {
+    _nameController.removeListener(_onFormChanged);
+    _emailController.removeListener(_onFormChanged);
+    _passwordController.removeListener(_onFormChanged);
+    _confirmPasswordController.removeListener(_onFormChanged);
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -30,11 +43,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
+  void _onFormChanged() => setState(() {});
+
+  bool get _isFormValid =>
+      _nameController.text.trim().isNotEmpty &&
+      _emailController.text.trim().isNotEmpty &&
+      _passwordController.text.trim().isNotEmpty &&
+      _confirmPasswordController.text.trim().isNotEmpty &&
+      _agreedToTerms;
+
   void _handleRegister() {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      // Simulate register — replace with real auth later
       Future.delayed(const Duration(seconds: 2), () {
         if (mounted) {
           setState(() => _isLoading = false);
@@ -47,160 +68,231 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppConstants.paddingScreen),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header
-                const Text(
-                  'Buat Akun Baru',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-
-                const SizedBox(height: AppConstants.spacingSm),
-
-                const Text(
-                  'Isi data dirimu untuk mulai menggunakan CookSnap',
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-
-                const SizedBox(height: AppConstants.spacingXl),
-
-                // Name
-                CustomTextField(
-                  labelText: 'Nama Lengkap',
-                  hintText: 'Masukkan nama lengkap',
-                  prefixIcon: Icons.person_outline,
-                  controller: _nameController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Nama wajib diisi';
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: AppConstants.spacingMd),
-
-                // Email
-                CustomTextField(
-                  labelText: 'Email',
-                  hintText: 'nama@email.com',
-                  prefixIcon: Icons.email_outlined,
-                  keyboardType: TextInputType.emailAddress,
-                  controller: _emailController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Email wajib diisi';
-                    }
-                    if (!value.contains('@')) {
-                      return 'Email tidak valid';
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: AppConstants.spacingMd),
-
-                // Password
-                CustomTextField(
-                  labelText: 'Password',
-                  hintText: 'Minimal 6 karakter',
-                  prefixIcon: Icons.lock_outline,
-                  isPassword: true,
-                  controller: _passwordController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Password wajib diisi';
-                    }
-                    if (value.length < 6) {
-                      return 'Password minimal 6 karakter';
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: AppConstants.spacingMd),
-
-                // Confirm Password
-                CustomTextField(
-                  labelText: 'Konfirmasi Password',
-                  hintText: 'Ulangi password',
-                  prefixIcon: Icons.lock_outline,
-                  isPassword: true,
-                  controller: _confirmPasswordController,
-                  textInputAction: TextInputAction.done,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Konfirmasi password wajib diisi';
-                    }
-                    if (value != _passwordController.text) {
-                      return 'Password tidak cocok';
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: AppConstants.spacingLg),
-
-                // Register Button
-                PrimaryButton(
-                  text: 'Daftar',
-                  onPressed: _handleRegister,
-                  isLoading: _isLoading,
-                  useGradient: true,
-                ),
-
-                const SizedBox(height: AppConstants.spacingLg),
-
-                // Login Link
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Sudah punya akun? ',
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 14,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: const Text(
-                        'Masuk',
-                        style: TextStyle(
-                          color: AppColors.primary,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(AppConstants.paddingScreen),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(
+                            Icons.arrow_back_ios_new,
+                            size: 20,
+                            color: AppColors.textPrimary,
+                          ),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(
+                            minWidth: 32,
+                            minHeight: 32,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: AppConstants.spacingMd),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text(
+                              'Buat Akun',
+                              style: TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textPrimary,
+                                height: 1.2,
+                                letterSpacing: -0.8,
+                              ),
+                            ),
+                            SizedBox(height: AppConstants.spacingSm),
+                            Text(
+                              'Gabung dengan CookSnap hari ini',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: AppColors.grey666,
+                                height: 1.4,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: AppConstants.spacingXl),
+                      CustomTextField(
+                        hintText: 'Nama Lengkap',
+                        prefixIcon: Icons.person_outline,
+                        controller: _nameController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Nama wajib diisi';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: AppConstants.spacingMd),
+                      CustomTextField(
+                        hintText: 'Alamat Email',
+                        prefixIcon: Icons.email_outlined,
+                        keyboardType: TextInputType.emailAddress,
+                        controller: _emailController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Email wajib diisi';
+                          }
+                          if (!value.contains('@')) {
+                            return 'Email tidak valid';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: AppConstants.spacingMd),
+                      CustomTextField(
+                        hintText: 'Kata Sandi',
+                        prefixIcon: Icons.lock_outline,
+                        isPassword: true,
+                        controller: _passwordController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Kata sandi wajib diisi';
+                          }
+                          if (value.length < 6) {
+                            return 'Kata sandi minimal 6 karakter';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: AppConstants.spacingMd),
+                      CustomTextField(
+                        hintText: 'Konfirmasi Kata Sandi',
+                        prefixIcon: Icons.lock_outline,
+                        isPassword: true,
+                        controller: _confirmPasswordController,
+                        textInputAction: TextInputAction.done,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Konfirmasi kata sandi wajib diisi';
+                          }
+                          if (value != _passwordController.text) {
+                            return 'Kata sandi tidak cocok';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: AppConstants.spacingLg),
+                      PrimaryButton(
+                        text: 'Buat Akun',
+                        onPressed: _isFormValid && !_isLoading
+                            ? _handleRegister
+                            : null,
+                        isLoading: _isLoading,
+                        useGradient: true,
+                      ),
+                      const SizedBox(height: AppConstants.spacingMd),
+                      _buildTermsCheckbox(),
+                    ],
+                  ),
                 ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppConstants.paddingScreen,
+                0,
+                AppConstants.paddingScreen,
+                AppConstants.spacingXl,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Sudah punya akun? ',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: const Text(
+                      'Masuk',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        decoration: TextDecoration.underline,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-                const SizedBox(height: AppConstants.spacingLg),
-              ],
+  Widget _buildTermsCheckbox() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 24,
+          height: 24,
+          child: Checkbox(
+            value: _agreedToTerms,
+            onChanged: (value) {
+              setState(() => _agreedToTerms = value ?? false);
+            },
+            activeColor: AppColors.brandOrange,
+            checkColor: AppColors.white,
+            side: const BorderSide(
+              color: AppColors.brandOrange,
+              width: 1.5,
+            ),
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            visualDensity: VisualDensity.compact,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4),
             ),
           ),
         ),
-      ),
+        const SizedBox(width: AppConstants.spacingSm),
+        Expanded(
+          child: GestureDetector(
+            onTap: () {
+              setState(() => _agreedToTerms = !_agreedToTerms);
+            },
+            child: Text.rich(
+              TextSpan(
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppColors.grey666,
+                  height: 1.4,
+                ),
+                children: const [
+                  TextSpan(text: 'Setuju dengan '),
+                  TextSpan(
+                    text: 'Syarat & Ketentuan',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                  TextSpan(text: ' CookSnap'),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

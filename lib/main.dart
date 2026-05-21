@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'core/app_theme.dart';
 import 'core/app_routes.dart';
@@ -6,8 +7,15 @@ import 'core/app_constants.dart';
 import 'providers/ai_detection_provider.dart';
 import 'providers/favorites_provider.dart';
 import 'providers/user_provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  await dotenv.load(fileName: ".env");
   runApp(const CookSnapApp());
 }
 

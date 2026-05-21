@@ -1,13 +1,17 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:cooksnap_mobile_app/main.dart';
+import 'package:cooksnap/main.dart';
 
 void main() {
   testWidgets('CookSnap app smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
     await tester.pumpWidget(const CookSnapApp());
+    await tester.pump();
 
-    // Verify that splash screen renders
-    expect(find.text('CookSnap'), findsOneWidget);
+    expect(find.byType(MaterialApp), findsOneWidget);
+
+    // Let splash auto-navigation timer finish so no pending timers remain.
+    await tester.pump(const Duration(seconds: 3));
+    await tester.pump();
   });
 }

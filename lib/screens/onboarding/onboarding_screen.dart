@@ -6,8 +6,6 @@ import '../../core/app_routes.dart';
 import '../../core/dummy_data.dart';
 import '../../widgets/custom_button.dart';
 
-/// Onboarding Screen — Introduces app features
-/// 3 pages with swipe navigation and dot indicators
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -38,12 +36,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
   }
 
-  void _onSkip() {
-    Navigator.pushReplacementNamed(context, AppRoutes.login);
-  }
-
   @override
   Widget build(BuildContext context) {
+    final page = _pages[_currentPage];
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -52,68 +48,59 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              // Skip Button
-              Align(
-                alignment: Alignment.topRight,
-                child: Padding(
-                  padding: const EdgeInsets.all(AppConstants.paddingScreen),
-                  child: TextButton(
-                    onPressed: _onSkip,
-                    child: Text(
-                      _currentPage < _pages.length - 1 ? 'Lewati' : '',
-                      style: const TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              // Page Content
-              Expanded(
+              const Spacer(flex: 2),
+              SizedBox(
+                height: 240,
                 child: PageView.builder(
                   controller: _pageController,
                   onPageChanged: (index) {
-                    setState(() {
-                      _currentPage = index;
-                    });
+                    setState(() => _currentPage = index);
                   },
                   itemCount: _pages.length,
                   itemBuilder: (context, index) {
-                    return _buildPage(_pages[index]);
+                    return _buildIllustration(_pages[index]);
                   },
                 ),
               ),
-
-              // Dot Indicators
+              const SizedBox(height: AppConstants.spacingXxl),
+              _buildDotIndicators(),
+              const SizedBox(height: AppConstants.spacingXxl),
               Padding(
                 padding: const EdgeInsets.symmetric(
-                  vertical: AppConstants.spacingLg,
+                  horizontal: AppConstants.paddingScreen * 2,
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                    _pages.length,
-                    (index) => AnimatedContainer(
-                      duration: AppConstants.animFast,
-                      margin: const EdgeInsets.symmetric(horizontal: 4),
-                      width: _currentPage == index ? 28 : 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: _currentPage == index
-                            ? AppColors.primary
-                            : AppColors.primary.withOpacity(0.2),
-                        borderRadius:
-                            BorderRadius.circular(AppConstants.radiusRound),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 280),
+                  child: Column(
+                    children: [
+                      Text(
+                        page['title'] as String,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                          height: 1.15,
+                          letterSpacing: -0.8,
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: AppConstants.spacingXl),
+                      Text(
+                        page['subtitle'] as String,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.grey666,
+                          height: 1.5,
+                          letterSpacing: -0.4,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-
-              // Button
+              const Spacer(flex: 3),
               Padding(
                 padding: const EdgeInsets.fromLTRB(
                   AppConstants.paddingScreen,
@@ -122,9 +109,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   AppConstants.spacingXl,
                 ),
                 child: PrimaryButton(
-                  text: _currentPage < _pages.length - 1
-                      ? 'Selanjutnya'
-                      : 'Mulai Sekarang',
+                  text: _currentPage < _pages.length - 1 ? 'Lanjut' : 'Mulai',
                   onPressed: _onNext,
                   useGradient: true,
                 ),
@@ -136,49 +121,37 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  Widget _buildPage(Map<String, dynamic> page) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppConstants.paddingScreen * 2,
+  Widget _buildIllustration(Map<String, dynamic> page) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: SvgPicture.asset(
+        page['image'] as String,
+        width: 240,
+        height: 240,
       ),
-      child: Column(
+    );
+  }
+
+  Widget _buildDotIndicators() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppConstants.spacingSm),
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Illustration Image
-          SvgPicture.asset(
-            page['image'] as String,
-            width: 240,
-            height: 240,
-          ),
-
-          const SizedBox(height: AppConstants.spacingXl),
-
-          // Title
-          Text(
-            page['title'] as String,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-              height: 1.2,
+        children: List.generate(
+          _pages.length,
+          (index) => AnimatedContainer(
+            duration: AppConstants.animFast,
+            margin: const EdgeInsets.symmetric(horizontal: 6),
+            width: _currentPage == index ? 28 : 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: _currentPage == index
+                  ? AppColors.brandOrange
+                  : AppColors.brandOrange.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(AppConstants.radiusRound),
             ),
           ),
-
-          const SizedBox(height: AppConstants.spacingMd),
-
-          // Subtitle
-          Text(
-            page['subtitle'] as String,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              color: AppColors.textSecondary,
-              height: 1.6,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
