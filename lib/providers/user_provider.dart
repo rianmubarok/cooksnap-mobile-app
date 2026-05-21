@@ -1,15 +1,19 @@
 import 'package:flutter/foundation.dart';
 
-/// UserProvider — Manages user profile state
-/// TODO Genard: Connect to PocketBase auth and user data
+/// User profile state — connect to PocketBase auth later.
 class UserProvider extends ChangeNotifier {
-  String _name = 'Ashab Ibnu Abdul Aziz';
-  String _email = 'ashab@cooksnap.id';
+  String _name = '';
+  String _email = '';
   bool _isLoggedIn = false;
 
   String get name => _name;
   String get email => _email;
   bool get isLoggedIn => _isLoggedIn;
+
+  String get firstName {
+    if (_name.isEmpty) return 'User';
+    return _name.split(' ').first;
+  }
 
   void setUser(String name, String email) {
     _name = name;

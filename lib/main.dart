@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'app/app_providers.dart';
 import 'core/app_theme.dart';
 import 'core/app_routes.dart';
 import 'core/app_constants.dart';
-import 'providers/ai_detection_provider.dart';
-import 'providers/favorites_provider.dart';
-import 'providers/user_provider.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +13,7 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: '.env');
   runApp(const CookSnapApp());
 }
 
@@ -25,11 +23,7 @@ class CookSnapApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => AiDetectionProvider()),
-        ChangeNotifierProvider(create: (_) => FavoritesProvider()),
-        ChangeNotifierProvider(create: (_) => UserProvider()),
-      ],
+      providers: AppProviders.build(),
       child: MaterialApp(
         title: AppConstants.appName,
         debugShowCheckedModeBanner: false,
@@ -40,4 +34,3 @@ class CookSnapApp extends StatelessWidget {
     );
   }
 }
-

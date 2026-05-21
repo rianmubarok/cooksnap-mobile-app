@@ -1,34 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_routes.dart';
-import 'package:provider/provider.dart';
+import '../../models/recipe_model.dart';
 import '../../providers/favorites_provider.dart';
-/// Favorite Screen — Shows list of saved/favorited recipes
-/// TODO Genard: Replace dummy data with PocketBase favorites query
+import '../../widgets/navigation/tab_page_scaffold.dart';
+import '../../widgets/recipe/recipe_thumbnail.dart';
+
 class FavoriteScreen extends StatelessWidget {
   const FavoriteScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final favorites = context.watch<FavoritesProvider>().favorites;
+    final favorites = context.watch<FavoritesProvider>().favoriteRecipes;
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.background,
-        foregroundColor: AppColors.textPrimary,
-        elevation: 0,
-        title: const Text(
-          'Resep Favorit',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        centerTitle: false,
-      ),
+    return TabPageScaffold(
+      title: 'Resep Favorit',
       body: favorites.isEmpty
           ? _buildEmptyState()
           : ListView.separated(
@@ -37,7 +25,7 @@ class FavoriteScreen extends StatelessWidget {
               separatorBuilder: (_, __) =>
                   const SizedBox(height: AppConstants.spacingMd),
               itemBuilder: (context, index) {
-                return _buildFavoriteCard(context, favorites[index]);
+                return _FavoriteCard(recipe: favorites[index]);
               },
             ),
     );
@@ -52,15 +40,13 @@ class FavoriteScreen extends StatelessWidget {
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.08),
+              color: AppColors.primary.withValues(alpha: 0.08),
               shape: BoxShape.circle,
             ),
-            child: const Center(
-              child: Icon(
-                Icons.favorite_border,
-                size: 48,
-                color: AppColors.textHint,
-              ),
+            child: const Icon(
+              Icons.favorite_border,
+              size: 48,
+              color: AppColors.textHint,
             ),
           ),
           const SizedBox(height: AppConstants.spacingLg),
@@ -86,17 +72,21 @@ class FavoriteScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildFavoriteCard(
-      BuildContext context, Map<String, dynamic> recipe) {
+class _FavoriteCard extends StatelessWidget {
+  final Recipe recipe;
+
+  const _FavoriteCard({required this.recipe});
+
+  @override
+  Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(
-          context, 
-          AppRoutes.recipeDetail, 
-          arguments: recipe['id'] ?? '1'
-        );
-      },
+      onTap: () => Navigator.pushNamed(
+        context,
+        AppRoutes.recipeDetail,
+        arguments: recipe.id,
+      ),
       child: Container(
         padding: const EdgeInsets.all(AppConstants.paddingCard),
         decoration: BoxDecoration(
@@ -106,29 +96,22 @@ class FavoriteScreen extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Image placeholder
             Container(
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.08),
+                color: AppColors.primary.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(AppConstants.radiusSm),
               ),
-              child: Center(
-                child: Text(
-                  recipe['emoji'] as String,
-                  style: const TextStyle(fontSize: 36),
-                ),
-              ),
+              child: const RecipeThumbnail(iconSize: 32),
             ),
             const SizedBox(width: AppConstants.spacingMd),
-            // Info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    recipe['name'] as String,
+                    recipe.recipeName,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -144,7 +127,7 @@ class FavoriteScreen extends StatelessWidget {
                           size: 14, color: AppColors.textHint),
                       const SizedBox(width: 4),
                       Text(
-                        recipe['cookingTime'] as String,
+                        recipe.cookingTimeLabel,
                         style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.textSecondary,
@@ -155,7 +138,7 @@ class FavoriteScreen extends StatelessWidget {
                           size: 14, color: AppColors.textHint),
                       const SizedBox(width: 4),
                       Text(
-                        recipe['difficulty'] as String,
+                        recipe.difficulty,
                         style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.textSecondary,
@@ -166,7 +149,6 @@ class FavoriteScreen extends StatelessWidget {
                 ],
               ),
             ),
-            // Favorite icon
             const Icon(Icons.favorite, color: Colors.red, size: 22),
           ],
         ),

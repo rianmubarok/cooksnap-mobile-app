@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
+import '../../core/app_text_styles.dart';
 import '../../core/app_routes.dart';
 import '../../core/dummy_data.dart';
 import '../../widgets/custom_button.dart';
@@ -76,25 +77,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       Text(
                         page['title'] as String,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                          height: 1.15,
-                          letterSpacing: -0.8,
-                        ),
+                        style: AppTextStyles.headlineDisplay,
                       ),
                       const SizedBox(height: AppConstants.spacingXl),
                       Text(
                         page['subtitle'] as String,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.grey666,
-                          height: 1.5,
-                          letterSpacing: -0.4,
-                        ),
+                        style: AppTextStyles.subtitleMuted.copyWith(height: 1.5),
                       ),
                     ],
                   ),

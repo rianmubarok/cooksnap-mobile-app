@@ -19,25 +19,36 @@ class PrimaryButton extends StatelessWidget {
     this.icon,
   });
 
+  static const double _disabledBackgroundOpacity = 0.45;
+
+  LinearGradient _primaryGradient({required bool enabled}) {
+    final opacity = enabled ? 1.0 : _disabledBackgroundOpacity;
+    return LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        AppColors.primary.withValues(alpha: opacity),
+        const Color(0xFF2E6331).withValues(alpha: opacity),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final enabled = onPressed != null && !isLoading;
+
     if (useGradient) {
       return Container(
         height: AppConstants.buttonHeight,
         width: double.infinity,
         decoration: BoxDecoration(
-          gradient: onPressed != null
-              ? AppColors.primaryGradient
-              : const LinearGradient(colors: [
-                  AppColors.textHint,
-                  AppColors.textHint,
-                ]),
+          gradient: _primaryGradient(enabled: enabled),
           borderRadius: BorderRadius.circular(AppConstants.radiusMd),
         ),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: isLoading ? null : onPressed,
+            onTap: enabled ? onPressed : null,
             borderRadius: BorderRadius.circular(AppConstants.radiusMd),
             child: Center(
               child: isLoading
@@ -73,30 +84,33 @@ class PrimaryButton extends StatelessWidget {
       );
     }
 
-    return SizedBox(
-      width: double.infinity,
-      height: AppConstants.buttonHeight,
-      child: ElevatedButton(
-        onPressed: isLoading ? null : onPressed,
-        child: isLoading
-            ? const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  color: AppColors.white,
-                  strokeWidth: 2.5,
-                ),
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (icon != null) ...[
-                    Icon(icon, size: 20),
-                    const SizedBox(width: AppConstants.spacingSm),
+    return Opacity(
+      opacity: enabled ? 1.0 : _disabledBackgroundOpacity,
+      child: SizedBox(
+        width: double.infinity,
+        height: AppConstants.buttonHeight,
+        child: ElevatedButton(
+          onPressed: enabled ? onPressed : null,
+          child: isLoading
+              ? const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    color: AppColors.white,
+                    strokeWidth: 2.5,
+                  ),
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (icon != null) ...[
+                      Icon(icon, size: 20),
+                      const SizedBox(width: AppConstants.spacingSm),
+                    ],
+                    Text(text),
                   ],
-                  Text(text),
-                ],
-              ),
+                ),
+        ),
       ),
     );
   }

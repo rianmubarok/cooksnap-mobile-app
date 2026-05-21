@@ -1,92 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import 'package:provider/provider.dart';
+import '../../data/repositories/recipe_repository.dart';
 import '../../providers/favorites_provider.dart';
-/// Recipe Detail Screen — Full recipe view
-/// TODO Genard: Replace dummy data with PocketBase recipe fetch
-class RecipeDetailScreen extends StatefulWidget {
+
+class RecipeDetailScreen extends StatelessWidget {
   const RecipeDetailScreen({super.key});
 
   @override
-  State<RecipeDetailScreen> createState() => _RecipeDetailScreenState();
-}
-
-class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
-  String? _recipeId;
-  bool _isLoading = true;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_recipeId == null) {
-      final args = ModalRoute.of(context)?.settings.arguments;
-      if (args != null && args is String) {
-        _recipeId = args;
-      } else {
-        _recipeId = '1'; // Default dummy ID
-      }
-      
-      // Simulate loading
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
-      });
-    }
-  }
-
-  // Dummy recipe data — replace with real model later
-  final Map<String, dynamic> _recipe = {
-    'name': 'Nasi Goreng Special',
-    'description':
-        'Nasi goreng khas Indonesia dengan bumbu rahasia yang membuat rasanya istimewa. Cocok untuk sarapan, makan siang, atau makan malam.',
-    'cookingTime': '20 min',
-    'difficulty': 'Easy',
-    'category': 'Makanan Utama',
-    'image': null, // placeholder
-    'ingredients': [
-      {'name': 'Nasi putih', 'quantity': '2', 'unit': 'piring'},
-      {'name': 'Telur', 'quantity': '2', 'unit': 'butir'},
-      {'name': 'Bawang merah', 'quantity': '5', 'unit': 'siung'},
-      {'name': 'Bawang putih', 'quantity': '3', 'unit': 'siung'},
-      {'name': 'Cabai merah', 'quantity': '3', 'unit': 'buah'},
-      {'name': 'Kecap manis', 'quantity': '2', 'unit': 'sdm'},
-      {'name': 'Garam', 'quantity': '1', 'unit': 'sdt'},
-      {'name': 'Minyak goreng', 'quantity': '3', 'unit': 'sdm'},
-    ],
-    'steps': [
-      'Haluskan bawang merah, bawang putih, dan cabai merah.',
-      'Panaskan minyak goreng di wajan dengan api sedang.',
-      'Tumis bumbu halus hingga harum dan matang.',
-      'Masukkan telur, aduk orak-arik hingga matang.',
-      'Masukkan nasi putih, aduk rata dengan bumbu.',
-      'Tambahkan kecap manis dan garam, aduk hingga merata.',
-      'Masak selama 3-5 menit sambil terus diaduk.',
-      'Angkat dan sajikan selagi hangat.',
-    ],
-  };
-
-  @override
   Widget build(BuildContext context) {
-    if (_isLoading || _recipeId == null) {
+    final args = ModalRoute.of(context)?.settings.arguments;
+    final recipeId = args is String ? args : '1';
+    final recipe = context.read<RecipeRepository>().getRecipeById(recipeId);
+
+    if (recipe == null) {
       return Scaffold(
         backgroundColor: AppColors.background,
-        body: const Center(
-          child: CircularProgressIndicator(color: AppColors.primary),
+        appBar: AppBar(
+          backgroundColor: AppColors.primary,
+          foregroundColor: AppColors.textOnPrimary,
         ),
+        body: const Center(child: Text('Resep tidak ditemukan')),
       );
     }
 
-    final isFavorite = context.watch<FavoritesProvider>().isFavorite(_recipeId!);
+    final isFavorite =
+        context.watch<FavoritesProvider>().isFavorite(recipeId);
 
     return Scaffold(
       backgroundColor: AppColors.background,
       body: CustomScrollView(
         slivers: [
-          // AppBar with image
           SliverAppBar(
             expandedHeight: 250,
             pinned: true,
@@ -96,7 +41,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
               icon: Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.arrow_back_ios_new,
@@ -109,7 +54,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                 icon: Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withValues(alpha: 0.3),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -119,21 +64,19 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   ),
                 ),
                 onPressed: () {
-                  Provider.of<FavoritesProvider>(context, listen: false)
-                      .toggleFavorite(_recipeId!);
+                  context
+                      .read<FavoritesProvider>()
+                      .toggleFavorite(recipeId);
                 },
               ),
             ],
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [
-                      AppColors.primary,
-                      AppColors.primaryLight,
-                    ],
+                    colors: [AppColors.primary, AppColors.primaryLight],
                   ),
                 ),
                 child: const Center(
@@ -141,14 +84,11 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(height: 40),
-                      Text('🍚', style: TextStyle(fontSize: 72)),
+                      Text('🍽️', style: TextStyle(fontSize: 72)),
                       SizedBox(height: 8),
                       Text(
                         'Foto Resep',
-                        style: TextStyle(
-                          color: Colors.white54,
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(color: Colors.white54, fontSize: 14),
                       ),
                     ],
                   ),
@@ -156,17 +96,14 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
               ),
             ),
           ),
-
-          // Content
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(AppConstants.paddingScreen),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Recipe Name
                   Text(
-                    _recipe['name'],
+                    recipe.recipeName,
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w700,
@@ -174,18 +111,18 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: AppConstants.spacingSm),
-
-                  // Category badge
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
-                      color: AppColors.secondary.withOpacity(0.2),
+                      color: AppColors.secondary.withValues(alpha: 0.2),
                       borderRadius:
                           BorderRadius.circular(AppConstants.radiusRound),
                     ),
                     child: Text(
-                      _recipe['category'],
+                      recipe.category,
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -194,21 +131,22 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: AppConstants.spacingMd),
-
-                  // Time & Difficulty row
                   Row(
                     children: [
-                      _buildInfoChip(
-                          Icons.access_time, _recipe['cookingTime']),
+                      _InfoChip(
+                        icon: Icons.access_time,
+                        text: recipe.cookingTimeLabel,
+                      ),
                       const SizedBox(width: 16),
-                      _buildInfoChip(Icons.restaurant, _recipe['difficulty']),
+                      _InfoChip(
+                        icon: Icons.restaurant,
+                        text: recipe.difficulty,
+                      ),
                     ],
                   ),
                   const SizedBox(height: AppConstants.spacingLg),
-
-                  // Description
                   Text(
-                    _recipe['description'],
+                    recipe.description,
                     style: const TextStyle(
                       fontSize: 14,
                       color: AppColors.textSecondary,
@@ -216,8 +154,6 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: AppConstants.spacingXl),
-
-                  // Ingredients Section
                   const Text(
                     '🧂 Bahan-bahan',
                     style: TextStyle(
@@ -235,61 +171,61 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                       border: Border.all(color: AppColors.border),
                     ),
                     child: Column(
-                      children: List.generate(
-                        (_recipe['ingredients'] as List).length,
-                        (index) {
-                          final ing = _recipe['ingredients'][index];
-                          final isLast = index ==
-                              (_recipe['ingredients'] as List).length - 1;
-                          return Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 14),
-                            decoration: BoxDecoration(
-                              border: isLast
-                                  ? null
-                                  : const Border(
-                                      bottom: BorderSide(
-                                          color: AppColors.divider)),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 8,
-                                  height: 8,
-                                  decoration: const BoxDecoration(
-                                    color: AppColors.secondary,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    ing['name'],
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColors.textPrimary,
+                      children: List.generate(recipe.ingredients.length, (
+                        index,
+                      ) {
+                        final ing = recipe.ingredients[index];
+                        final isLast = index == recipe.ingredients.length - 1;
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          decoration: BoxDecoration(
+                            border: isLast
+                                ? null
+                                : const Border(
+                                    bottom: BorderSide(
+                                      color: AppColors.divider,
                                     ),
                                   ),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 8,
+                                height: 8,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.secondary,
+                                  shape: BoxShape.circle,
                                 ),
-                                Text(
-                                  '${ing['quantity']} ${ing['unit']}',
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  ing.name,
                                   style: const TextStyle(
-                                    fontSize: 13,
-                                    color: AppColors.textSecondary,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w500,
+                                    color: AppColors.textPrimary,
                                   ),
                                 ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
+                              ),
+                              Text(
+                                '${ing.quantity} ${ing.unit}',
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  color: AppColors.textSecondary,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
                     ),
                   ),
                   const SizedBox(height: AppConstants.spacingXl),
-
-                  // Steps Section
                   const Text(
                     '👨‍🍳 Langkah-langkah',
                     style: TextStyle(
@@ -300,9 +236,11 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   ),
                   const SizedBox(height: AppConstants.spacingMd),
                   ...List.generate(
-                    (_recipe['steps'] as List).length,
-                    (index) => _buildStepItem(
-                        index + 1, _recipe['steps'][index] as String),
+                    recipe.steps.length,
+                    (index) => _StepItem(
+                      stepNumber: index + 1,
+                      instruction: recipe.steps[index],
+                    ),
                   ),
                   const SizedBox(height: AppConstants.spacingXl),
                 ],
@@ -313,8 +251,16 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
       ),
     );
   }
+}
 
-  Widget _buildInfoChip(IconData icon, String text) {
+class _InfoChip extends StatelessWidget {
+  final IconData icon;
+  final String text;
+
+  const _InfoChip({required this.icon, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
@@ -339,8 +285,16 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
       ),
     );
   }
+}
 
-  Widget _buildStepItem(int stepNumber, String instruction) {
+class _StepItem extends StatelessWidget {
+  final int stepNumber;
+  final String instruction;
+
+  const _StepItem({required this.stepNumber, required this.instruction});
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(

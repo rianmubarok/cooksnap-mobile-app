@@ -4,8 +4,7 @@ import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_routes.dart';
 
-/// Splash Screen — First screen shown when app opens
-/// Auto-navigates to onboarding after 3 seconds
+/// Splash Screen — auto-navigates to onboarding after delay.
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -55,7 +54,6 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Navigate after splash duration
     Future.delayed(AppConstants.splashDuration, () {
       if (mounted) {
         Navigator.pushReplacementNamed(context, AppRoutes.onboarding);
@@ -80,14 +78,17 @@ class _SplashScreenState extends State<SplashScreen>
         ),
         child: SafeArea(
           child: Center(
-            child: ScaleTransition(
-              scale: _scaleAnimation,
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: SvgPicture.asset(
-                  'assets/logos/logo-1.svg',
-                  width: 80,
-                  height: 80,
+            child: SlideTransition(
+              position: _slideAnimation,
+              child: ScaleTransition(
+                scale: _scaleAnimation,
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: SvgPicture.asset(
+                    'assets/logos/logo-1.svg',
+                    width: 80,
+                    height: 80,
+                  ),
                 ),
               ),
             ),

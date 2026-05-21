@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
+import '../../providers/user_provider.dart';
 import '../../core/app_constants.dart';
+import '../../core/app_decorations.dart';
+import '../../core/app_text_styles.dart';
 import '../../core/app_routes.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
@@ -59,6 +63,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       Future.delayed(const Duration(seconds: 2), () {
         if (mounted) {
           setState(() => _isLoading = false);
+          context.read<UserProvider>().setUser(
+                _nameController.text.trim(),
+                _emailController.text.trim(),
+              );
           Navigator.pushReplacementNamed(context, AppRoutes.home);
         }
       });
@@ -68,10 +76,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
+      body: Container(
+        decoration: AppDecorations.pageBackground,
+        child: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(AppConstants.paddingScreen),
                 child: Form(
@@ -102,22 +112,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           children: const [
                             Text(
                               'Buat Akun',
-                              style: TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.textPrimary,
-                                height: 1.2,
-                                letterSpacing: -0.8,
-                              ),
+                              style: AppTextStyles.headlineAuth,
                             ),
                             SizedBox(height: AppConstants.spacingSm),
                             Text(
                               'Gabung dengan CookSnap hari ini',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: AppColors.grey666,
-                                height: 1.4,
-                              ),
+                              style: AppTextStyles.subtitleMuted,
                             ),
                           ],
                         ),
@@ -127,6 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         hintText: 'Nama Lengkap',
                         prefixIcon: Icons.person_outline,
                         controller: _nameController,
+                        large: true,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Nama wajib diisi';
@@ -140,6 +141,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         prefixIcon: Icons.email_outlined,
                         keyboardType: TextInputType.emailAddress,
                         controller: _emailController,
+                        large: true,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Email wajib diisi';
@@ -156,6 +158,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         prefixIcon: Icons.lock_outline,
                         isPassword: true,
                         controller: _passwordController,
+                        large: true,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Kata sandi wajib diisi';
@@ -173,6 +176,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         isPassword: true,
                         controller: _confirmPasswordController,
                         textInputAction: TextInputAction.done,
+                        large: true,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Konfirmasi kata sandi wajib diisi';
@@ -233,6 +237,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
           ],
+        ),
         ),
       ),
     );

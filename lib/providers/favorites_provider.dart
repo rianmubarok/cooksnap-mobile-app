@@ -1,24 +1,22 @@
 import 'package:flutter/foundation.dart';
+import '../data/repositories/recipe_repository.dart';
+import '../models/recipe_model.dart';
 
-/// FavoritesProvider — Manages favorite recipe state
-/// TODO Genard: Connect to PocketBase favorites collection
+/// Manages favorite recipe IDs — sync with PocketBase later.
 class FavoritesProvider extends ChangeNotifier {
+  FavoritesProvider(this._recipeRepository);
+
+  final RecipeRepository _recipeRepository;
   final List<String> _favoriteRecipeIds = [];
 
   List<String> get favoriteRecipeIds => List.unmodifiable(_favoriteRecipeIds);
 
-  // Dummy list to support the UI for now
-  List<Map<String, dynamic>> get favorites => _favoriteRecipeIds.isEmpty
-      ? []
-      : [
-          {
-            'id': '1',
-            'name': 'Nasi Goreng Special',
-            'cookingTime': '20 min',
-            'difficulty': 'Easy',
-            'emoji': '🍚',
-          },
-        ];
+  List<Recipe> get favoriteRecipes {
+    return _favoriteRecipeIds
+        .map(_recipeRepository.getRecipeById)
+        .whereType<Recipe>()
+        .toList();
+  }
 
   bool isFavorite(String recipeId) => _favoriteRecipeIds.contains(recipeId);
 

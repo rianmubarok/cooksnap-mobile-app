@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import '../config/api_config.dart';
@@ -57,8 +58,7 @@ Example output: ["telur", "tomat", "bawang merah", "cabai merah", "tahu", "tempe
         }
       };
 
-      print('Calling Gemini API: ${ApiConfig.geminiVisionEndpoint}');
-      print('Request body keys: ${requestBody.keys}');
+      debugPrint('Calling Gemini API: ${ApiConfig.geminiVisionEndpoint}');
 
       final response = await http.post(
         Uri.parse(ApiConfig.geminiVisionEndpoint),
@@ -68,8 +68,7 @@ Example output: ["telur", "tomat", "bawang merah", "cabai merah", "tahu", "tempe
         body: jsonEncode(requestBody),
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      debugPrint('Gemini response status: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
@@ -83,7 +82,7 @@ Example output: ["telur", "tomat", "bawang merah", "cabai merah", "tahu", "tempe
               candidate['content']['parts'].isNotEmpty) {
             final textResponse = candidate['content']['parts'][0]['text'];
             
-            print('AI Response Text: $textResponse');
+            debugPrint('AI response received (${textResponse.length} chars)');
 
             final ingredients =
                 IngredientParser.parseGeminiResponse(textResponse);

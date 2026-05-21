@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 
 class IngredientParser {
   static List<String> parseGeminiResponse(String rawResponse) {
@@ -25,7 +26,7 @@ class IngredientParser {
       if (match != null) {
         cleanedResponse = match.group(0)!;
       } else {
-        print('No JSON array found in response');
+        debugPrint('IngredientParser: no JSON array in response');
         return [];
       }
 
@@ -42,7 +43,7 @@ class IngredientParser {
         cleanedResponse += ']';
       }
 
-      print('Cleaned JSON: $cleanedResponse');
+      debugPrint('IngredientParser: parsed ${cleanedResponse.length} chars');
 
       final List<dynamic> parsedList = jsonDecode(cleanedResponse);
       final List<String> ingredients = parsedList
@@ -54,29 +55,8 @@ class IngredientParser {
 
       return uniqueIngredients.take(10).toList();
     } catch (e) {
-      print('Parser error: $e');
-      print('Raw response: $rawResponse');
+      debugPrint('IngredientParser error: $e');
       return [];
     }
-  }
-
-  static List<String> removeDuplicates(List<String> ingredients) {
-    return ingredients.toSet().toList();
-  }
-
-  static List<String> extractJsonArray(String text) {
-    final jsonArrayPattern = RegExp(r'\[.*?\]', dotAll: true);
-    final match = jsonArrayPattern.firstMatch(text);
-
-    if (match != null) {
-      try {
-        final List<dynamic> parsedList = jsonDecode(match.group(0)!);
-        return parsedList.map((item) => item.toString()).toList();
-      } catch (e) {
-        return [];
-      }
-    }
-
-    return [];
   }
 }
