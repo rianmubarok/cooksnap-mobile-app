@@ -174,19 +174,19 @@ class DummyData {
   // Dummy Onboarding Data
   static const List<Map<String, dynamic>> onboardingPages = [
     {
-      'title': 'Foto Bahan Makanan',
-      'subtitle': 'Snap foto bahan makanan yang kamu punya di dapur',
-      'icon': '📸',
+      'title': 'Scan Ingredients Instantly',
+      'subtitle': 'Foto bahan makanan dan biarkan CookSnap mengenalinya otomatis.',
+      'image': 'assets/images/ws-1.svg',
     },
     {
-      'title': 'AI Deteksi Bahan',
-      'subtitle': 'AI kami akan mengenali bahan makanan dari fotomu secara otomatis',
-      'icon': '🤖',
+      'title': 'Get Smart Recipe Ideas',
+      'subtitle': 'Dapatkan rekomendasi resep dari bahan yang kamu punya.',
+      'image': 'assets/images/ws-2.svg',
     },
     {
-      'title': 'Dapatkan Resep',
-      'subtitle': 'Temukan resep yang bisa dibuat dari bahan yang kamu punya',
-      'icon': '🍳',
+      'title': 'Cook Smarter, Waste Less',
+      'subtitle': 'Masak lebih hemat, praktis, dan minim food waste.',
+      'image': 'assets/images/ws-3.svg',
     },
   ];
 }

@@ -1,6 +1,6 @@
 {
-    "name": "cooksnap_mobile_app",
-    "short_name": "cooksnap_mobile_app",
+    "name": "CookSnap",
+    "short_name": "CookSnap",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

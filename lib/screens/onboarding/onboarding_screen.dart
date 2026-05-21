@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_routes.dart';
@@ -143,20 +144,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Emoji Icon (replace with real illustration later)
-          Container(
-            width: 160,
-            height: 160,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                page['icon'] as String,
-                style: const TextStyle(fontSize: 72),
-              ),
-            ),
+          // Illustration Image
+          SvgPicture.asset(
+            page['image'] as String,
+            width: 240,
+            height: 240,
           ),
 
           const SizedBox(height: AppConstants.spacingXl),
