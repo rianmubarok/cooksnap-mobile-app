@@ -91,8 +91,14 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildNavItem(Icons.home_rounded, 'Beranda', 0),
             _buildNavItem(Icons.search_rounded, 'Cari', 1),
             const SizedBox(width: 48), // Space for FAB
-            _buildNavItem(Icons.bookmark_outline_rounded, 'Simpan', 2),
-            _buildNavItem(Icons.person_outline_rounded, 'Profil', 3),
+            _buildNavItem(Icons.bookmark_outline_rounded, 'Simpan', 2,
+                onTap: () {
+              Navigator.pushNamed(context, AppRoutes.favorite);
+            }),
+            _buildNavItem(Icons.person_outline_rounded, 'Profil', 3,
+                onTap: () {
+              Navigator.pushNamed(context, AppRoutes.profile);
+            }),
           ],
         ),
       ),
@@ -509,13 +515,17 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildNavItem(IconData icon, String label, int index) {
+  Widget _buildNavItem(IconData icon, String label, int index,
+      {VoidCallback? onTap}) {
     final isSelected = _bottomNavIndex == index;
     return InkWell(
       onTap: () {
         setState(() {
           _bottomNavIndex = index;
         });
+        if (onTap != null) {
+          onTap();
+        }
       },
       borderRadius: BorderRadius.circular(12),
       child: Padding(
