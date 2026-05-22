@@ -12,7 +12,7 @@ class RecipeDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)?.settings.arguments;
     final recipeId = args is String ? args : '1';
-    final recipe = context.read<RecipeRepository>().getRecipeById(recipeId);
+    final recipe = context.watch<RecipeRepository>().getRecipeById(recipeId);
 
     if (recipe == null) {
       return Scaffold(
@@ -33,7 +33,7 @@ class RecipeDetailScreen extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 250,
+            expandedHeight: AppConstants.recipeImageHeight,
             pinned: true,
             backgroundColor: AppColors.primary,
             foregroundColor: AppColors.white,

@@ -6,12 +6,14 @@ class TabPageScaffold extends StatelessWidget {
   final String title;
   final Widget body;
   final EdgeInsetsGeometry? bodyPadding;
+  final Widget? action;
 
   const TabPageScaffold({
     super.key,
     required this.title,
     required this.body,
     this.bodyPadding,
+    this.action,
   });
 
   @override
@@ -19,7 +21,7 @@ class TabPageScaffold extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        TabPageHeader(title: title),
+        TabPageHeader(title: title, action: action),
         Expanded(
           child: bodyPadding != null
               ? Padding(padding: bodyPadding!, child: body)

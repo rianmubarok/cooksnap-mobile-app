@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
+import '../../core/app_routes.dart';
 import '../../core/app_text_styles.dart';
 import '../../data/repositories/recipe_repository.dart';
 import '../../models/recipe_model.dart';
-import '../../providers/shell_navigation_provider.dart';
 import '../../providers/user_provider.dart';
 import '../../widgets/recipe/recipe_card_horizontal.dart';
 import '../../widgets/recipe/recipe_list_tile.dart';
@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final recipeRepo = context.read<RecipeRepository>();
+    final recipeRepo = context.watch<RecipeRepository>();
     final categories = recipeRepo.getCategories();
     final selectedCategory = categories[_selectedCategoryIndex].name;
     final recipes = recipeRepo.getRecipesByCategory(selectedCategory);
@@ -82,33 +82,48 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Material(
         color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(AppConstants.radiusLg),
-        child: InkWell(
-          onTap: () => context
-              .read<ShellNavigationProvider>()
-              .selectTab(ShellTabs.ingredients),
-          borderRadius: BorderRadius.circular(AppConstants.radiusLg),
-          child: Container(
-            height: 60,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(AppConstants.radiusLg),
-              border: Border.all(color: AppColors.border),
-            ),
-            child: const Row(
-              children: [
-                SizedBox(width: 16),
-                Icon(Icons.soup_kitchen_outlined,
-                    color: AppColors.textPrimary, size: 26),
-                SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    'Input bahan untuk cari resep...',
-                    style: TextStyle(color: AppColors.textHint, fontSize: 16),
+        child: Container(
+          height: AppConstants.searchBarHeight,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Row(
+            children: [
+              const SizedBox(width: 16),
+              const Icon(Icons.search_rounded,
+                  color: AppColors.textHint, size: 24),
+              const SizedBox(width: 10),
+              Expanded(
+                child: TextField(
+                  textInputAction: TextInputAction.search,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    color: AppColors.textPrimary,
                   ),
+                  decoration: const InputDecoration(
+                    hintText: 'Cari Resep',
+                    hintStyle: TextStyle(
+                        color: AppColors.textHint, fontSize: 18),
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  onSubmitted: (query) {
+                    if (query.trim().isNotEmpty) {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.search,
+                        arguments: query.trim(),
+                      );
+                    }
+                  },
                 ),
-                Icon(Icons.chevron_right, color: AppColors.textHint, size: 22),
-                SizedBox(width: 12),
-              ],
-            ),
+              ),
+              const SizedBox(width: 12),
+            ],
           ),
         ),
       ),

@@ -5,19 +5,34 @@ import '../../core/app_constants.dart';
 import '../../core/app_decorations.dart';
 import '../../core/app_text_styles.dart';
 import '../../data/repositories/recipe_repository.dart';
+import '../../models/recipe_model.dart';
 import '../../widgets/recipe/recipe_recommendation_card.dart';
 
-class RecipeRecommendationScreen extends StatelessWidget {
+class RecipeRecommendationScreen extends StatefulWidget {
   final List<String> ingredients;
 
   const RecipeRecommendationScreen({super.key, required this.ingredients});
 
   @override
-  Widget build(BuildContext context) {
-    final recommendations = context
-        .read<RecipeRepository>()
-        .getRecommendationsForIngredients(ingredients);
+  State<RecipeRecommendationScreen> createState() =>
+      _RecipeRecommendationScreenState();
+}
 
+class _RecipeRecommendationScreenState
+    extends State<RecipeRecommendationScreen> {
+  late final List<RecipeRecommendation> _recommendations;
+
+  @override
+  void initState() {
+    super.initState();
+    // Komputasi berat dilakukan sekali di initState, bukan setiap build().
+    _recommendations = context
+        .read<RecipeRepository>()
+        .getRecommendationsForIngredients(widget.ingredients);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -36,17 +51,17 @@ class RecipeRecommendationScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${recommendations.length} resep cocok dengan ${ingredients.length} bahan kamu',
+                      '${_recommendations.length} resep cocok dengan ${widget.ingredients.length} bahan kamu',
                       style: AppTextStyles.subtitleMuted,
                     ),
                     const SizedBox(height: AppConstants.spacingMd),
-                    _IngredientsPanel(ingredients: ingredients),
+                    _IngredientsPanel(ingredients: widget.ingredients),
                     const SizedBox(height: AppConstants.spacingLg),
                   ],
                 ),
               ),
             ),
-            if (recommendations.isEmpty)
+            if (_recommendations.isEmpty)
               const SliverFillRemaining(
                 child: Center(
                   child: Text(
@@ -66,10 +81,10 @@ class RecipeRecommendationScreen extends StatelessWidget {
                     (context, index) => Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: RecipeRecommendationCard(
-                        recommendation: recommendations[index],
+                        recommendation: _recommendations[index],
                       ),
                     ),
-                    childCount: recommendations.length,
+                    childCount: _recommendations.length,
                   ),
                 ),
               ),

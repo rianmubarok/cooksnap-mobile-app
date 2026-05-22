@@ -5,8 +5,9 @@ import '../../core/app_text_styles.dart';
 /// Shared header for main shell tab pages (below shell [SafeArea]).
 class TabPageHeader extends StatelessWidget {
   final String title;
+  final Widget? action;
 
-  const TabPageHeader({super.key, required this.title});
+  const TabPageHeader({super.key, required this.title, this.action});
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +18,19 @@ class TabPageHeader extends StatelessWidget {
         AppConstants.paddingScreen,
         AppConstants.spacingSm,
       ),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          title,
-          style: AppTextStyles.h3.copyWith(letterSpacing: -0.5),
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (action != null)
+            Align(
+              alignment: Alignment.centerRight,
+              child: action!,
+            ),
+          Text(
+            title,
+            style: AppTextStyles.headlineDisplay,
+          ),
+        ],
       ),
     );
   }

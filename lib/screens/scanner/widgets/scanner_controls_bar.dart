@@ -18,10 +18,20 @@ class ScannerControlsBar extends StatelessWidget {
     required this.onClear,
   });
 
+  void _showComingSoon(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Fitur segera hadir'),
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF1A1A2E),
+      color: AppColors.scannerDark,
       padding: const EdgeInsets.fromLTRB(
         AppConstants.paddingScreen,
         AppConstants.spacingMd,
@@ -84,7 +94,7 @@ class ScannerControlsBar extends StatelessWidget {
               : _ActionButton(
                   icon: Icons.flip_camera_ios_outlined,
                   label: 'Flip',
-                  onTap: () {},
+                  onTap: () => _showComingSoon(context),
                 ),
         ],
       ),

@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_routes.dart';
+import '../../providers/user_provider.dart';
 
-/// Splash Screen — auto-navigates to onboarding after delay.
+/// Splash Screen — auto-navigates berdasarkan status login user.
+/// - Sudah login → langsung ke [AppRoutes.home]
+/// - Belum login → ke [AppRoutes.onboarding]
+///
+/// TODO: Tambahkan SharedPreferences untuk menyimpan status onboarding
+///       agar user yang sudah pernah onboarding tidak diulang setiap sesi baru.
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -55,9 +62,12 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.forward();
 
     Future.delayed(AppConstants.splashDuration, () {
-      if (mounted) {
-        Navigator.pushReplacementNamed(context, AppRoutes.onboarding);
-      }
+      if (!mounted) return;
+      final isLoggedIn = context.read<UserProvider>().isLoggedIn;
+      Navigator.pushReplacementNamed(
+        context,
+        isLoggedIn ? AppRoutes.home : AppRoutes.onboarding,
+      );
     });
   }
 

@@ -14,7 +14,7 @@ class ScannerPreviewPanel extends StatelessWidget {
       children: [
         Container(
           width: double.infinity,
-          color: const Color(0xFF1A1A2E),
+          color: AppColors.scannerDark,
           child: imageBytes != null
               ? Image.memory(
                   imageBytes!,
@@ -38,29 +38,29 @@ class ScannerPreviewPanel extends StatelessWidget {
                       ),
                       child: Stack(
                         children: [
-                          _ScannerCorner(
+                          const _ScannerCorner(
                             alignment: Alignment.topLeft,
-                            borderRadius: const BorderRadius.only(
+                            borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(AppConstants.radiusLg),
                             ),
                           ),
-                          _ScannerCorner(
+                          const _ScannerCorner(
                             alignment: Alignment.topRight,
-                            borderRadius: const BorderRadius.only(
+                            borderRadius: BorderRadius.only(
                               topRight:
                                   Radius.circular(AppConstants.radiusLg),
                             ),
                           ),
-                          _ScannerCorner(
+                          const _ScannerCorner(
                             alignment: Alignment.bottomLeft,
-                            borderRadius: const BorderRadius.only(
+                            borderRadius: BorderRadius.only(
                               bottomLeft:
                                   Radius.circular(AppConstants.radiusLg),
                             ),
                           ),
-                          _ScannerCorner(
+                          const _ScannerCorner(
                             alignment: Alignment.bottomRight,
-                            borderRadius: const BorderRadius.only(
+                            borderRadius: BorderRadius.only(
                               bottomRight:
                                   Radius.circular(AppConstants.radiusLg),
                             ),

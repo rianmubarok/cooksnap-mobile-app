@@ -6,6 +6,6 @@ class AppDecorations {
   AppDecorations._();
 
   static const BoxDecoration pageBackground = BoxDecoration(
-    gradient: AppColors.onboardingGradient,
+    gradient: AppColors.pageGradient,
   );
 }

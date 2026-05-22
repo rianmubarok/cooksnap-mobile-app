@@ -4,7 +4,7 @@ import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_text_styles.dart';
 import '../../core/app_routes.dart';
-import '../../core/dummy_data.dart';
+import '../../data/dummy/dummy_data.dart';
 import '../../widgets/custom_button.dart';
 
 class OnboardingScreen extends StatefulWidget {

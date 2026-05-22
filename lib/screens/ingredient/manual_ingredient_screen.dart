@@ -61,8 +61,12 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final suggestions = ['Ayam', 'Telur', 'Bawang Merah', 'Tahu']
+        .where((i) => !_ingredients.contains(i))
+        .toList();
+
     return TabPageScaffold(
-      title: 'Input Bahan',
+      title: 'Bahan apa yang kamu punya?',
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(
           horizontal: AppConstants.paddingScreen,
@@ -70,141 +74,173 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-                Text(
-                  'Ketik bahan yang kamu punya, lalu cari resep yang cocok.',
-                  style: AppTextStyles.subtitleMuted,
-                ),
                 const SizedBox(height: AppConstants.spacingLg),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: CustomTextField(
-                        hintText: 'Contoh: telur, tomat, bawang merah',
-                        prefixIcon: Icons.soup_kitchen_outlined,
+                        hintText: 'Ketik nama bahan...',
+                        large: true,
                         controller: _ingredientController,
                         textInputAction: TextInputAction.done,
                         onSubmitted: (_) => _addIngredient(),
                       ),
                     ),
                     const SizedBox(width: AppConstants.spacingSm),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Material(
-                        color: AppColors.primary,
-                        borderRadius:
-                            BorderRadius.circular(AppConstants.radiusMd),
-                        child: InkWell(
-                          onTap: _addIngredient,
-                          borderRadius:
-                              BorderRadius.circular(AppConstants.radiusMd),
-                          child: const SizedBox(
-                            width: 52,
-                            height: 52,
-                            child: Icon(
-                              Icons.add_rounded,
-                              color: AppColors.white,
-                              size: 28,
-                            ),
+                    Material(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+                      child: InkWell(
+                        onTap: _addIngredient,
+                        borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+                        child: const SizedBox(
+                          width: 60,
+                          height: 60,
+                          child: Icon(
+                            Icons.add_rounded,
+                            color: AppColors.white,
+                            size: 28,
                           ),
                         ),
                       ),
                     ),
                   ],
                 ),
-                if (_ingredients.isNotEmpty) ...[
-                  const SizedBox(height: AppConstants.spacingLg),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '${_ingredients.length} bahan ditambahkan',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: _clearAll,
+                const SizedBox(height: AppConstants.spacingLg),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Dipilih',
+                      style: AppTextStyles.sectionTitle,
+                    ),
+                    Opacity(
+                      opacity: _ingredients.isNotEmpty ? 1.0 : 0.0,
+                      child: GestureDetector(
+                        onTap: _ingredients.isNotEmpty ? _clearAll : null,
                         child: const Text(
                           'Hapus semua',
                           style: TextStyle(
                             fontSize: 13,
-                            color: AppColors.error,
+                            color: AppColors.primary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: AppConstants.spacingSm),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppConstants.spacingSm),
+                if (_ingredients.isNotEmpty) ...[
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
                     children: _ingredients.map((ingredient) {
-                      return InputChip(
-                        label: Text(ingredient),
-                        deleteIcon: const Icon(Icons.close, size: 18),
-                        onDeleted: () => _removeIngredient(ingredient),
-                        backgroundColor:
-                            AppColors.secondary.withValues(alpha: 0.2),
-                        side: BorderSide(
-                          color: AppColors.secondary.withValues(alpha: 0.5),
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 8,
                         ),
-                        labelStyle: const TextStyle(
-                          fontSize: 13,
+                        decoration: BoxDecoration(
                           color: AppColors.primary,
-                          fontWeight: FontWeight.w500,
+                          borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              ingredient,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.white,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            GestureDetector(
+                              onTap: () => _removeIngredient(ingredient),
+                              child: Container(
+                                padding: const EdgeInsets.all(2),
+                                decoration: const BoxDecoration(
+                                  color: AppColors.chipBackground,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.close,
+                                  size: 12,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       );
                     }).toList(),
                   ),
                 ] else ...[
-                  const SizedBox(height: AppConstants.spacingXl),
-                  Center(
-                    child: Column(
-                      children: [
-                        Container(
-                          width: 88,
-                          height: 88,
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.08),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.soup_kitchen_outlined,
-                            size: 44,
-                            color: AppColors.primary.withValues(alpha: 0.4),
-                          ),
-                        ),
-                        const SizedBox(height: AppConstants.spacingMd),
-                        const Text(
-                          'Belum ada bahan',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: AppConstants.spacingSm),
-                        const Text(
-                          'Tambahkan minimal satu bahan untuk\nmendapatkan rekomendasi resep',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.textSecondary,
-                            height: 1.5,
-                          ),
-                        ),
-                      ],
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    decoration: BoxDecoration(
+                      color: AppColors.cardBackground,
+                      borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+                      border: Border.all(color: AppColors.border),
                     ),
+                    alignment: Alignment.center,
+                    child: const Text(
+                      'Belum ada bahan yang ditambahkan',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ),
+                ],
+                if (suggestions.isNotEmpty) ...[
+                  const SizedBox(height: AppConstants.spacingXl),
+                  Text(
+                    'Saran',
+                    style: AppTextStyles.sectionTitle,
+                  ),
+                  const SizedBox(height: AppConstants.spacingMd),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: suggestions.map((ingredient) {
+                      return GestureDetector(
+                        onTap: () {
+                          _ingredientController.text = ingredient;
+                          _addIngredient();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.cardBackground,
+                            borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+                            border: Border.all(color: AppColors.border),
+                          ),
+                          child: Text(
+                            '+ $ingredient',
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ],
                 const SizedBox(height: AppConstants.spacingXl),
                 PrimaryButton(
-                  text: 'Cari Resep dari Bahan Ini',
+                  text: 'Cari Resep',
                   icon: Icons.search_rounded,
+                  iconSize: 24,
                   useGradient: true,
                   onPressed: _ingredients.isNotEmpty ? _findRecipes : null,
                 ),

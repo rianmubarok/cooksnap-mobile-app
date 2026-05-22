@@ -7,6 +7,7 @@ import '../shell/main_shell_screen.dart';
 import '../screens/scanner/scanner_screen.dart';
 import '../screens/recipe/recipe_detail_screen.dart';
 import '../screens/recipe/recipe_recommendation_screen.dart';
+import '../screens/search/search_screen.dart';
 
 /// App route names and MaterialApp route map.
 class AppRoutes {
@@ -20,6 +21,7 @@ class AppRoutes {
   static const String scanner = '/scanner';
   static const String recipeDetail = '/recipe-detail';
   static const String recipeRecommendation = '/recipe-recommendation';
+  static const String search = '/search';
 
   static Map<String, WidgetBuilder> get routes => {
         splash: (context) => const SplashScreen(),
@@ -33,6 +35,11 @@ class AppRoutes {
           final args = ModalRoute.of(context)?.settings.arguments;
           final ingredients = args is List<String> ? args : <String>[];
           return RecipeRecommendationScreen(ingredients: ingredients);
+        },
+        search: (context) {
+          final args = ModalRoute.of(context)?.settings.arguments;
+          final query = args is String ? args : '';
+          return SearchScreen(initialQuery: query);
         },
       };
 }

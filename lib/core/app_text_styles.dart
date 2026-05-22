@@ -10,65 +10,30 @@ class AppTextStyles {
   static const String fontFamily = 'Poppins';
 
   // Headings
-  static const TextStyle h1 = TextStyle(
-    fontSize: 32,
-    fontWeight: FontWeight.w700,
-    color: AppColors.textPrimary,
-    letterSpacing: -0.8,
-    height: 1.15,
-  );
-
-  /// Login / register titles (28px, tight tracking).
-  static const TextStyle headlineAuth = TextStyle(
-    fontSize: 28,
-    fontWeight: FontWeight.w700,
-    color: AppColors.textPrimary,
-    height: 1.2,
-    letterSpacing: -0.8,
-  );
-
-  /// Onboarding & home hero lines (32px, tight tracking).
   static const TextStyle headlineDisplay = TextStyle(
     fontSize: 32,
     fontWeight: FontWeight.w700,
     color: AppColors.textPrimary,
     height: 1.15,
-    letterSpacing: -0.8,
+    letterSpacing: -1,
   );
 
-  /// Subtitle under auth titles.
-  static const TextStyle subtitleMuted = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w400,
-    color: AppColors.grey666,
-    height: 1.4,
-    letterSpacing: -0.4,
-  );
-
-  /// Home greeting line above hero title.
-  static const TextStyle greeting = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w400,
-    color: AppColors.grey666,
-    height: 1.4,
-    letterSpacing: -0.4,
-  );
-
-  /// Section headers on home and tabs.
-  static const TextStyle sectionTitle = TextStyle(
-    fontSize: 18,
+  /// Login / register screen titles.
+  static const TextStyle headlineAuth = TextStyle(
+    fontSize: 32,
     fontWeight: FontWeight.w700,
     color: AppColors.textPrimary,
     height: 1.2,
-    letterSpacing: -0.5,
+    letterSpacing: -1,
   );
 
-  static const TextStyle h2 = TextStyle(
+  /// Section headers on home and tab screens.
+  static const TextStyle sectionTitle = TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.w700,
     color: AppColors.textPrimary,
-    letterSpacing: -0.3,
-    height: 1.3,
+    height: 1.2,
+    letterSpacing: -1,
   );
 
   static const TextStyle h3 = TextStyle(
@@ -106,6 +71,18 @@ class AppTextStyles {
     color: AppColors.textSecondary,
     height: 1.4,
   );
+
+  /// Subtitle under auth titles and muted descriptions.
+  static const TextStyle subtitleMuted = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    color: AppColors.grey666,
+    height: 1.4,
+    letterSpacing: -0.4,
+  );
+
+  /// Home greeting line — same as [subtitleMuted].
+  static const TextStyle greeting = subtitleMuted;
 
   // Labels
   static const TextStyle labelLarge = TextStyle(

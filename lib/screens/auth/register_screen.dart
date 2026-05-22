@@ -77,7 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: AppDecorations.pageBackground,
+        color: AppColors.background,
         child: SafeArea(
           child: Column(
             children: [
@@ -105,7 +105,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ),
                       const SizedBox(height: AppConstants.spacingMd),
-                      Align(
+                      const Align(
                         alignment: Alignment.centerLeft,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -275,7 +275,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               setState(() => _agreedToTerms = !_agreedToTerms);
             },
             child: Text.rich(
-              TextSpan(
+              const TextSpan(
                 style: const TextStyle(
                   fontSize: 14,
                   color: AppColors.grey666,

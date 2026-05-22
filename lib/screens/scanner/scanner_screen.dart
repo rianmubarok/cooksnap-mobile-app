@@ -67,17 +67,20 @@ class _ScannerScreenState extends State<ScannerScreen> {
       return;
     }
 
-    showScanResultBottomSheet(
-      context,
-      onRescan: _clearImage,
-    );
-    await context.read<AiDetectionProvider>().scanIngredients(_selectedImage!);
+    // Reset state terlebih dahulu agar bottom sheet langsung menampilkan
+    // state loading ketika pertama kali dibuka.
+    final provider = context.read<AiDetectionProvider>();
+    provider.reset();
+
+    // Buka bottom sheet dan mulai scan secara bersamaan.
+    showScanResultBottomSheet(context, onRescan: _clearImage);
+    provider.scanIngredients(_selectedImage!);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.textPrimary,
+      backgroundColor: AppColors.scannerDark,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         foregroundColor: AppColors.white,
@@ -93,12 +96,6 @@ class _ScannerScreenState extends State<ScannerScreen> {
             color: AppColors.white,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.flash_off_rounded),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: Column(
         children: [

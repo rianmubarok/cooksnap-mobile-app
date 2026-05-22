@@ -10,6 +10,11 @@ class DummyRecipeRepository implements RecipeRepository {
       .map(RecipeCategory.fromMap)
       .toList();
 
+  /// O(1) lookup index by recipe id.
+  late final Map<String, Recipe> _recipesById = {
+    for (final r in _recipes) r.id: r,
+  };
+
   @override
   List<Recipe> getAllRecipes() => List.unmodifiable(_recipes);
 
@@ -17,12 +22,7 @@ class DummyRecipeRepository implements RecipeRepository {
   List<RecipeCategory> getCategories() => List.unmodifiable(_categories);
 
   @override
-  Recipe? getRecipeById(String id) {
-    for (final recipe in _recipes) {
-      if (recipe.id == id) return recipe;
-    }
-    return null;
-  }
+  Recipe? getRecipeById(String id) => _recipesById[id];
 
   @override
   List<Recipe> getRecipesByCategory(String categoryName) {

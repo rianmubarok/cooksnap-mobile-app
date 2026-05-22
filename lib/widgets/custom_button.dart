@@ -9,6 +9,7 @@ class PrimaryButton extends StatelessWidget {
   final bool isLoading;
   final bool useGradient;
   final IconData? icon;
+  final double iconSize;
 
   const PrimaryButton({
     super.key,
@@ -17,6 +18,7 @@ class PrimaryButton extends StatelessWidget {
     this.isLoading = false,
     this.useGradient = false,
     this.icon,
+    this.iconSize = 20,
   });
 
   static const double _disabledBackgroundOpacity = 0.45;
@@ -64,7 +66,7 @@ class PrimaryButton extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         if (icon != null) ...[
-                          Icon(icon, color: AppColors.white, size: 20),
+                          Icon(icon, color: AppColors.white, size: iconSize),
                           const SizedBox(width: AppConstants.spacingSm),
                         ],
                         Text(
@@ -104,7 +106,7 @@ class PrimaryButton extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     if (icon != null) ...[
-                      Icon(icon, size: 20),
+                      Icon(icon, size: iconSize),
                       const SizedBox(width: AppConstants.spacingSm),
                     ],
                     Text(text),
