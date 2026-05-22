@@ -161,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 category.name,
                 style: TextStyle(
                   fontSize: 13,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                  fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
                   color: isSelected ? AppColors.white : AppColors.textPrimary,
                 ),
               ),
@@ -229,3 +229,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+

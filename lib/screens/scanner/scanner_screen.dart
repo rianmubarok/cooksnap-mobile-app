@@ -92,7 +92,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
           'Scan Bahan Makanan',
           style: TextStyle(
             fontSize: 18,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
             color: AppColors.white,
           ),
         ),
@@ -111,3 +111,4 @@ class _ScannerScreenState extends State<ScannerScreen> {
     );
   }
 }
+

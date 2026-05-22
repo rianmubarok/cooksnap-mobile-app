@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 import 'app_constants.dart';
+import 'app_text_styles.dart';
 
 /// CookSnap Theme Configuration
 /// Material 3 based theme with custom component styles
@@ -12,42 +12,41 @@ class AppTheme {
   static TextTheme _buildTighterTextTheme(TextTheme base) {
     return base.copyWith(
       displayLarge: base.displayLarge?.copyWith(
-          letterSpacing: -2.0, height: 0.95, fontWeight: FontWeight.w900),
+          letterSpacing: -2.0, height: 0.95, fontWeight: FontWeight.w500),
       displayMedium: base.displayMedium?.copyWith(
-          letterSpacing: -1.6, height: 0.95, fontWeight: FontWeight.w900),
+          letterSpacing: -1.6, height: 0.95, fontWeight: FontWeight.w500),
       displaySmall: base.displaySmall?.copyWith(
-          letterSpacing: -1.2, height: 1.0, fontWeight: FontWeight.w800),
+          letterSpacing: -1.2, height: 1.0, fontWeight: FontWeight.w500),
       headlineLarge: base.headlineLarge?.copyWith(
-          letterSpacing: -1.2, height: 1.0, fontWeight: FontWeight.w800),
+          letterSpacing: -1.2, height: 1.0, fontWeight: FontWeight.w500),
       headlineMedium: base.headlineMedium?.copyWith(
-          letterSpacing: -1.0, height: 1.0, fontWeight: FontWeight.w800),
+          letterSpacing: -1.0, height: 1.0, fontWeight: FontWeight.w500),
       headlineSmall: base.headlineSmall?.copyWith(
-          letterSpacing: -0.8, height: 1.05, fontWeight: FontWeight.w700),
+          letterSpacing: -0.8, height: 1.05, fontWeight: FontWeight.w500),
       titleLarge: base.titleLarge?.copyWith(
-          letterSpacing: -0.8, height: 1.05, fontWeight: FontWeight.w700),
+          letterSpacing: -0.8, height: 1.05, fontWeight: FontWeight.w500),
       titleMedium: base.titleMedium?.copyWith(
-          letterSpacing: -0.6, height: 1.05, fontWeight: FontWeight.w700),
+          letterSpacing: -0.6, height: 1.05, fontWeight: FontWeight.w500),
       titleSmall: base.titleSmall?.copyWith(
-          letterSpacing: -0.5, height: 1.1, fontWeight: FontWeight.w600),
+          letterSpacing: -0.5, height: 1.1, fontWeight: FontWeight.w500),
       bodyLarge: base.bodyLarge?.copyWith(letterSpacing: -0.5, height: 1.15),
       bodyMedium: base.bodyMedium?.copyWith(letterSpacing: -0.4, height: 1.15),
       bodySmall: base.bodySmall?.copyWith(letterSpacing: -0.3, height: 1.15),
       labelLarge: base.labelLarge
-          ?.copyWith(letterSpacing: -0.5, fontWeight: FontWeight.w700),
+          ?.copyWith(letterSpacing: -0.5, fontWeight: FontWeight.w500),
       labelMedium: base.labelMedium
-          ?.copyWith(letterSpacing: -0.4, fontWeight: FontWeight.w600),
+          ?.copyWith(letterSpacing: -0.4, fontWeight: FontWeight.w500),
       labelSmall: base.labelSmall
           ?.copyWith(letterSpacing: -0.3, fontWeight: FontWeight.w500),
     );
   }
 
   static ThemeData get lightTheme {
-    final baseTextTheme =
-        GoogleFonts.workSansTextTheme(ThemeData.light().textTheme);
+    final baseTextTheme = ThemeData.light().textTheme.apply(fontFamily: AppTextStyles.fontFamily);
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      fontFamily: GoogleFonts.workSans().fontFamily,
+      fontFamily: AppTextStyles.fontFamily,
       textTheme: _buildTighterTextTheme(baseTextTheme),
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: AppColors.background,
@@ -90,7 +89,7 @@ class AppTheme {
           ),
           textStyle: const TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
             letterSpacing: -0.6,
           ),
         ),
@@ -107,7 +106,7 @@ class AppTheme {
           ),
           textStyle: const TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
             letterSpacing: -0.6,
           ),
         ),
@@ -119,7 +118,7 @@ class AppTheme {
           foregroundColor: AppColors.primary,
           textStyle: const TextStyle(
             fontSize: 14,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
             letterSpacing: -0.5,
           ),
         ),
@@ -174,7 +173,7 @@ class AppTheme {
         elevation: 0,
         selectedLabelStyle: TextStyle(
           fontSize: 12,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
         ),
         unselectedLabelStyle: TextStyle(
           fontSize: 12,
@@ -191,3 +190,4 @@ class AppTheme {
     );
   }
 }
+

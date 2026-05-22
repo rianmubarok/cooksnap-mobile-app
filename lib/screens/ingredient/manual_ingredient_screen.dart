@@ -153,7 +153,7 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
                               ingredient,
                               style: const TextStyle(
                                 fontSize: 13,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.w500,
                                 color: AppColors.white,
                               ),
                             ),
@@ -251,3 +251,4 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
     );
   }
 }
+

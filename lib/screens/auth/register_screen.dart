@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
@@ -227,7 +228,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       'Masuk',
                       style: TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                         decoration: TextDecoration.underline,
                         color: AppColors.textPrimary,
                       ),
@@ -245,7 +246,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget _buildTermsCheckbox() {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(
           width: 24,
@@ -275,23 +276,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
               setState(() => _agreedToTerms = !_agreedToTerms);
             },
             child: Text.rich(
-              const TextSpan(
+              TextSpan(
                 style: const TextStyle(
                   fontSize: 14,
                   color: AppColors.grey666,
                   height: 1.4,
                 ),
-                children: const [
-                  TextSpan(text: 'Setuju dengan '),
+                children: [
+                  const TextSpan(text: 'Setuju dengan '),
                   TextSpan(
                     text: 'Syarat & Ketentuan',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w500,
                       color: AppColors.textPrimary,
                       decoration: TextDecoration.underline,
                     ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Fitur syarat & ketentuan segera hadir'),
+                            behavior: SnackBarBehavior.floating,
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      },
                   ),
-                  TextSpan(text: ' CookSnap'),
+                  const TextSpan(text: ' CookSnap'),
                 ],
               ),
             ),

@@ -106,7 +106,7 @@ class RecipeDetailScreen extends StatelessWidget {
                     recipe.recipeName,
                     style: const TextStyle(
                       fontSize: 24,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w500,
                       color: AppColors.textPrimary,
                     ),
                   ),
@@ -125,7 +125,7 @@ class RecipeDetailScreen extends StatelessWidget {
                       recipe.category,
                       style: const TextStyle(
                         fontSize: 12,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                         color: AppColors.primaryLight,
                       ),
                     ),
@@ -155,10 +155,10 @@ class RecipeDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppConstants.spacingXl),
                   const Text(
-                    '🧂 Bahan-bahan',
+                    'Bahan-bahan',
                     style: TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w500,
                       color: AppColors.textPrimary,
                     ),
                   ),
@@ -227,10 +227,10 @@ class RecipeDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppConstants.spacingXl),
                   const Text(
-                    '👨‍🍳 Langkah-langkah',
+                    'Langkah-langkah',
                     style: TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w500,
                       color: AppColors.textPrimary,
                     ),
                   ),
@@ -313,7 +313,7 @@ class _StepItem extends StatelessWidget {
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 14,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
@@ -342,3 +342,4 @@ class _StepItem extends StatelessWidget {
     );
   }
 }
+

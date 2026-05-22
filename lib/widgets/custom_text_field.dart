@@ -73,7 +73,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             widget.labelText!,
             style: const TextStyle(
               fontSize: 14,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
               color: AppColors.textPrimary,
             ),
           ),
@@ -145,3 +145,4 @@ class _CustomTextFieldState extends State<CustomTextField> {
     );
   }
 }
+

@@ -45,7 +45,7 @@ class RecipeListTile extends StatelessWidget {
                     recipe.recipeName,
                     style: const TextStyle(
                       fontSize: 15,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                       color: AppColors.textPrimary,
                     ),
                   ),
@@ -104,3 +104,4 @@ class _InfoChip extends StatelessWidget {
     );
   }
 }
+

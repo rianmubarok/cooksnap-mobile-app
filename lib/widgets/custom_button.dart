@@ -74,7 +74,7 @@ class PrimaryButton extends StatelessWidget {
                           style: const TextStyle(
                             color: AppColors.white,
                             fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w500,
                             letterSpacing: -0.6,
                           ),
                         ),
@@ -152,3 +152,4 @@ class SecondaryButton extends StatelessWidget {
     );
   }
 }
+

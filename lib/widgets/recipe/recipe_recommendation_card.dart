@@ -56,7 +56,7 @@ class RecipeRecommendationCard extends StatelessWidget {
                     Text(
                       recipe.recipeName,
                       style: const TextStyle(
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                         fontSize: 14,
                         color: AppColors.textPrimary,
                       ),
@@ -157,7 +157,7 @@ class RecipeRecommendationCard extends StatelessWidget {
                           '${recommendation.matchPercentage}%',
                           style: TextStyle(
                             fontSize: 10,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             color: progressColor,
                           ),
                         ),
@@ -175,3 +175,4 @@ class RecipeRecommendationCard extends StatelessWidget {
     );
   }
 }
+

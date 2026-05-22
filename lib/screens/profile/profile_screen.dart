@@ -37,7 +37,7 @@ class ProfileScreen extends StatelessWidget {
                       userName.isNotEmpty ? userName[0].toUpperCase() : 'G',
                       style: const TextStyle(
                         fontSize: 40,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w500,
                         color: Colors.white,
                       ),
                     ),
@@ -48,7 +48,7 @@ class ProfileScreen extends StatelessWidget {
                   userName,
                   style: const TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w500,
                     color: AppColors.textPrimary,
                   ),
                 ),
@@ -161,3 +161,4 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 }
+

@@ -7,45 +7,45 @@ class AppTextStyles {
   AppTextStyles._();
 
   // Font Family
-  static const String fontFamily = 'Poppins';
+  static const String fontFamily = 'WorkSans';
 
   // Headings
   static const TextStyle headlineDisplay = TextStyle(
     fontSize: 32,
-    fontWeight: FontWeight.w700,
+    fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
     height: 1.15,
-    letterSpacing: -1,
+    letterSpacing: -1.5,
   );
 
   /// Login / register screen titles.
   static const TextStyle headlineAuth = TextStyle(
     fontSize: 32,
-    fontWeight: FontWeight.w700,
+    fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
     height: 1.2,
-    letterSpacing: -1,
+    letterSpacing: -1.5,
   );
 
   /// Section headers on home and tab screens.
   static const TextStyle sectionTitle = TextStyle(
     fontSize: 24,
-    fontWeight: FontWeight.w700,
+    fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
     height: 1.2,
-    letterSpacing: -1,
+    letterSpacing: -1.2,
   );
 
   static const TextStyle h3 = TextStyle(
     fontSize: 20,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
     height: 1.3,
   );
 
   static const TextStyle h4 = TextStyle(
     fontSize: 18,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
     height: 1.4,
   );
@@ -87,7 +87,7 @@ class AppTextStyles {
   // Labels
   static const TextStyle labelLarge = TextStyle(
     fontSize: 16,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
     letterSpacing: 0.3,
   );
@@ -108,14 +108,14 @@ class AppTextStyles {
   // Button Text
   static const TextStyle buttonLarge = TextStyle(
     fontSize: 16,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
     letterSpacing: 0.5,
     height: 1.0,
   );
 
   static const TextStyle buttonSmall = TextStyle(
     fontSize: 14,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
     letterSpacing: 0.3,
     height: 1.0,
   );
@@ -128,3 +128,4 @@ class AppTextStyles {
     letterSpacing: 0.3,
   );
 }
+

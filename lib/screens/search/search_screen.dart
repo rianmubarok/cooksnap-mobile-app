@@ -162,7 +162,7 @@ class _SearchScreenState extends State<SearchScreen> {
             q.isEmpty ? 'Ketik untuk mencari resep' : 'Resep "$q" tidak ditemukan',
             style: const TextStyle(
               fontSize: 16,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
               color: AppColors.textSecondary,
             ),
             textAlign: TextAlign.center,
@@ -183,3 +183,4 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 }
+

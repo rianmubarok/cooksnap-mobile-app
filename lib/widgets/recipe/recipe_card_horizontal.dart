@@ -58,7 +58,7 @@ class RecipeCardHorizontal extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                     color: Colors.white,
                     height: 1.3,
                   ),
@@ -71,3 +71,4 @@ class RecipeCardHorizontal extends StatelessWidget {
     );
   }
 }
+

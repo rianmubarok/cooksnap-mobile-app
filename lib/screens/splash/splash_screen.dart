@@ -24,7 +24,6 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
-  late Animation<Offset> _slideAnimation;
 
   @override
   void initState() {
@@ -46,16 +45,6 @@ class _SplashScreenState extends State<SplashScreen>
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.0, 0.6, curve: Curves.elasticOut),
-      ),
-    );
-
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.3, 0.8, curve: Curves.easeOut),
       ),
     );
 
@@ -88,17 +77,14 @@ class _SplashScreenState extends State<SplashScreen>
         ),
         child: SafeArea(
           child: Center(
-            child: SlideTransition(
-              position: _slideAnimation,
-              child: ScaleTransition(
-                scale: _scaleAnimation,
-                child: FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: SvgPicture.asset(
-                    'assets/logos/logo-1.svg',
-                    width: 80,
-                    height: 80,
-                  ),
+            child: ScaleTransition(
+              scale: _scaleAnimation,
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: SvgPicture.asset(
+                  'assets/logos/logo-1.svg',
+                  width: 80,
+                  height: 80,
                 ),
               ),
             ),

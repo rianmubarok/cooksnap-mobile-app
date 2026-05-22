@@ -82,7 +82,7 @@ void showScanResultBottomSheet(
                         'Bahan Terdeteksi 🎯 (${provider.detectedIngredients.length})',
                         style: const TextStyle(
                           fontSize: 20,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w500,
                           color: AppColors.textPrimary,
                         ),
                       ),
@@ -160,7 +160,7 @@ class _DetectedIngredientTile extends StatelessWidget {
               name,
               style: const TextStyle(
                 fontSize: 15,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
                 color: AppColors.textPrimary,
               ),
             ),
@@ -185,3 +185,4 @@ class _DetectedIngredientTile extends StatelessWidget {
     );
   }
 }
+

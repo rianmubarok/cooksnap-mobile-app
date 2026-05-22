@@ -132,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               'Lupa Kata Sandi?',
                               style: TextStyle(
                                 fontSize: 14,
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w500,
                                 decoration: TextDecoration.underline,
                                 color: AppColors.textPrimary,
                               ),
@@ -178,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         'Daftar',
                         style: TextStyle(
                           fontSize: 14,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w500,
                           decoration: TextDecoration.underline,
                           color: AppColors.textPrimary,
                         ),

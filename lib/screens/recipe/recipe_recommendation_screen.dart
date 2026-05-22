@@ -121,7 +121,7 @@ class _IngredientsPanel extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               color: AppColors.primary,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: AppConstants.spacingSm),
@@ -157,3 +157,4 @@ class _IngredientsPanel extends StatelessWidget {
     );
   }
 }
+

@@ -54,7 +54,7 @@ class FavoriteScreen extends StatelessWidget {
             'Belum ada resep favorit',
             style: TextStyle(
               fontSize: 18,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
               color: AppColors.textPrimary,
             ),
           ),
@@ -114,7 +114,7 @@ class _FavoriteCard extends StatelessWidget {
                     recipe.recipeName,
                     style: const TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                       color: AppColors.textPrimary,
                     ),
                     maxLines: 1,
@@ -156,3 +156,4 @@ class _FavoriteCard extends StatelessWidget {
     );
   }
 }
+
