@@ -40,7 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 _buildCategories(categories),
                 _buildSectionTitle('Resep Populer', 'Lihat Semua'),
                 _buildPopularRecipes(recipes),
-                const SizedBox(height: AppConstants.spacingLg),
                 _buildSectionTitle('Resep Terbaru', 'Lihat Semua'),
                 _buildRecentRecipes(recipes),
                 const SizedBox(height: AppConstants.spacingXl),

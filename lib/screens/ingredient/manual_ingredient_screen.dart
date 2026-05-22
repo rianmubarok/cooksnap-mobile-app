@@ -131,7 +131,7 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: AppConstants.spacingSm),
+                const SizedBox(height: AppConstants.spacingMd),
                 if (_ingredients.isNotEmpty) ...[
                   Wrap(
                     spacing: 8,
