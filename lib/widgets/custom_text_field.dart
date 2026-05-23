@@ -13,8 +13,12 @@ class CustomTextField extends StatefulWidget {
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
   final void Function(String)? onSubmitted;
+  final ValueChanged<String>? onChanged;
   /// Larger field for auth screens (18px text, taller touch target).
   final bool large;
+  /// Shows a clear button when the field has text (e.g. search).
+  final bool clearable;
+  final bool autofocus;
 
   const CustomTextField({
     super.key,
@@ -27,7 +31,10 @@ class CustomTextField extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.next,
     this.onSubmitted,
+    this.onChanged,
     this.large = false,
+    this.clearable = false,
+    this.autofocus = false,
   });
 
   static const double largeFontSize = 18;
@@ -39,6 +46,32 @@ class CustomTextField extends StatefulWidget {
 
 class _CustomTextFieldState extends State<CustomTextField> {
   bool _obscureText = true;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller?.addListener(_onControllerChanged);
+  }
+
+  @override
+  void didUpdateWidget(covariant CustomTextField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller?.removeListener(_onControllerChanged);
+      widget.controller?.addListener(_onControllerChanged);
+      if (widget.clearable) setState(() {});
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.controller?.removeListener(_onControllerChanged);
+    super.dispose();
+  }
+
+  void _onControllerChanged() {
+    if (widget.clearable) setState(() {});
+  }
 
   double get _fontSize => widget.large ? CustomTextField.largeFontSize : 15;
 
@@ -55,6 +88,45 @@ class _CustomTextFieldState extends State<CustomTextField> {
   EdgeInsets get _suffixIconPadding => EdgeInsets.only(
         right: widget.large ? 14 : 10,
       );
+
+  Widget? _buildSuffixIcon() {
+    if (widget.isPassword) {
+      return Padding(
+        padding: _suffixIconPadding,
+        child: IconButton(
+          icon: Icon(
+            _obscureText
+                ? Icons.visibility_off_outlined
+                : Icons.visibility_outlined,
+            color: AppColors.textHint,
+            size: _iconSize,
+          ),
+          onPressed: () {
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },
+        ),
+      );
+    }
+
+    if (widget.clearable &&
+        widget.controller != null &&
+        widget.controller!.text.isNotEmpty) {
+      return Padding(
+        padding: _suffixIconPadding,
+        child: IconButton(
+          icon: Icon(Icons.close_rounded, color: AppColors.textHint, size: _iconSize),
+          onPressed: () {
+            widget.controller!.clear();
+            widget.onChanged?.call('');
+          },
+        ),
+      );
+    }
+
+    return null;
+  }
 
   OutlineInputBorder _outlineBorder(Color color, {double width = 1}) {
     return OutlineInputBorder(
@@ -81,10 +153,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ],
         TextFormField(
           controller: widget.controller,
+          autofocus: widget.autofocus,
           obscureText: widget.isPassword ? _obscureText : false,
           keyboardType: widget.keyboardType,
           textInputAction: widget.textInputAction,
           onFieldSubmitted: widget.onSubmitted,
+          onChanged: widget.onChanged,
           validator: widget.validator,
           style: TextStyle(
             fontSize: _fontSize,
@@ -120,25 +194,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     ),
                   )
                 : null,
-            suffixIcon: widget.isPassword
-                ? Padding(
-                    padding: _suffixIconPadding,
-                    child: IconButton(
-                      icon: Icon(
-                        _obscureText
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                        color: AppColors.textHint,
-                        size: _iconSize,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureText = !_obscureText;
-                        });
-                      },
-                    ),
-                  )
-                : null,
+            suffixIcon: _buildSuffixIcon(),
           ),
         ),
       ],

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../core/app_colors.dart';
-import '../core/app_decorations.dart';
-import '../core/app_routes.dart';
-import '../providers/shell_navigation_provider.dart';
-import '../screens/favorite/favorite_screen.dart';
-import '../screens/home/home_screen.dart';
-import '../screens/profile/profile_screen.dart';
-import '../screens/ingredient/manual_ingredient_screen.dart';
-import '../widgets/navigation/app_bottom_nav_bar.dart';
+import '../../core/app_colors.dart';
+import '../../core/app_decorations.dart';
+import '../../core/app_routes.dart';
+import '../../providers/shell_navigation_provider.dart';
+import '../favorite/favorite_screen.dart';
+import '../home/home_screen.dart';
+import '../profile/profile_screen.dart';
+import '../ingredient/manual_ingredient_screen.dart';
+import '../../widgets/navigation/app_bottom_nav_bar.dart';
 
 /// Main app shell with shared bottom navigation and scanner FAB.
 class MainShellScreen extends StatelessWidget {
@@ -25,8 +26,12 @@ class MainShellScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final currentIndex = context.watch<ShellNavigationProvider>().currentIndex;
 
-    return Scaffold(
-      body: Container(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: Colors.transparent,
+      ),
+      child: Scaffold(
+        body: Container(
         decoration: AppDecorations.pageBackground,
         child: SafeArea(
           bottom: false,
@@ -55,6 +60,7 @@ class MainShellScreen extends StatelessWidget {
       bottomNavigationBar: AppBottomNavBar(
         currentIndex: currentIndex,
         onIndexChanged: context.read<ShellNavigationProvider>().selectTab,
+      ),
       ),
     );
   }

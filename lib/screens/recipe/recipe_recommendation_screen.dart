@@ -6,6 +6,8 @@ import '../../core/app_decorations.dart';
 import '../../core/app_text_styles.dart';
 import '../../data/repositories/recipe_repository.dart';
 import '../../models/recipe_model.dart';
+import '../../widgets/common/empty_state_view.dart';
+import '../../widgets/ingredient/ingredient_tag_chip.dart';
 import '../../widgets/recipe/recipe_recommendation_card.dart';
 
 class RecipeRecommendationScreen extends StatefulWidget {
@@ -25,7 +27,6 @@ class _RecipeRecommendationScreenState
   @override
   void initState() {
     super.initState();
-    // Komputasi berat dilakukan sekali di initState, bukan setiap build().
     _recommendations = context
         .read<RecipeRepository>()
         .getRecommendationsForIngredients(widget.ingredients);
@@ -63,12 +64,10 @@ class _RecipeRecommendationScreenState
             ),
             if (_recommendations.isEmpty)
               const SliverFillRemaining(
-                child: Center(
-                  child: Text(
-                    'Belum ada resep yang cocok.\nCoba scan bahan lain.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: AppColors.textSecondary),
-                  ),
+                child: EmptyStateView(
+                  icon: Icons.restaurant_menu_outlined,
+                  title: 'Belum ada resep yang cocok',
+                  subtitle: 'Coba scan bahan lain atau tambah bahan manual',
                 ),
               )
             else
@@ -116,45 +115,27 @@ class _IngredientsPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Bahan yang kamu punya:',
-            style: TextStyle(
-              fontSize: 13,
-              color: AppColors.primary,
-              fontWeight: FontWeight.w500,
-            ),
+            style: AppTextStyles.labelMedium.copyWith(color: AppColors.primary),
           ),
           const SizedBox(height: AppConstants.spacingSm),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: ingredients.isEmpty
-                ? [const Text('Tidak ada bahan')]
-                : ingredients.map((ingredient) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.secondary.withValues(alpha: 0.35),
-                        borderRadius:
-                            BorderRadius.circular(AppConstants.radiusRound),
-                      ),
-                      child: Text(
-                        ingredient,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    );
-                  }).toList(),
+                ? [
+                    const Text(
+                      'Tidak ada bahan',
+                      style: AppTextStyles.bodySmall,
+                    ),
+                  ]
+                : ingredients
+                    .map((i) => IngredientTagChip(label: i))
+                    .toList(),
           ),
         ],
       ),
     );
   }
 }
-

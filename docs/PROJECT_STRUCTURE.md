@@ -4,20 +4,19 @@ CookSnap uses a **layered + feature-oriented** layout to keep UI, state, and dat
 
 ```
 lib/
-├── app/
-│   └── app_providers.dart      # Provider tree & dependency injection
-├── config/
-│   └── api_config.dart         # Env-based API endpoints
 ├── core/
+│   ├── api_config.dart
 │   ├── app_colors.dart
 │   ├── app_constants.dart
 │   ├── app_decorations.dart
+│   ├── app_providers.dart      # Provider tree & dependency injection
 │   ├── app_routes.dart
 │   ├── app_text_styles.dart
 │   ├── app_theme.dart
 │   └── dummy_data.dart         # Static onboarding content only
 ├── data/
 │   ├── dummy/
+│   │   ├── dummy_data.dart
 │   │   └── dummy_recipe_source.dart
 │   └── repositories/
 │       ├── recipe_repository.dart
@@ -28,28 +27,42 @@ lib/
 ├── providers/
 │   ├── ai_detection_provider.dart
 │   ├── favorites_provider.dart
+│   ├── pantry_provider.dart
 │   ├── shell_navigation_provider.dart
 │   └── user_provider.dart
 ├── screens/
 │   ├── auth/
 │   ├── favorite/
 │   ├── home/
-│   ├── ingredient/             # Manual ingredient input tab
+│   ├── ingredient/
+│   │   ├── manual_ingredient_screen.dart
+│   │   └── pantry_essentials_sheet.dart
 │   ├── onboarding/
 │   ├── profile/
 │   ├── recipe/
 │   ├── scanner/
-│   │   └── widgets/            # Scanner UI parts
+│   │   └── widgets/
+│   ├── search/
+│   ├── shell/
+│   │   └── main_shell_screen.dart
 │   └── splash/
 ├── services/
 │   └── ai_detection_service.dart
-├── shell/
-│   └── main_shell_screen.dart  # SafeArea + bottom nav + FAB
 ├── utils/
-│   └── ingredient_parser.dart
+│   ├── auth_mock.dart
+│   ├── ingredient_parser.dart
+│   ├── placeholder_snackbar.dart
+│   └── recipe_navigation.dart
 ├── widgets/
+│   ├── auth/                   # AuthScreenLayout, AuthHeader, AuthFooterLink
+│   ├── common/                 # EmptyStateView, BottomSheetHandle, etc.
+│   ├── ingredient/             # Chips for ingredients
 │   ├── navigation/
-│   └── recipe/
+│   ├── profile/
+│   ├── recipe/
+│   ├── search/
+│   ├── custom_button.dart
+│   └── custom_text_field.dart
 └── main.dart
 ```
 
@@ -67,6 +80,21 @@ lib/
 
 ---
 
+## Shared widgets
+
+| Widget | Purpose |
+|--------|---------|
+| `TabPageScaffold` / `TabPageHeader` | Tab screens (favorit, profil, input bahan) |
+| `RecipeListTile` / `RecipeCardHorizontal` | Recipe lists |
+| `RecipeThumbnailBox` | Image or placeholder (`imageUrl`) |
+| `RecipeSearchField` | Home + search screen |
+| `EmptyStateView` | Empty lists / no results |
+| `AppChip` | Category filters on home (`chipHeight`) |
+| `RemovableIngredientChip` / `SuggestionChip` | Input bahan — hug-content width |
+| `AuthScreenLayout` | Login & register layout |
+
+---
+
 ## Main shell tabs
 
 | Index | Tab | Screen |
@@ -75,8 +103,6 @@ lib/
 | 1 | Input Bahan | `ManualIngredientScreen` |
 | 2 | Simpan | `FavoriteScreen` |
 | 3 | Profil | `ProfileScreen` |
-
-Tab switching: `ShellNavigationProvider.selectTab()` — used by bottom nav and Home search bar.
 
 ---
 
@@ -87,14 +113,6 @@ Screen → context.read<RecipeRepository>()
        → DummyRecipeRepository (swap for PocketBase later)
        → Recipe model
 ```
-
----
-
-## Routing
-
-- Tab screens live inside `MainShellScreen` (not separate routes).
-- Full-screen routes: splash, onboarding, auth, scanner, recipe detail, recipe recommendation.
-- Pass recipe id or ingredient list via `Navigator` `arguments`.
 
 ---
 

@@ -36,36 +36,36 @@ class ScannerPreviewPanel extends StatelessWidget {
                         borderRadius:
                             BorderRadius.circular(AppConstants.radiusLg),
                       ),
-                      child: Stack(
+                      child: const Stack(
                         children: [
-                          const _ScannerCorner(
+                          _ScannerCorner(
                             alignment: Alignment.topLeft,
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(AppConstants.radiusLg),
                             ),
                           ),
-                          const _ScannerCorner(
+                          _ScannerCorner(
                             alignment: Alignment.topRight,
                             borderRadius: BorderRadius.only(
                               topRight:
                                   Radius.circular(AppConstants.radiusLg),
                             ),
                           ),
-                          const _ScannerCorner(
+                          _ScannerCorner(
                             alignment: Alignment.bottomLeft,
                             borderRadius: BorderRadius.only(
                               bottomLeft:
                                   Radius.circular(AppConstants.radiusLg),
                             ),
                           ),
-                          const _ScannerCorner(
+                          _ScannerCorner(
                             alignment: Alignment.bottomRight,
                             borderRadius: BorderRadius.only(
                               bottomRight:
                                   Radius.circular(AppConstants.radiusLg),
                             ),
                           ),
-                          const Center(
+                          Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -114,7 +114,7 @@ class ScannerPreviewPanel extends StatelessWidget {
             child: const Text(
               'AI akan mendeteksi bahan makanan secara otomatis',
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.white, fontSize: 13),
+              style: TextStyle(color: AppColors.white, fontSize: 14),
             ),
           ),
         ),

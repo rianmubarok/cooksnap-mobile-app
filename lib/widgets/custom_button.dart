@@ -30,7 +30,7 @@ class PrimaryButton extends StatelessWidget {
       end: Alignment.bottomRight,
       colors: [
         AppColors.primary.withValues(alpha: opacity),
-        const Color(0xFF2E6331).withValues(alpha: opacity),
+        AppColors.primaryLight.withValues(alpha: opacity),
       ],
     );
   }

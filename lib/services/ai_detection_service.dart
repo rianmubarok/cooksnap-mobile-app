@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import '../config/api_config.dart';
+import '../core/api_config.dart';
 import '../models/scan_result_model.dart';
 import '../utils/ingredient_parser.dart';
 

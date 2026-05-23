@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_routes.dart';
+import '../../core/app_text_styles.dart';
 import '../../models/recipe_model.dart';
+import '../../utils/recipe_navigation.dart';
 import 'recipe_thumbnail.dart';
 
 class RecipeCardHorizontal extends StatelessWidget {
@@ -10,14 +11,13 @@ class RecipeCardHorizontal extends StatelessWidget {
 
   const RecipeCardHorizontal({super.key, required this.recipe});
 
+  bool get _hasImage =>
+      recipe.imageUrl != null && recipe.imageUrl!.trim().isNotEmpty;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(
-        context,
-        AppRoutes.recipeDetail,
-        arguments: recipe.id,
-      ),
+      onTap: () => context.openRecipeDetail(recipe.id),
       child: Container(
         width: 200,
         margin: const EdgeInsets.only(right: 16),
@@ -26,10 +26,19 @@ class RecipeCardHorizontal extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              Container(
-                color: AppColors.primary.withValues(alpha: 0.08),
-                child: const RecipeThumbnail(),
-              ),
+              _hasImage
+                  ? Image.network(
+                      recipe.imageUrl!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => const ColoredBox(
+                        color: AppColors.cardBackground,
+                        child: RecipeThumbnail(),
+                      ),
+                    )
+                  : Container(
+                      color: AppColors.primary.withValues(alpha: 0.08),
+                      child: const RecipeThumbnail(),
+                    ),
               Positioned(
                 bottom: 0,
                 left: 0,
@@ -40,10 +49,7 @@ class RecipeCardHorizontal extends StatelessWidget {
                     gradient: LinearGradient(
                       begin: Alignment.bottomCenter,
                       end: Alignment.topCenter,
-                      colors: [
-                        Colors.black87,
-                        Colors.transparent,
-                      ],
+                      colors: [Colors.black87, Colors.transparent],
                     ),
                   ),
                 ),
@@ -56,12 +62,7 @@ class RecipeCardHorizontal extends StatelessWidget {
                   recipe.recipeName,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
-                    height: 1.3,
-                  ),
+                  style: AppTextStyles.h4.copyWith(color: Colors.white),
                 ),
               ),
             ],
@@ -71,4 +72,3 @@ class RecipeCardHorizontal extends StatelessWidget {
     );
   }
 }
-

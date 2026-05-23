@@ -123,7 +123,7 @@ class _ActionButton extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             label,
-            style: const TextStyle(color: AppColors.white, fontSize: 12),
+            style: const TextStyle(color: AppColors.white, fontSize: 14),
           ),
         ],
       ),

@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import '../../../core/app_colors.dart';
 import '../../../core/app_constants.dart';
 import '../../../core/app_routes.dart';
+import '../../../core/app_text_styles.dart';
 import '../../../providers/ai_detection_provider.dart';
+import '../../../widgets/common/bottom_sheet_handle.dart';
 import '../../../widgets/custom_button.dart';
 
 void showScanResultBottomSheet(
@@ -33,42 +35,31 @@ void showScanResultBottomSheet(
                 child: ListView(
                   controller: scrollController,
                   children: [
-                    Center(
-                      child: Container(
-                        width: 40,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: AppColors.divider,
-                          borderRadius: BorderRadius.circular(
-                            AppConstants.radiusRound,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppConstants.spacingLg),
+                    const BottomSheetHandle(),
                     if (provider.isLoading) ...[
                       const SizedBox(height: 40),
                       const Center(child: CircularProgressIndicator()),
                       const SizedBox(height: 16),
-                      const Center(
+                      Center(
                         child: Text(
                           'AI sedang menganalisis bahan...',
-                          style: TextStyle(
-                            fontSize: 16,
+                          style: AppTextStyles.bodyLarge.copyWith(
                             color: AppColors.textSecondary,
                           ),
                         ),
                       ),
                     ] else if (provider.hasError) ...[
                       const SizedBox(height: 20),
-                      Icon(Icons.error_outline,
-                          size: 60, color: Colors.red.shade400),
+                      Icon(
+                        Icons.error_outline,
+                        size: 60,
+                        color: Colors.red.shade400,
+                      ),
                       const SizedBox(height: 16),
                       Text(
                         provider.errorMessage ?? 'Terjadi kesalahan',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: AppTextStyles.bodyLarge.copyWith(
                           color: Colors.red.shade700,
                         ),
                       ),
@@ -80,11 +71,7 @@ void showScanResultBottomSheet(
                     ] else if (provider.hasResult) ...[
                       Text(
                         'Bahan Terdeteksi 🎯 (${provider.detectedIngredients.length})',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textPrimary,
-                        ),
+                        style: AppTextStyles.h3,
                       ),
                       const SizedBox(height: AppConstants.spacingMd),
                       if (provider.detectedIngredients.isEmpty)
@@ -93,7 +80,7 @@ void showScanResultBottomSheet(
                           child: Text(
                             'Tidak ada bahan makanan yang terdeteksi.',
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: AppColors.textSecondary),
+                            style: AppTextStyles.bodySmall,
                           ),
                         )
                       else
@@ -156,14 +143,7 @@ class _DetectedIngredientTile extends StatelessWidget {
           const Text('✅', style: TextStyle(fontSize: 24)),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              name,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textPrimary,
-              ),
-            ),
+            child: Text(name, style: AppTextStyles.labelLarge),
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -171,11 +151,9 @@ class _DetectedIngredientTile extends StatelessWidget {
               color: AppColors.success.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(AppConstants.radiusRound),
             ),
-            child: const Text(
+            child: Text(
               'AI Detected',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
+              style: AppTextStyles.labelMedium.copyWith(
                 color: AppColors.secondary,
               ),
             ),
@@ -185,4 +163,3 @@ class _DetectedIngredientTile extends StatelessWidget {
     );
   }
 }
-

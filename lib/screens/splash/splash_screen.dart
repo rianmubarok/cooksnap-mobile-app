@@ -82,7 +82,7 @@ class _SplashScreenState extends State<SplashScreen>
               child: FadeTransition(
                 opacity: _fadeAnimation,
                 child: SvgPicture.asset(
-                  'assets/logos/logo-1.svg',
+                  'assets/logos/cooksnap_logo.svg',
                   width: 80,
                   height: 80,
                 ),

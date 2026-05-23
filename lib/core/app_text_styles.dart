@@ -14,18 +14,12 @@ class AppTextStyles {
     fontSize: 32,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
-    height: 1.15,
-    letterSpacing: -1.5,
-  );
-
-  /// Login / register screen titles.
-  static const TextStyle headlineAuth = TextStyle(
-    fontSize: 32,
-    fontWeight: FontWeight.w500,
-    color: AppColors.textPrimary,
     height: 1.2,
     letterSpacing: -1.5,
   );
+
+  /// Auth screen title — alias for [headlineDisplay].
+  static const TextStyle headlineAuth = headlineDisplay;
 
   /// Section headers on home and tab screens.
   static const TextStyle sectionTitle = TextStyle(
@@ -66,7 +60,7 @@ class AppTextStyles {
   );
 
   static const TextStyle bodySmall = TextStyle(
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
     height: 1.4,
@@ -99,7 +93,7 @@ class AppTextStyles {
   );
 
   static const TextStyle labelSmall = TextStyle(
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: FontWeight.w500,
     color: AppColors.textSecondary,
     letterSpacing: 0.5,
@@ -122,10 +116,18 @@ class AppTextStyles {
 
   // Caption
   static const TextStyle caption = TextStyle(
-    fontSize: 11,
+    fontSize: 14,
     fontWeight: FontWeight.w400,
     color: AppColors.textHint,
     letterSpacing: 0.3,
+  );
+
+  /// Underlined inline link (auth footer, forgot password).
+  static const TextStyle link = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
+    decoration: TextDecoration.underline,
+    color: AppColors.textPrimary,
   );
 }
 

@@ -5,8 +5,14 @@ import '../services/ai_detection_service.dart';
 
 enum DetectionState { idle, loading, success, error }
 
+/// Manages the AI ingredient-detection flow.
+///
+/// [AiDetectionService] is injected via the constructor so the provider
+/// can be unit-tested with a mock service without hitting the real API.
 class AiDetectionProvider extends ChangeNotifier {
-  final AiDetectionService _aiDetectionService = AiDetectionService();
+  AiDetectionProvider(this._aiDetectionService);
+
+  final AiDetectionService _aiDetectionService;
 
   DetectionState _state = DetectionState.idle;
   ScanResult? _scanResult;

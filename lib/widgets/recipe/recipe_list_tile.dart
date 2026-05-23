@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_routes.dart';
+import '../../core/app_text_styles.dart';
 import '../../models/recipe_model.dart';
+import '../../utils/recipe_navigation.dart';
+import 'recipe_info_chip.dart';
 import 'recipe_thumbnail.dart';
 
+/// Horizontal list tile for a recipe. Used on the home screen and search results.
 class RecipeListTile extends StatelessWidget {
   final Recipe recipe;
+  final Widget? trailing;
 
-  const RecipeListTile({super.key, required this.recipe});
+  const RecipeListTile({super.key, required this.recipe, this.trailing});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(
-        context,
-        AppRoutes.recipeDetail,
-        arguments: recipe.id,
-      ),
+      onTap: () => context.openRecipeDetail(recipe.id),
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(12),
@@ -27,45 +27,24 @@ class RecipeListTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Container(
-              width: 72,
-              height: 72,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(AppConstants.radiusSm),
-              ),
-              child: const RecipeThumbnail(iconSize: 32),
-            ),
+            RecipeThumbnailBox(size: 72, imageUrl: recipe.imageUrl),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    recipe.recipeName,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
+                  Text(recipe.recipeName, style: AppTextStyles.labelLarge),
                   const SizedBox(height: 4),
-                  Text(
-                    recipe.category,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
+                  Text(recipe.category, style: AppTextStyles.bodySmall),
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      _InfoChip(
+                      RecipeInfoChip(
                         icon: Icons.timer_outlined,
                         text: recipe.cookingTimeLabel,
                       ),
                       const SizedBox(width: 12),
-                      _InfoChip(
+                      RecipeInfoChip(
                         icon: Icons.restaurant_menu_outlined,
                         text: recipe.difficulty,
                       ),
@@ -74,34 +53,13 @@ class RecipeListTile extends StatelessWidget {
                 ],
               ),
             ),
+            if (trailing != null) ...[
+              const SizedBox(width: 8),
+              trailing!,
+            ],
           ],
         ),
       ),
     );
   }
 }
-
-class _InfoChip extends StatelessWidget {
-  final IconData icon;
-  final String text;
-
-  const _InfoChip({required this.icon, required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, size: 14, color: AppColors.textSecondary),
-        const SizedBox(width: 4),
-        Text(
-          text,
-          style: const TextStyle(
-            fontSize: 11,
-            color: AppColors.textSecondary,
-          ),
-        ),
-      ],
-    );
-  }
-}
-

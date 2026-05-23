@@ -3,7 +3,7 @@ import '../screens/splash/splash_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
-import '../shell/main_shell_screen.dart';
+import '../screens/shell/main_shell_screen.dart';
 import '../screens/scanner/scanner_screen.dart';
 import '../screens/recipe/recipe_detail_screen.dart';
 import '../screens/recipe/recipe_recommendation_screen.dart';

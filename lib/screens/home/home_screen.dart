@@ -7,8 +7,11 @@ import '../../core/app_text_styles.dart';
 import '../../data/repositories/recipe_repository.dart';
 import '../../models/recipe_model.dart';
 import '../../providers/user_provider.dart';
+import '../../widgets/common/app_chip.dart';
+import '../../widgets/common/section_action_link.dart';
 import '../../widgets/recipe/recipe_card_horizontal.dart';
 import '../../widgets/recipe/recipe_list_tile.dart';
+import '../../widgets/search/recipe_search_field.dart';
 
 /// Home tab — recipes, categories, and sections.
 class HomeScreen extends StatefulWidget {
@@ -20,6 +23,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedCategoryIndex = 0;
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -31,24 +36,50 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       children: [
         Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(context),
-                  _buildSearchBar(context),
-                _buildCategories(categories),
-                _buildSectionTitle('Resep Populer', 'Lihat Semua'),
-                _buildPopularRecipes(recipes),
-                _buildSectionTitle('Resep Terbaru', 'Lihat Semua'),
-                _buildRecentRecipes(recipes),
-                const SizedBox(height: AppConstants.spacingXl),
-              ],
+          child: RefreshIndicator(
+            key: _refreshIndicatorKey,
+            onRefresh: _onRefresh,
+            color: AppColors.primary,
+            backgroundColor: AppColors.cardBackground,
+            strokeWidth: 2.5,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(context),
+                  Padding(
+                    padding: const EdgeInsets.all(AppConstants.paddingScreen),
+                    child: RecipeSearchField(
+                      onSubmitted: (query) {
+                        if (query.trim().isNotEmpty) {
+                          Navigator.pushNamed(
+                            context,
+                            AppRoutes.search,
+                            arguments: query.trim(),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                  _buildCategories(categories),
+                  _buildSectionTitle('Resep Populer'),
+                  _buildPopularRecipes(recipes),
+                  _buildSectionTitle('Resep Terbaru'),
+                  _buildRecentRecipes(recipes),
+                  const SizedBox(height: AppConstants.spacingXl),
+                ],
+              ),
             ),
           ),
         ),
       ],
     );
+  }
+
+  Future<void> _onRefresh() async {
+    await Future.delayed(const Duration(milliseconds: 600));
+    if (mounted) setState(() {});
   }
 
   Widget _buildHeader(BuildContext context) {
@@ -75,63 +106,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSearchBar(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(AppConstants.paddingScreen),
-      child: Material(
-        color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(AppConstants.radiusLg),
-        child: Container(
-          height: AppConstants.searchBarHeight,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppConstants.radiusLg),
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Row(
-            children: [
-              const SizedBox(width: 16),
-              const Icon(Icons.search_rounded,
-                  color: AppColors.textHint, size: 24),
-              const SizedBox(width: 10),
-              Expanded(
-                child: TextField(
-                  textInputAction: TextInputAction.search,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    color: AppColors.textPrimary,
-                  ),
-                  decoration: const InputDecoration(
-                    hintText: 'Cari Resep',
-                    hintStyle: TextStyle(
-                        color: AppColors.textHint, fontSize: 18),
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  onSubmitted: (query) {
-                    if (query.trim().isNotEmpty) {
-                      Navigator.pushNamed(
-                        context,
-                        AppRoutes.search,
-                        arguments: query.trim(),
-                      );
-                    }
-                  },
-                ),
-              ),
-              const SizedBox(width: 12),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildCategories(List<RecipeCategory> categories) {
     return SizedBox(
-      height: 32,
+      height: AppConstants.chipHeight,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(
@@ -142,29 +119,12 @@ class _HomeScreenState extends State<HomeScreen> {
           final category = categories[index];
           final isSelected = index == _selectedCategoryIndex;
 
-          return GestureDetector(
-            onTap: () => setState(() => _selectedCategoryIndex = index),
-            child: AnimatedContainer(
-              duration: AppConstants.animFast,
-              margin: const EdgeInsets.only(right: 10),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color:
-                    isSelected ? AppColors.primary : AppColors.cardBackground,
-                borderRadius: BorderRadius.circular(AppConstants.radiusRound),
-                border: Border.all(
-                  color: isSelected ? AppColors.primary : AppColors.border,
-                ),
-              ),
-              child: Text(
-                category.name,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
-                  color: isSelected ? AppColors.white : AppColors.textPrimary,
-                ),
-              ),
+          return Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: AppChip(
+              label: category.name,
+              selected: isSelected,
+              onTap: () => setState(() => _selectedCategoryIndex = index),
             ),
           );
         },
@@ -172,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String title, String action) {
+  Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         AppConstants.paddingScreen,
@@ -184,14 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(title, style: AppTextStyles.sectionTitle),
-          Text(
-            action,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: AppColors.primary,
-            ),
-          ),
+          const SectionActionLink(label: 'Lihat Semua'),
         ],
       ),
     );
@@ -229,4 +182,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-

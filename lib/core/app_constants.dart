@@ -38,8 +38,9 @@ class AppConstants {
   static const double buttonHeightSmall = 40.0;
   
   // Element Sizing
+  static const double chipHeight = 32.0;
   static const double searchBarHeight = 60.0;
-  static const double recipeImageHeight = 250.0;
+  static const double recipeImageHeight = 350.0;
 
   // Animation Durations
   static const Duration animFast = Duration(milliseconds: 200);

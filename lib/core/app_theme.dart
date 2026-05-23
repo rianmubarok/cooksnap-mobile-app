@@ -172,11 +172,11 @@ class AppTheme {
         type: BottomNavigationBarType.fixed,
         elevation: 0,
         selectedLabelStyle: TextStyle(
-          fontSize: 12,
+          fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
         unselectedLabelStyle: TextStyle(
-          fontSize: 12,
+          fontSize: 14,
           fontWeight: FontWeight.w400,
         ),
       ),
