@@ -29,7 +29,7 @@ class RecipeRecommendationCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.cardBackground,
-          borderRadius: BorderRadius.circular(AppConstants.radiusMd),
+          borderRadius: BorderRadius.circular(AppConstants.radiusLg),
           border: Border.all(color: AppColors.border),
         ),
         child: Row(
@@ -43,15 +43,18 @@ class RecipeRecommendationCard extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.only(top: 12, bottom: 12, right: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       recipe.recipeName,
-                      style: AppTextStyles.labelLarge,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.h3.copyWith(
+                        letterSpacing: -1.2,
+                        height: 1.2,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Row(
@@ -83,8 +86,6 @@ class RecipeRecommendationCard extends StatelessWidget {
                 ),
               ),
             ),
-            const Icon(Icons.chevron_right, color: AppColors.textHint),
-            const SizedBox(width: 12),
           ],
         ),
       ),

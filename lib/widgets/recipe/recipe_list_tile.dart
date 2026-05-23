@@ -23,7 +23,7 @@ class RecipeListTile extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: AppColors.cardBackground,
-          borderRadius: BorderRadius.circular(AppConstants.radiusMd),
+          borderRadius: BorderRadius.circular(AppConstants.radiusLg),
           border: Border.all(color: AppColors.border),
         ),
         child: Row(
@@ -34,7 +34,15 @@ class RecipeListTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(recipe.recipeName, style: AppTextStyles.labelLarge),
+                  Text(
+                    recipe.recipeName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.h3.copyWith(
+                      letterSpacing: -1.2,
+                      height: 1.2,
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
@@ -52,10 +60,6 @@ class RecipeListTile extends StatelessWidget {
                 ],
               ),
             ),
-            if (trailing != null) ...[
-              const SizedBox(width: 8),
-              trailing!,
-            ],
           ],
         ),
       ),

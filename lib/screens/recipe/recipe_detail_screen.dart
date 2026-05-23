@@ -203,7 +203,7 @@ class RecipeDetailScreen extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: AppColors.cardBackground,
-                          borderRadius: BorderRadius.circular(AppConstants.radiusMd),
+                          borderRadius: BorderRadius.circular(AppConstants.radiusLg),
                           border: Border.all(color: AppColors.border),
                         ),
                         child: Row(
