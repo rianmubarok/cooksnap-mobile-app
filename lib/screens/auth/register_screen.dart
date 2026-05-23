@@ -162,7 +162,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               text: 'Buat Akun',
               onPressed: _isFormValid && !_isLoading ? _handleRegister : null,
               isLoading: _isLoading,
-              useGradient: true,
             ),
             const SizedBox(height: AppConstants.spacingMd),
             _buildTermsCheckbox(),

@@ -24,6 +24,7 @@ class RecipeListTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.cardBackground,
           borderRadius: BorderRadius.circular(AppConstants.radiusMd),
+          border: Border.all(color: AppColors.border),
         ),
         child: Row(
           children: [

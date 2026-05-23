@@ -100,7 +100,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 child: PrimaryButton(
                   text: _currentPage < _pages.length - 1 ? 'Lanjut' : 'Mulai',
                   onPressed: _onNext,
-                  useGradient: true,
                 ),
               ),
             ],

@@ -82,12 +82,15 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.textOnPrimary,
+          disabledBackgroundColor: AppColors.primary,
+          disabledForegroundColor: AppColors.textOnPrimary,
           elevation: 0,
           minimumSize: const Size(double.infinity, AppConstants.buttonHeight),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppConstants.radiusMd),
+            borderRadius: BorderRadius.circular(AppConstants.radiusLg),
           ),
           textStyle: const TextStyle(
+            fontFamily: AppTextStyles.fontFamily,
             fontSize: 16,
             fontWeight: FontWeight.w500,
             letterSpacing: -0.6,
@@ -102,9 +105,10 @@ class AppTheme {
           side: const BorderSide(color: AppColors.primary, width: 1.5),
           minimumSize: const Size(double.infinity, AppConstants.buttonHeight),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppConstants.radiusMd),
+            borderRadius: BorderRadius.circular(AppConstants.radiusLg),
           ),
           textStyle: const TextStyle(
+            fontFamily: AppTextStyles.fontFamily,
             fontSize: 16,
             fontWeight: FontWeight.w500,
             letterSpacing: -0.6,

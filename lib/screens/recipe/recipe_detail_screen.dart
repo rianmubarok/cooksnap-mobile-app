@@ -165,7 +165,7 @@ class RecipeDetailScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: AppConstants.spacingXl),
+                  const SizedBox(height: 20),
                   const Text(
                     'Deskripsi',
                     style: AppTextStyles.sectionTitle,
@@ -175,7 +175,7 @@ class RecipeDetailScreen extends StatelessWidget {
                     recipe.description,
                     style: AppTextStyles.bodySmall.copyWith(height: 1.6),
                   ),
-                  const SizedBox(height: AppConstants.spacingXl),
+                  const SizedBox(height: 20),
                   const Text(
                     'Bahan-bahan',
                     style: AppTextStyles.sectionTitle,
@@ -247,7 +247,7 @@ class RecipeDetailScreen extends StatelessWidget {
                       );
                     }),
                   ),
-                  const SizedBox(height: AppConstants.spacingXl),
+                  const SizedBox(height: 20),
                   const Text(
                     'Instruksi',
                     style: AppTextStyles.sectionTitle,

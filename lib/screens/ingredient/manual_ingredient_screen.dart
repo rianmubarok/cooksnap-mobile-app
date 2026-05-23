@@ -106,7 +106,7 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
                 SquareIconButton(onPressed: _addIngredient),
               ],
             ),
-            const SizedBox(height: AppConstants.spacingLg),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -125,6 +125,7 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: _ingredients
                     .map(
                       (ingredient) => RemovableIngredientChip(
@@ -150,12 +151,13 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
                 ),
               ),
             if (suggestions.isNotEmpty) ...[
-              const SizedBox(height: AppConstants.spacingXl),
+              const SizedBox(height: 20),
               const Text('Saran', style: AppTextStyles.sectionTitle),
               const SizedBox(height: AppConstants.spacingMd),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: suggestions
                     .map(
                       (ingredient) => SuggestionChip(
@@ -174,7 +176,6 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
               text: 'Cari Resep',
               icon: Icons.search_rounded,
               iconSize: 24,
-              useGradient: true,
               onPressed: _ingredients.isNotEmpty ? _findRecipes : null,
             ),
             const SizedBox(height: AppConstants.spacingXl),

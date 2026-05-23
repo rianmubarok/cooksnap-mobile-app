@@ -114,7 +114,6 @@ class _LoginScreenState extends State<LoginScreen> {
               text: 'Masuk',
               onPressed: _isFormValid && !_isLoading ? _handleLogin : null,
               isLoading: _isLoading,
-              useGradient: true,
             ),
           ],
         ),

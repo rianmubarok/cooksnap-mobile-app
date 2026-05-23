@@ -17,8 +17,8 @@ class RemovableIngredientChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: const BoxConstraints(minHeight: AppConstants.chipHeight),
-      padding: const EdgeInsets.only(left: 14, right: 8, top: 6, bottom: 6),
+      height: AppConstants.chipHeight,
+      padding: const EdgeInsets.only(left: 14, right: 8),
       decoration: BoxDecoration(
         color: AppColors.primary,
         borderRadius: BorderRadius.circular(AppConstants.radiusLg),

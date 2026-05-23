@@ -19,16 +19,21 @@ class SuggestionChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        constraints: const BoxConstraints(minHeight: AppConstants.chipHeight),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        height: AppConstants.chipHeight,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
           color: AppColors.cardBackground,
           borderRadius: BorderRadius.circular(AppConstants.radiusLg),
           border: Border.all(color: AppColors.border),
         ),
-        child: Text(
-          '+ $label',
-          style: AppTextStyles.bodyMedium,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '+ $label',
+              style: AppTextStyles.bodyMedium,
+            ),
+          ],
         ),
       ),
     );

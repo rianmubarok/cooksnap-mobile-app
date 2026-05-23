@@ -45,13 +45,13 @@ class PrimaryButton extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           gradient: _primaryGradient(enabled: enabled),
-          borderRadius: BorderRadius.circular(AppConstants.radiusMd),
+          borderRadius: BorderRadius.circular(AppConstants.radiusLg),
         ),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
             onTap: enabled ? onPressed : null,
-            borderRadius: BorderRadius.circular(AppConstants.radiusMd),
+            borderRadius: BorderRadius.circular(AppConstants.radiusLg),
             child: Center(
               child: isLoading
                   ? const SizedBox(

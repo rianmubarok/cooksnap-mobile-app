@@ -100,7 +100,6 @@ void showScanResultBottomSheet(
                             arguments: provider.detectedIngredients,
                           );
                         },
-                        useGradient: true,
                         icon: Icons.search,
                       ),
                       const SizedBox(height: AppConstants.spacingMd),

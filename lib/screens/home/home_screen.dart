@@ -49,7 +49,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   _buildHeader(context),
                   Padding(
-                    padding: const EdgeInsets.all(AppConstants.paddingScreen),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppConstants.paddingScreen,
+                      vertical: 12,
+                    ),
                     child: RecipeSearchField(
                       onSubmitted: (query) {
                         if (query.trim().isNotEmpty) {
@@ -63,9 +66,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   _buildCategories(categories),
-                  _buildSectionTitle('Resep Populer'),
+                  _buildSectionTitle('Resep Populer', topPadding: 16),
                   _buildPopularRecipes(recipes),
-                  _buildSectionTitle('Resep Terbaru'),
+                  _buildSectionTitle('Resep Terbaru', topPadding: 20),
                   _buildRecentRecipes(recipes),
                   const SizedBox(height: AppConstants.spacingXl),
                 ],
@@ -132,13 +135,13 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title, {double topPadding = 24.0}) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
+      padding: EdgeInsets.fromLTRB(
         AppConstants.paddingScreen,
-        AppConstants.spacingLg,
+        topPadding,
         AppConstants.paddingScreen,
-        AppConstants.spacingMd,
+        16.0,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
