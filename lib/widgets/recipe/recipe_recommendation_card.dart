@@ -9,10 +9,12 @@ import 'recipe_thumbnail.dart';
 
 class RecipeRecommendationCard extends StatelessWidget {
   final RecipeRecommendation recommendation;
+  final List<String>? userIngredients;
 
   const RecipeRecommendationCard({
     super.key,
     required this.recommendation,
+    this.userIngredients,
   });
 
   @override
@@ -23,7 +25,7 @@ class RecipeRecommendationCard extends StatelessWidget {
         isFullMatch ? AppColors.success : AppColors.brandOrange;
 
     return GestureDetector(
-      onTap: () => context.openRecipeDetail(recipe.id),
+      onTap: () => context.openRecipeDetail(recipe.id, userIngredients),
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.cardBackground,

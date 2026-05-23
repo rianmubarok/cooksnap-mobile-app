@@ -33,10 +33,7 @@ class AuthFooterLink extends StatelessWidget {
             onTap: onTap,
             child: Text(
               actionLabel,
-              style: AppTextStyles.labelMedium.copyWith(
-                color: AppColors.textPrimary,
-                decoration: TextDecoration.underline,
-              ),
+              style: AppTextStyles.link,
             ),
           ),
         ],

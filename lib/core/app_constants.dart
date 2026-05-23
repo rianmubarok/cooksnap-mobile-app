@@ -38,7 +38,7 @@ class AppConstants {
   static const double buttonHeightSmall = 40.0;
   
   // Element Sizing
-  static const double chipHeight = 32.0;
+  static const double chipHeight = 36.0;
   static const double searchBarHeight = 60.0;
   static const double recipeImageHeight = 350.0;
 

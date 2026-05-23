@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_routes.dart';
 import '../../core/app_text_styles.dart';
+import '../../providers/pantry_provider.dart';
 import '../../widgets/common/section_action_link.dart';
 import '../../widgets/common/square_icon_button.dart';
 import '../../widgets/custom_button.dart';
@@ -57,10 +59,14 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
 
   void _findRecipes() {
     if (_ingredients.isEmpty) return;
+
+    final pantryItems = context.read<PantryProvider>().items;
+    final allIngredients = <String>{..._ingredients, ...pantryItems}.toList();
+
     Navigator.pushNamed(
       context,
       AppRoutes.recipeRecommendation,
-      arguments: List<String>.from(_ingredients),
+      arguments: allIngredients,
     );
   }
 

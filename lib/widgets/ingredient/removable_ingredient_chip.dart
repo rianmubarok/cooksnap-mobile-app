@@ -35,14 +35,14 @@ class RemovableIngredientChip extends StatelessWidget {
             onTap: onRemove,
             behavior: HitTestBehavior.opaque,
             child: Container(
-              padding: const EdgeInsets.all(2),
+              padding: const EdgeInsets.all(4),
               decoration: const BoxDecoration(
                 color: AppColors.chipBackground,
                 shape: BoxShape.circle,
               ),
               child: const Icon(
                 Icons.close,
-                size: 12,
+                size: 16,
                 color: AppColors.primary,
               ),
             ),

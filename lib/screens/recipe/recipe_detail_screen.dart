@@ -15,7 +15,16 @@ class RecipeDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)?.settings.arguments;
-    final recipeId = args is String ? args : '1';
+    String recipeId = '1';
+    List<String> availableIngredients = [];
+    
+    if (args is String) {
+      recipeId = args;
+    } else if (args is Map) {
+      recipeId = args['id'] as String;
+      availableIngredients = (args['availableIngredients'] as List<String>?) ?? [];
+    }
+
     final recipe = context.watch<RecipeRepository>().getRecipeById(recipeId);
 
     if (recipe == null) {
@@ -175,8 +184,17 @@ class RecipeDetailScreen extends StatelessWidget {
                   Column(
                     children: List.generate(recipe.ingredients.length, (
                       index,
-                    ) {
+                      ) {
                       final ing = recipe.ingredients[index];
+                      bool isAvailable = false;
+                      for (var ai in availableIngredients) {
+                        if (ing.name.toLowerCase().contains(ai.toLowerCase()) || 
+                            ai.toLowerCase().contains(ing.name.toLowerCase())) {
+                          isAvailable = true;
+                          break;
+                        }
+                      }
+
                       return Container(
                         margin: const EdgeInsets.only(bottom: AppConstants.spacingSm),
                         padding: const EdgeInsets.symmetric(
@@ -191,12 +209,24 @@ class RecipeDetailScreen extends StatelessWidget {
                         child: Row(
                           children: [
                             Container(
-                              width: 8,
-                              height: 8,
-                              decoration: const BoxDecoration(
-                                color: AppColors.secondary,
+                              width: 24,
+                              height: 24,
+                              decoration: BoxDecoration(
+                                color: isAvailable ? AppColors.chipBackground : const Color(0xFFD9D9D9),
                                 shape: BoxShape.circle,
                               ),
+                              child: isAvailable 
+                                  ? const Icon(Icons.check, size: 16, color: AppColors.primary)
+                                  : Center(
+                                      child: Container(
+                                        width: 8,
+                                        height: 8,
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFF666666),
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                    ),
                             ),
                             const SizedBox(width: 12),
                             Expanded(

@@ -81,6 +81,7 @@ class _RecipeRecommendationScreenState
                       padding: const EdgeInsets.only(bottom: 12),
                       child: RecipeRecommendationCard(
                         recommendation: _recommendations[index],
+                        userIngredients: widget.ingredients,
                       ),
                     ),
                     childCount: _recommendations.length,

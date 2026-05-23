@@ -34,8 +34,6 @@ class RecipeListTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(recipe.recipeName, style: AppTextStyles.labelLarge),
-                  const SizedBox(height: 4),
-                  Text(recipe.category, style: AppTextStyles.bodySmall),
                   const SizedBox(height: 8),
                   Row(
                     children: [
