@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
 import '../core/app_constants.dart';
@@ -19,6 +20,8 @@ class CustomTextField extends StatefulWidget {
   /// Shows a clear button when the field has text (e.g. search).
   final bool clearable;
   final bool autofocus;
+  final double? iconSize;
+  final List<String>? animatedHints;
 
   const CustomTextField({
     super.key,
@@ -35,6 +38,8 @@ class CustomTextField extends StatefulWidget {
     this.large = false,
     this.clearable = false,
     this.autofocus = false,
+    this.iconSize,
+    this.animatedHints,
   });
 
   static const double largeFontSize = 18;
@@ -46,11 +51,26 @@ class CustomTextField extends StatefulWidget {
 
 class _CustomTextFieldState extends State<CustomTextField> {
   bool _obscureText = true;
+  int _currentHintIndex = 0;
+  Timer? _hintTimer;
 
   @override
   void initState() {
     super.initState();
     widget.controller?.addListener(_onControllerChanged);
+    _startHintTimerIfNeeded();
+  }
+
+  void _startHintTimerIfNeeded() {
+    if (widget.animatedHints != null && widget.animatedHints!.isNotEmpty) {
+      _hintTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+        if (mounted) {
+          setState(() {
+            _currentHintIndex = (_currentHintIndex + 1) % widget.animatedHints!.length;
+          });
+        }
+      });
+    }
   }
 
   @override
@@ -59,23 +79,28 @@ class _CustomTextFieldState extends State<CustomTextField> {
     if (oldWidget.controller != widget.controller) {
       oldWidget.controller?.removeListener(_onControllerChanged);
       widget.controller?.addListener(_onControllerChanged);
-      if (widget.clearable) setState(() {});
+      if (widget.clearable || widget.animatedHints != null) setState(() {});
+    }
+    if (oldWidget.animatedHints != widget.animatedHints) {
+      _hintTimer?.cancel();
+      _startHintTimerIfNeeded();
     }
   }
 
   @override
   void dispose() {
+    _hintTimer?.cancel();
     widget.controller?.removeListener(_onControllerChanged);
     super.dispose();
   }
 
   void _onControllerChanged() {
-    if (widget.clearable) setState(() {});
+    if (widget.clearable || widget.animatedHints != null) setState(() {});
   }
 
   double get _fontSize => widget.large ? CustomTextField.largeFontSize : 15;
 
-  double get _iconSize => widget.large ? 20 : 18;
+  double get _iconSize => widget.iconSize ?? (widget.large ? 20 : 18);
 
   double get _horizontalPadding =>
       widget.large ? AppConstants.paddingScreen : AppConstants.spacingMd;
@@ -165,7 +190,45 @@ class _CustomTextFieldState extends State<CustomTextField> {
             color: AppColors.textPrimary,
           ),
           decoration: InputDecoration(
-            hintText: widget.hintText,
+            label: widget.animatedHints != null
+                ? AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 500),
+                    layoutBuilder: (currentChild, previousChildren) {
+                      return Stack(
+                        alignment: Alignment.centerLeft,
+                        children: <Widget>[
+                          ...previousChildren,
+                          if (currentChild != null) currentChild,
+                        ],
+                      );
+                    },
+                    transitionBuilder: (child, animation) {
+                      final isIncoming = child.key == ValueKey<int>(_currentHintIndex);
+                      return FadeTransition(
+                        opacity: animation,
+                        child: SlideTransition(
+                          position: Tween<Offset>(
+                            begin: Offset(0.0, isIncoming ? 0.3 : -0.3),
+                            end: Offset.zero,
+                          ).animate(animation),
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: Text(
+                      widget.animatedHints![_currentHintIndex],
+                      key: ValueKey<int>(_currentHintIndex),
+                      style: TextStyle(
+                        color: AppColors.textHint,
+                        fontSize: _fontSize,
+                      ),
+                    ),
+                  )
+                : null,
+            floatingLabelBehavior: widget.animatedHints != null
+                ? FloatingLabelBehavior.never
+                : null,
+            hintText: widget.animatedHints != null ? null : widget.hintText,
             hintStyle: TextStyle(
               color: AppColors.textHint,
               fontSize: _fontSize,

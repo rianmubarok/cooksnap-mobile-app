@@ -22,7 +22,15 @@ class RecipeSearchField extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomTextField(
       hintText: 'Cari Resep',
+      animatedHints: const [
+        'Cari Resep',
+        'Ayam Goreng',
+        'Opor Ayam',
+        'Nasi Goreng',
+        'Sop Ikan',
+      ],
       prefixIcon: Icons.search_rounded,
+      iconSize: 24,
       large: true,
       clearable: clearable,
       controller: controller,

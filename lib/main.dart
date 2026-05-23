@@ -28,6 +28,10 @@ class CookSnapApp extends StatelessWidget {
         title: AppConstants.appName,
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
+        builder: (context, child) => GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: child,
+        ),
         initialRoute: AppRoutes.splash,
         routes: AppRoutes.routes,
       ),

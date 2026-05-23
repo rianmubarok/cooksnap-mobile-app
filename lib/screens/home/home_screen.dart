@@ -152,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildPopularRecipes(List<Recipe> recipes) {
     return SizedBox(
-      height: 240,
+      height: 300,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(

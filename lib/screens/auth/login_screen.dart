@@ -54,8 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
     await runMockAuth(context, onComplete: () {
       setState(() => _isLoading = false);
       final email = _emailController.text.trim();
-      final displayName =
-          email.contains('@') ? email.split('@').first : email;
+      final displayName = email.contains('@') ? email.split('@').first : email;
       context.read<UserProvider>().setUser(
             displayName.isEmpty ? 'User' : displayName,
             email,
@@ -106,7 +105,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   context,
                   'Fitur reset kata sandi segera hadir',
                 ),
-                child: const Text('Lupa Kata Sandi?', style: AppTextStyles.link),
+                child:
+                    const Text('Lupa Kata Sandi?', style: AppTextStyles.link),
               ),
             ),
             const SizedBox(height: AppConstants.spacingLg),

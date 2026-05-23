@@ -19,7 +19,7 @@ class RecipeCardHorizontal extends StatelessWidget {
     return GestureDetector(
       onTap: () => context.openRecipeDetail(recipe.id),
       child: Container(
-        width: 200,
+        width: 240,
         margin: const EdgeInsets.only(right: 16),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(AppConstants.radiusLg),
@@ -62,7 +62,11 @@ class RecipeCardHorizontal extends StatelessWidget {
                   recipe.recipeName,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.h4.copyWith(color: Colors.white),
+                  style: AppTextStyles.h3.copyWith(
+                    color: Colors.white,
+                    letterSpacing: -1.2,
+                    height: 1.2,
+                  ),
                 ),
               ),
             ],

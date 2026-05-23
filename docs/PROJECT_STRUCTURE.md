@@ -70,39 +70,39 @@ lib/
 
 ## Layer responsibilities
 
-| Layer | Role |
-|-------|------|
-| **presentation** | `screens/`, `widgets/`, `providers/` — UI & local state |
-| **domain** | `models/`, `repositories/` (interfaces) — business entities |
-| **data** | `data/dummy/`, `data/repositories/*_impl` — data sources |
-| **core** | Theme, routes, shared constants |
-| **services** | HTTP / third-party integrations |
+| Layer            | Role                                                        |
+| ---------------- | ----------------------------------------------------------- |
+| **presentation** | `screens/`, `widgets/`, `providers/` — UI & local state     |
+| **domain**       | `models/`, `repositories/` (interfaces) — business entities |
+| **data**         | `data/dummy/`, `data/repositories/*_impl` — data sources    |
+| **core**         | Theme, routes, shared constants                             |
+| **services**     | HTTP / third-party integrations                             |
 
 ---
 
 ## Shared widgets
 
-| Widget | Purpose |
-|--------|---------|
-| `TabPageScaffold` / `TabPageHeader` | Tab screens (favorit, profil, input bahan) |
-| `RecipeListTile` / `RecipeCardHorizontal` | Recipe lists |
-| `RecipeThumbnailBox` | Image or placeholder (`imageUrl`) |
-| `RecipeSearchField` | Home + search screen |
-| `EmptyStateView` | Empty lists / no results |
-| `AppChip` | Category filters on home (`chipHeight`) |
-| `RemovableIngredientChip` / `SuggestionChip` | Input bahan — hug-content width |
-| `AuthScreenLayout` | Login & register layout |
+| Widget                                       | Purpose                                    |
+| -------------------------------------------- | ------------------------------------------ |
+| `TabPageScaffold` / `TabPageHeader`          | Tab screens (favorit, profil, input bahan) |
+| `RecipeListTile` / `RecipeCardHorizontal`    | Recipe lists                               |
+| `RecipeThumbnailBox`                         | Image or placeholder (`imageUrl`)          |
+| `RecipeSearchField`                          | Home + search screen                       |
+| `EmptyStateView`                             | Empty lists / no results                   |
+| `AppChip`                                    | Category filters on home (`chipHeight`)    |
+| `RemovableIngredientChip` / `SuggestionChip` | Input bahan — hug-content width            |
+| `AuthScreenLayout`                           | Login & register layout                    |
 
 ---
 
 ## Main shell tabs
 
-| Index | Tab | Screen |
-|-------|-----|--------|
-| 0 | Beranda | `HomeScreen` |
-| 1 | Input Bahan | `ManualIngredientScreen` |
-| 2 | Simpan | `FavoriteScreen` |
-| 3 | Profil | `ProfileScreen` |
+| Index | Tab         | Screen                   |
+| ----- | ----------- | ------------------------ |
+| 0     | Beranda     | `HomeScreen`             |
+| 1     | Input Bahan | `ManualIngredientScreen` |
+| 2     | Simpan      | `FavoriteScreen`         |
+| 3     | Profil      | `ProfileScreen`          |
 
 ---
 
