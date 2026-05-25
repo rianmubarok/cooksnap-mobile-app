@@ -13,6 +13,8 @@ import '../../widgets/ingredient/removable_ingredient_chip.dart';
 import '../../widgets/ingredient/suggestion_chip.dart';
 import '../../widgets/navigation/circular_header_button.dart';
 import '../../widgets/navigation/tab_page_scaffold.dart';
+import '../../data/dummy/dummy_ingredients.dart';
+import '../../utils/string_utils.dart';
 import 'pantry_essentials_sheet.dart';
 
 class ManualIngredientScreen extends StatefulWidget {
@@ -24,23 +26,32 @@ class ManualIngredientScreen extends StatefulWidget {
 
 class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
   final TextEditingController _ingredientController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   final List<String> _ingredients = [];
 
   @override
   void dispose() {
     _ingredientController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
-  void _addIngredient() {
-    final value = _ingredientController.text.trim();
+  void _addIngredient([String? valueOverride]) {
+    final value = valueOverride ?? _ingredientController.text.trim();
     if (value.isEmpty) return;
 
-    final normalized = value.toLowerCase();
-    final exists = _ingredients.any((i) => i.toLowerCase() == normalized);
-    if (exists) {
-      _ingredientController.clear();
-      return;
+    for (var existing in _ingredients) {
+      if (StringUtils.isSimilar(existing, value)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Bahan "$value" sudah ada atau mirip dengan "$existing".'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        _ingredientController.clear();
+        return;
+      }
     }
 
     setState(() {
@@ -72,8 +83,9 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final suggestions = ['Ayam', 'Telur', 'Bawang Merah', 'Tahu']
-        .where((i) => !_ingredients.contains(i))
+    final popular = ['Bawang Merah', 'Bawang Putih', 'Cabai Merah', 'Ayam', 'Telur Ayam', 'Tomat', 'Garam', 'Minyak Goreng', 'Kecap Manis'];
+    final suggestions = popular
+        .where((i) => !_ingredients.any((existing) => StringUtils.isSimilar(existing, i)))
         .toList();
 
     return TabPageScaffold(
@@ -94,12 +106,65 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: CustomTextField(
-                    hintText: 'Ketik nama bahan...',
-                    large: true,
-                    controller: _ingredientController,
-                    textInputAction: TextInputAction.done,
-                    onSubmitted: (_) => _addIngredient(),
+                  child: RawAutocomplete<String>(
+                    textEditingController: _ingredientController,
+                    focusNode: _focusNode,
+                    optionsBuilder: (TextEditingValue textEditingValue) {
+                      if (textEditingValue.text.isEmpty) {
+                        return const Iterable<String>.empty();
+                      }
+                      return DummyIngredients.items.where((String option) {
+                        return option.toLowerCase().contains(textEditingValue.text.toLowerCase());
+                      });
+                    },
+                    onSelected: (String selection) {
+                      _addIngredient(selection);
+                    },
+                    fieldViewBuilder: (context, controller, focusNode, onEditingComplete) {
+                      return CustomTextField(
+                        hintText: 'Ketik nama bahan...',
+                        large: true,
+                        controller: controller,
+                        focusNode: focusNode,
+                        textInputAction: TextInputAction.done,
+                        onSubmitted: (_) {
+                          onEditingComplete();
+                          _addIngredient();
+                        },
+                      );
+                    },
+                    optionsViewBuilder: (context, onSelected, options) {
+                      return Align(
+                        alignment: Alignment.topLeft,
+                        child: Material(
+                          elevation: 4.0,
+                          borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+                          color: AppColors.cardBackground,
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxHeight: 200,
+                              maxWidth: MediaQuery.of(context).size.width - (AppConstants.paddingScreen * 2) - 50,
+                            ),
+                            child: ListView.separated(
+                              padding: EdgeInsets.zero,
+                              shrinkWrap: true,
+                              itemCount: options.length,
+                              separatorBuilder: (context, index) => const Divider(height: 1),
+                              itemBuilder: (context, index) {
+                                final option = options.elementAt(index);
+                                return InkWell(
+                                  onTap: () => onSelected(option),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                    child: Text(option, style: AppTextStyles.bodyMedium),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(width: AppConstants.spacingSm),

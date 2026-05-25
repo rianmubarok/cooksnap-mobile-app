@@ -28,6 +28,9 @@ class Recipe {
   final int cookingTime;
   final String difficulty;
   final String category;
+  final String? sourceUrl;
+  final String? videoUrl;
+  final DateTime? createdAt;
 
   const Recipe({
     required this.id,
@@ -39,6 +42,9 @@ class Recipe {
     required this.cookingTime,
     required this.difficulty,
     required this.category,
+    this.sourceUrl,
+    this.videoUrl,
+    this.createdAt,
   });
 
   String get cookingTimeLabel => '$cookingTime min';
@@ -56,6 +62,9 @@ class Recipe {
       cookingTime: map['cooking_time'] as int,
       difficulty: map['difficulty'] as String,
       category: map['category'] as String,
+      sourceUrl: map['source_url'] as String?,
+      videoUrl: map['video_url'] as String?,
+      createdAt: map['created_at'] != null ? DateTime.tryParse(map['created_at'] as String) : null,
     );
   }
 }

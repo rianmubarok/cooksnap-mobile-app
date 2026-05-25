@@ -170,7 +170,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildRecentRecipes(List<Recipe> recipes) {
-    final recent = recipes.take(3).toList();
+    // Tampilkan hingga 10 resep terbaru
+    final recent = recipes.take(10).toList();
 
     return ListView.builder(
       shrinkWrap: true,

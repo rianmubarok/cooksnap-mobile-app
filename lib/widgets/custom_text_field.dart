@@ -22,6 +22,7 @@ class CustomTextField extends StatefulWidget {
   final bool autofocus;
   final double? iconSize;
   final List<String>? animatedHints;
+  final FocusNode? focusNode;
 
   const CustomTextField({
     super.key,
@@ -40,6 +41,7 @@ class CustomTextField extends StatefulWidget {
     this.autofocus = false,
     this.iconSize,
     this.animatedHints,
+    this.focusNode,
   });
 
   static const double largeFontSize = 18;
@@ -178,6 +180,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ],
         TextFormField(
           controller: widget.controller,
+          focusNode: widget.focusNode,
           autofocus: widget.autofocus,
           obscureText: widget.isPassword ? _obscureText : false,
           keyboardType: widget.keyboardType,

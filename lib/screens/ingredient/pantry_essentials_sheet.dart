@@ -9,6 +9,8 @@ import '../../widgets/common/section_action_link.dart';
 import '../../widgets/common/square_icon_button.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/ingredient/removable_ingredient_chip.dart';
+import '../../data/dummy/dummy_ingredients.dart';
+import '../../utils/string_utils.dart';
 
 void showPantryEssentialsSheet(BuildContext context) {
   showModalBottomSheet(
@@ -34,6 +36,7 @@ class PantryEssentialsSheet extends StatefulWidget {
 
 class _PantryEssentialsSheetState extends State<PantryEssentialsSheet> {
   late final TextEditingController _newIngredientController;
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -44,11 +47,29 @@ class _PantryEssentialsSheetState extends State<PantryEssentialsSheet> {
   @override
   void dispose() {
     _newIngredientController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
-  void _addIngredient(PantryProvider pantryProvider) {
-    pantryProvider.add(_newIngredientController.text);
+  void _addIngredient(PantryProvider pantryProvider, [String? valueOverride]) {
+    final value = valueOverride ?? _newIngredientController.text.trim();
+    if (value.isEmpty) return;
+
+    for (var existing in pantryProvider.items) {
+      if (StringUtils.isSimilar(existing, value)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Bahan "$value" sudah ada atau mirip dengan "$existing".'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        _newIngredientController.clear();
+        return;
+      }
+    }
+
+    pantryProvider.add(value);
     _newIngredientController.clear();
   }
 
@@ -91,12 +112,65 @@ class _PantryEssentialsSheetState extends State<PantryEssentialsSheet> {
                 Row(
                   children: [
                     Expanded(
-                      child: CustomTextField(
-                        hintText: 'Tambah bahan dasar...',
-                        large: true,
-                        controller: _newIngredientController,
-                        textInputAction: TextInputAction.done,
-                        onSubmitted: (_) => _addIngredient(pantryProvider),
+                      child: RawAutocomplete<String>(
+                        textEditingController: _newIngredientController,
+                        focusNode: _focusNode,
+                        optionsBuilder: (TextEditingValue textEditingValue) {
+                          if (textEditingValue.text.isEmpty) {
+                            return const Iterable<String>.empty();
+                          }
+                          return DummyIngredients.items.where((String option) {
+                            return option.toLowerCase().contains(textEditingValue.text.toLowerCase());
+                          });
+                        },
+                        onSelected: (String selection) {
+                          _addIngredient(pantryProvider, selection);
+                        },
+                        fieldViewBuilder: (context, controller, focusNode, onEditingComplete) {
+                          return CustomTextField(
+                            hintText: 'Tambah bahan dasar...',
+                            large: true,
+                            controller: controller,
+                            focusNode: focusNode,
+                            textInputAction: TextInputAction.done,
+                            onSubmitted: (_) {
+                              onEditingComplete();
+                              _addIngredient(pantryProvider);
+                            },
+                          );
+                        },
+                        optionsViewBuilder: (context, onSelected, options) {
+                          return Align(
+                            alignment: Alignment.topLeft,
+                            child: Material(
+                              elevation: 4.0,
+                              borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+                              color: AppColors.cardBackground,
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxHeight: 200,
+                                  maxWidth: MediaQuery.of(context).size.width - (AppConstants.paddingScreen * 2) - 50,
+                                ),
+                                child: ListView.separated(
+                                  padding: EdgeInsets.zero,
+                                  shrinkWrap: true,
+                                  itemCount: options.length,
+                                  separatorBuilder: (context, index) => const Divider(height: 1),
+                                  itemBuilder: (context, index) {
+                                    final option = options.elementAt(index);
+                                    return InkWell(
+                                      onTap: () => onSelected(option),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                        child: Text(option, style: AppTextStyles.bodyMedium),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
                     const SizedBox(width: AppConstants.spacingSm),

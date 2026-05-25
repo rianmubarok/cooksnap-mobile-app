@@ -8,6 +8,7 @@ import '../../data/repositories/recipe_repository.dart';
 import '../../providers/favorites_provider.dart';
 import '../../widgets/recipe/recipe_info_chip.dart';
 import '../../widgets/navigation/circular_header_button.dart';
+import '../../widgets/custom_button.dart';
 
 class RecipeDetailScreen extends StatelessWidget {
   const RecipeDetailScreen({super.key});
@@ -87,29 +88,40 @@ class RecipeDetailScreen extends StatelessWidget {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [AppColors.primary, AppColors.primaryLight],
-                      ),
-                    ),
-                    child: const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(height: 40),
-                          Text('🍽️', style: TextStyle(fontSize: 72)),
-                          SizedBox(height: 8),
-                          Text(
-                            'Foto Resep',
-                            style: TextStyle(color: Colors.white54, fontSize: 14),
+                  recipe.imageUrl != null && recipe.imageUrl!.isNotEmpty
+                      ? Image.network(
+                          recipe.imageUrl!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            color: AppColors.primaryLight,
+                            child: const Center(
+                              child: Icon(Icons.broken_image, color: Colors.white, size: 48),
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
+                        )
+                      : Container(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [AppColors.primary, AppColors.primaryLight],
+                            ),
+                          ),
+                          child: const Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(height: 40),
+                                Text('🍽️', style: TextStyle(fontSize: 72)),
+                                SizedBox(height: 8),
+                                Text(
+                                  'Foto Resep',
+                                  style: TextStyle(color: Colors.white54, fontSize: 14),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                   // Top black gradient overlay for safe area and header
                   Positioned(
                     top: 0,
@@ -255,12 +267,71 @@ class RecipeDetailScreen extends StatelessWidget {
                   const SizedBox(height: AppConstants.spacingMd),
                   ...List.generate(
                     recipe.steps.length,
-                    (index) => _StepItem(
-                      stepNumber: index + 1,
-                      instruction: recipe.steps[index],
+                    (index) => Padding(
+                      padding: EdgeInsets.only(
+                        bottom: index == recipe.steps.length - 1 ? 0 : AppConstants.spacingXl,
+                      ),
+                      child: _StepItem(
+                        stepNumber: index + 1,
+                        instruction: recipe.steps[index],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: AppConstants.spacingXl),
+                  if (recipe.sourceUrl != null && recipe.sourceUrl!.isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Sumber',
+                      style: AppTextStyles.sectionTitle,
+                    ),
+                    const SizedBox(height: AppConstants.spacingMd),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: InkWell(
+                        onTap: () {
+                          // TODO: Implement URL launch
+                        },
+                        borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.cardBackground,
+                            borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+                            border: Border.all(color: AppColors.border),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.link, size: 20, color: AppColors.primary),
+                              const SizedBox(width: 12),
+                              Text(
+                                (Uri.tryParse(recipe.sourceUrl!)?.host.isNotEmpty == true)
+                                    ? Uri.tryParse(recipe.sourceUrl!)!.host.replaceFirst('www.', '')
+                                    : recipe.sourceUrl!,
+                                style: AppTextStyles.labelMedium.copyWith(
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                  if (recipe.videoUrl != null && recipe.videoUrl!.isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    PrimaryButton(
+                      text: 'Lihat Video',
+                      icon: Icons.play_circle_fill,
+                      useGradient: true,
+                      onPressed: () {
+                        // TODO: Implement URL launch
+                      },
+                    ),
+                    const SizedBox(height: AppConstants.spacingXl),
+                  ],
                 ],
               ),
             ),
@@ -281,12 +352,10 @@ class _StepItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppConstants.spacingXl), // Increased gap per step
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
             width: 32,
             height: 32,
             decoration: const BoxDecoration(
@@ -310,7 +379,6 @@ class _StepItem extends StatelessWidget {
             ),
           ),
         ],
-      ),
     );
   }
 }
