@@ -27,7 +27,7 @@ class Recipe {
   final List<String> steps;
   final int cookingTime;
   final String difficulty;
-  final String category;
+  final List<String> tags;
   final String? sourceUrl;
   final String? videoUrl;
   final DateTime? createdAt;
@@ -41,7 +41,7 @@ class Recipe {
     required this.steps,
     required this.cookingTime,
     required this.difficulty,
-    required this.category,
+    required this.tags,
     this.sourceUrl,
     this.videoUrl,
     this.createdAt,
@@ -61,7 +61,7 @@ class Recipe {
       steps: List<String>.from(map['steps'] as List),
       cookingTime: map['cooking_time'] as int,
       difficulty: map['difficulty'] as String,
-      category: map['category'] as String,
+      tags: List<String>.from(map['tags'] as List),
       sourceUrl: map['source_url'] as String?,
       videoUrl: map['video_url'] as String?,
       createdAt: map['created_at'] != null ? DateTime.tryParse(map['created_at'] as String) : null,

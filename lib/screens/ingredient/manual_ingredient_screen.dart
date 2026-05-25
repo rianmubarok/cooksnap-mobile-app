@@ -68,24 +68,36 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
     setState(_ingredients.clear);
   }
 
-  void _findRecipes() {
+  void _findRecipes() async {
     if (_ingredients.isEmpty) return;
 
     final pantryItems = context.read<PantryProvider>().items;
     final allIngredients = <String>{..._ingredients, ...pantryItems}.toList();
 
-    Navigator.pushNamed(
+    final result = await Navigator.pushNamed(
       context,
       AppRoutes.recipeRecommendation,
       arguments: allIngredients,
     );
+
+    if (result is List<String> && mounted) {
+      final newIngredients = result.where((i) => !pantryItems.contains(i)).toList();
+      setState(() {
+        _ingredients.clear();
+        _ingredients.addAll(newIngredients);
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final pantryItems = context.watch<PantryProvider>().items;
     final popular = ['Bawang Merah', 'Bawang Putih', 'Cabai Merah', 'Ayam', 'Telur Ayam', 'Tomat', 'Garam', 'Minyak Goreng', 'Kecap Manis'];
     final suggestions = popular
-        .where((i) => !_ingredients.any((existing) => StringUtils.isSimilar(existing, i)))
+        .where((i) => 
+          !_ingredients.any((existing) => StringUtils.isSimilar(existing, i)) &&
+          !pantryItems.any((existing) => StringUtils.isSimilar(existing, i))
+        )
         .toList();
 
     return TabPageScaffold(
@@ -137,9 +149,13 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
                       return Align(
                         alignment: Alignment.topLeft,
                         child: Material(
-                          elevation: 4.0,
-                          borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+                          elevation: 0.0,
                           color: AppColors.cardBackground,
+                          clipBehavior: Clip.antiAlias,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+                            side: const BorderSide(color: AppColors.border),
+                          ),
                           child: ConstrainedBox(
                             constraints: BoxConstraints(
                               maxHeight: 200,

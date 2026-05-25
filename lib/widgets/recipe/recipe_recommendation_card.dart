@@ -27,64 +27,83 @@ class RecipeRecommendationCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => context.openRecipeDetail(recipe.id, userIngredients),
       child: Container(
+        height: 170,
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: AppColors.cardBackground,
           borderRadius: BorderRadius.circular(AppConstants.radiusLg),
-          border: Border.all(color: AppColors.border),
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(AppConstants.radiusSm),
-                child: RecipeThumbnailBox(size: 80, imageUrl: recipe.imageUrl),
-              ),
-            ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.only(top: 12, bottom: 12, right: 16),
+                padding: const EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       recipe.recipeName,
-                      maxLines: 1,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.h3.copyWith(
-                        letterSpacing: -1.2,
-                        height: 1.2,
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                        height: 1.3,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        RecipeInfoChip(
-                          icon: Icons.access_time,
-                          text: recipe.cookingTimeLabel,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: RecipeInfoChip(
-                            icon: Icons.restaurant,
-                            text: recipe.difficulty,
-                          ),
-                        ),
-                      ],
+                    const SizedBox(height: 6),
+                    Text(
+                      recipe.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.bodySmall,
                     ),
-                    const SizedBox(height: 10),
-                    _MatchInfo(
-                      recommendation: recommendation,
-                      color: progressColor,
-                    ),
-                    const SizedBox(height: 4),
-                    _MatchProgressBar(
-                      recommendation: recommendation,
-                      color: progressColor,
-                    ),
+                    if (!recommendation.isFullMatch) ...[
+                      const SizedBox(height: 12),
+                      _MatchInfo(
+                        recommendation: recommendation,
+                        color: progressColor,
+                      ),
+                      const SizedBox(height: 4),
+                      _MatchProgressBar(
+                        recommendation: recommendation,
+                        color: progressColor,
+                      ),
+                    ],
                   ],
                 ),
               ),
+            ),
+            SizedBox(
+              width: 150,
+              child: recipe.imageUrl != null && recipe.imageUrl!.trim().isNotEmpty
+                  ? Image.network(
+                      recipe.imageUrl!,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: SizedBox(
+                            width: 32,
+                            height: 32,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppColors.primary.withValues(alpha: 0.4),
+                            ),
+                          ),
+                        );
+                      },
+                      errorBuilder: (_, __, ___) => Container(
+                        color: AppColors.primary.withValues(alpha: 0.08),
+                        child: const RecipeThumbnail(iconSize: 48),
+                      ),
+                    )
+                  : Container(
+                      color: AppColors.primary.withValues(alpha: 0.08),
+                      child: const RecipeThumbnail(iconSize: 48),
+                    ),
             ),
           ],
         ),
@@ -101,44 +120,23 @@ class _MatchInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (recommendation.missingIngredientName != null) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.info_outline, size: 12, color: color),
-              const SizedBox(width: 4),
-              Expanded(
-                child: Text(
-                  recommendation.matchText,
-                  style: AppTextStyles.labelMedium.copyWith(color: color),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
+    return Row(
+      children: [
+        Icon(
+          recommendation.isFullMatch ? Icons.check_circle_outline : Icons.info_outline,
+          size: 14,
+          color: color,
+        ),
+        const SizedBox(width: 4),
+        Expanded(
+          child: Text(
+            recommendation.matchText,
+            style: AppTextStyles.labelMedium.copyWith(color: color),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 16, top: 2),
-            child: Text(
-              recommendation.missingIngredientName!,
-              style: AppTextStyles.labelMedium.copyWith(
-                color: color.withValues(alpha: 0.8),
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      );
-    }
-
-    return Text(
-      recommendation.matchText,
-      style: AppTextStyles.labelMedium.copyWith(color: color),
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
+        ),
+      ],
     );
   }
 }

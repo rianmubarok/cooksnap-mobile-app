@@ -143,9 +143,13 @@ class _PantryEssentialsSheetState extends State<PantryEssentialsSheet> {
                           return Align(
                             alignment: Alignment.topLeft,
                             child: Material(
-                              elevation: 4.0,
-                              borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+                              elevation: 0.0,
                               color: AppColors.cardBackground,
+                              clipBehavior: Clip.antiAlias,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+                                side: const BorderSide(color: AppColors.border),
+                              ),
                               child: ConstrainedBox(
                                 constraints: BoxConstraints(
                                   maxHeight: 200,

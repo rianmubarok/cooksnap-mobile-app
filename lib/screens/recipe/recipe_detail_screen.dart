@@ -169,11 +169,6 @@ class RecipeDetailScreen extends StatelessWidget {
                           icon: Icons.restaurant,
                           text: recipe.difficulty,
                         ),
-                        const SizedBox(width: AppConstants.spacingXl),
-                        RecipeInfoChip(
-                          icon: Icons.label_outline,
-                          text: recipe.category,
-                        ),
                       ],
                     ),
                   ),

@@ -6,10 +6,6 @@ class DummyRecipeRepository implements RecipeRepository {
   late final List<Recipe> _recipes =
       DummyRecipeSource.recipes.map(Recipe.fromMap).toList();
 
-  late final List<RecipeCategory> _categories = DummyRecipeSource.categories
-      .map(RecipeCategory.fromMap)
-      .toList();
-
   /// O(1) lookup index by recipe id.
   late final Map<String, Recipe> _recipesById = {
     for (final r in _recipes) r.id: r,
@@ -19,15 +15,15 @@ class DummyRecipeRepository implements RecipeRepository {
   List<Recipe> getAllRecipes() => List.unmodifiable(_recipes);
 
   @override
-  List<RecipeCategory> getCategories() => List.unmodifiable(_categories);
+  List<RecipeCategory> getCategories() => const [];
 
   @override
   Recipe? getRecipeById(String id) => _recipesById[id];
 
   @override
-  List<Recipe> getRecipesByCategory(String categoryName) {
-    if (categoryName == 'Semua') return getAllRecipes();
-    return _recipes.where((r) => r.category == categoryName).toList();
+  List<Recipe> getRecipesByCategory(String tag) {
+    if (tag == 'Semua' || tag.isEmpty) return getAllRecipes();
+    return _recipes.where((r) => r.tags.contains(tag)).toList();
   }
 
   @override

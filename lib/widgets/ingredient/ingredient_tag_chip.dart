@@ -12,14 +12,20 @@ class IngredientTagChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      height: AppConstants.chipHeight,
+      padding: const EdgeInsets.symmetric(horizontal: 14),
       decoration: BoxDecoration(
-        color: AppColors.secondary.withValues(alpha: 0.35),
-        borderRadius: BorderRadius.circular(AppConstants.radiusRound),
+        color: AppColors.primary,
+        borderRadius: BorderRadius.circular(AppConstants.radiusLg),
       ),
-      child: Text(
-        label,
-        style: AppTextStyles.labelMedium.copyWith(color: AppColors.primary),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            label,
+            style: AppTextStyles.labelMedium.copyWith(color: AppColors.white),
+          ),
+        ],
       ),
     );
   }

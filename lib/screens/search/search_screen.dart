@@ -48,7 +48,7 @@ class _SearchScreenState extends State<SearchScreen> {
           ? all
           : all.where((r) {
               return r.recipeName.toLowerCase().contains(q) ||
-                  r.category.toLowerCase().contains(q) ||
+                  r.tags.any((t) => t.toLowerCase().contains(q)) ||
                   r.ingredients.any(
                     (i) => i.name.toLowerCase().contains(q),
                   );

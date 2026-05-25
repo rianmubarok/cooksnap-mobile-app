@@ -75,9 +75,14 @@ class AppTextStyles {
     letterSpacing: -0.4,
   );
 
-  /// Home greeting line — same as [subtitleMuted].
-  static const TextStyle greeting = subtitleMuted;
-
+  /// Home greeting line.
+  static const TextStyle greeting = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+    color: AppColors.textPrimary,
+    height: 1.4,
+    letterSpacing: -1,
+  );
   // Labels
   static const TextStyle labelLarge = TextStyle(
     fontSize: 16,

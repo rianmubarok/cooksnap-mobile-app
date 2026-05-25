@@ -4,7 +4,7 @@ import '../../core/app_constants.dart';
 import '../../providers/favorites_provider.dart';
 import '../../widgets/common/empty_state_view.dart';
 import '../../widgets/navigation/tab_page_scaffold.dart';
-import '../../widgets/recipe/recipe_list_tile.dart';
+import '../../widgets/recipe/recipe_card_grid.dart';
 
 class FavoriteScreen extends StatelessWidget {
   const FavoriteScreen({super.key});
@@ -23,20 +23,17 @@ class FavoriteScreen extends StatelessWidget {
                   'Simpan resep kesukaanmu di sini\nagar mudah ditemukan kembali',
               showIconCircle: true,
             )
-          : ListView.separated(
+          : GridView.builder(
               padding: const EdgeInsets.all(AppConstants.paddingScreen),
               itemCount: favorites.length,
-              separatorBuilder: (_, __) =>
-                  const SizedBox(height: AppConstants.spacingMd),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 16,
+                childAspectRatio: 0.72,
+              ),
               itemBuilder: (context, index) {
-                return RecipeListTile(
-                  recipe: favorites[index],
-                  trailing: const Icon(
-                    Icons.favorite,
-                    color: Colors.red,
-                    size: 22,
-                  ),
-                );
+                return RecipeCardGrid(recipe: favorites[index]);
               },
             ),
     );
