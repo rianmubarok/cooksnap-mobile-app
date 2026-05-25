@@ -7,11 +7,13 @@ import '../../core/app_text_styles.dart';
 class SuggestionChip extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
+  final bool isSelected;
 
   const SuggestionChip({
     super.key,
     required this.label,
     required this.onTap,
+    this.isSelected = false,
   });
 
   @override
@@ -22,17 +24,31 @@ class SuggestionChip extends StatelessWidget {
         height: AppConstants.chipHeight,
         padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: AppColors.cardBackground,
+          color: isSelected
+              ? AppColors.primary.withValues(alpha: 0.1)
+              : AppColors.cardBackground,
           borderRadius: BorderRadius.circular(AppConstants.radiusLg),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(
+            color: isSelected ? AppColors.primary : AppColors.border,
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              '+ $label',
-              style: AppTextStyles.bodyMedium,
-            ),
+            if (isSelected) ...[
+              const Icon(Icons.check, size: 16, color: AppColors.primary),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.primary,
+                ),
+              ),
+            ] else
+              Text(
+                '+ $label',
+                style: AppTextStyles.bodyMedium,
+              ),
           ],
         ),
       ),

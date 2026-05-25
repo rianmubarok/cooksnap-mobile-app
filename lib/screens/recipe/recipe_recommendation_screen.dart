@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_decorations.dart';
 import '../../core/app_text_styles.dart';
 import '../../data/repositories/recipe_repository.dart';
 import '../../models/recipe_model.dart';
 import '../../providers/pantry_provider.dart';
 import '../../widgets/common/empty_state_view.dart';
 import '../../widgets/ingredient/ingredient_tag_chip.dart';
+import '../../widgets/ingredient/suggestion_chip.dart';
 import '../../widgets/recipe/recipe_recommendation_card.dart';
-import '../../utils/string_utils.dart';
 
 class RecipeRecommendationScreen extends StatefulWidget {
   final List<String> ingredients;
@@ -150,13 +149,9 @@ class _RecipeRecommendationScreenState
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context, _currentIngredients),
           ),
-          title: const Text(
+          title: Text(
             'Resep Rekomendasi',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-              color: Colors.white,
-            ),
+            style: AppTextStyles.h3.copyWith(color: AppColors.textOnPrimary),
           ),
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.textOnPrimary,
@@ -174,12 +169,14 @@ class _RecipeRecommendationScreenState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      '$validTotalRecommendations resep cocok dengan ${displayedIngredients.length} bahan kamu',
-                      style: AppTextStyles.greeting,
-                    ),
+                    const Text('Dipilih', style: AppTextStyles.sectionTitle),
                     const SizedBox(height: AppConstants.spacingMd),
                     _IngredientsPanel(ingredients: displayedIngredients),
+                    const SizedBox(height: AppConstants.spacingSm),
+                    Text(
+                      '$validTotalRecommendations resep cocok dengan ${displayedIngredients.length} bahan kamu',
+                      style: AppTextStyles.bodySmall,
+                    ),
                   ],
                 ),
               ),
@@ -198,7 +195,10 @@ class _RecipeRecommendationScreenState
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(AppConstants.paddingScreen, 0, AppConstants.paddingScreen, 16),
-                    child: Text('Resep Spesifik (Bahan Pilihan)', style: AppTextStyles.h4),
+                    child: const Text(
+                      'Resep Spesifik',
+                      style: AppTextStyles.sectionTitle,
+                    ),
                   ),
                 ),
                 SliverPadding(
@@ -229,17 +229,17 @@ class _RecipeRecommendationScreenState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Apakah kamu juga punya?',
-                          style: AppTextStyles.labelMedium.copyWith(color: AppColors.primary),
-                        ),
-                        const SizedBox(height: 12),
+                        const Text('Saran', style: AppTextStyles.sectionTitle),
+                        const SizedBox(height: AppConstants.spacingMd),
                         Wrap(
                           spacing: 8,
                           runSpacing: 8,
+                          crossAxisAlignment: WrapCrossAlignment.center,
                           children: suggestedIngredients.map((ing) {
                             final isSelected = _selectedSuggestions.contains(ing);
-                            return GestureDetector(
+                            return SuggestionChip(
+                              label: ing,
+                              isSelected: isSelected,
                               onTap: () {
                                 setState(() {
                                   if (isSelected) {
@@ -249,37 +249,6 @@ class _RecipeRecommendationScreenState
                                   }
                                 });
                               },
-                              child: Container(
-                                height: AppConstants.chipHeight,
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? AppColors.primary.withValues(alpha: 0.1)
-                                      : AppColors.cardBackground,
-                                  borderRadius: BorderRadius.circular(AppConstants.radiusLg),
-                                  border: Border.all(
-                                    color: isSelected ? AppColors.primary : AppColors.border,
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    if (isSelected) ...[
-                                      const Icon(Icons.check, size: 16, color: AppColors.primary),
-                                      const SizedBox(width: 6),
-                                    ] else ...[
-                                      Text('+', style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textHint)),
-                                      const SizedBox(width: 4),
-                                    ],
-                                    Text(
-                                      ing,
-                                      style: AppTextStyles.labelMedium.copyWith(
-                                        color: isSelected ? AppColors.primary : AppColors.textPrimary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
                             );
                           }).toList(),
                         ),
@@ -292,7 +261,10 @@ class _RecipeRecommendationScreenState
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(AppConstants.paddingScreen, 0, AppConstants.paddingScreen, 16),
-                    child: Text('Ditambah Bahan Dasar', style: AppTextStyles.h4),
+                    child: const Text(
+                      'Ditambah Bahan Dasar',
+                      style: AppTextStyles.sectionTitle,
+                    ),
                   ),
                 ),
                 SliverPadding(

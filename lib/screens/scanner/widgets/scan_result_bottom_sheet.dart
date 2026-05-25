@@ -7,6 +7,7 @@ import '../../../core/app_text_styles.dart';
 import '../../../providers/ai_detection_provider.dart';
 import '../../../widgets/common/bottom_sheet_handle.dart';
 import '../../../widgets/custom_button.dart';
+import '../../../widgets/ingredient/ingredient_tag_chip.dart';
 
 void showScanResultBottomSheet(
   BuildContext context, {
@@ -70,7 +71,7 @@ void showScanResultBottomSheet(
                       ),
                     ] else if (provider.hasResult) ...[
                       Text(
-                        'Bahan Terdeteksi 🎯 (${provider.detectedIngredients.length})',
+                        'Bahan Terdeteksi (${provider.detectedIngredients.length})',
                         style: AppTextStyles.h3,
                       ),
                       const SizedBox(height: AppConstants.spacingMd),
@@ -84,10 +85,16 @@ void showScanResultBottomSheet(
                           ),
                         )
                       else
-                        ...provider.detectedIngredients.map(
-                          (ingredient) => _DetectedIngredientTile(
-                            name: ingredient,
-                          ),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: provider.detectedIngredients
+                              .map(
+                                (ingredient) =>
+                                    IngredientTagChip(label: ingredient),
+                              )
+                              .toList(),
                         ),
                       const SizedBox(height: AppConstants.spacingLg),
                       PrimaryButton(
@@ -123,43 +130,3 @@ void showScanResultBottomSheet(
   );
 }
 
-class _DetectedIngredientTile extends StatelessWidget {
-  final String name;
-
-  const _DetectedIngredientTile({required this.name});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(AppConstants.radiusLg),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Row(
-        children: [
-          const Text('✅', style: TextStyle(fontSize: 24)),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(name, style: AppTextStyles.labelLarge),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: AppColors.success.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(AppConstants.radiusRound),
-            ),
-            child: Text(
-              'AI Detected',
-              style: AppTextStyles.labelMedium.copyWith(
-                color: AppColors.secondary,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

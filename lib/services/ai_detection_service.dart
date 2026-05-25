@@ -17,44 +17,31 @@ class AiDetectionService {
           {
             "parts": [
               {
-                "inline_data": {
-                  "mime_type": "image/jpeg",
-                  "data": base64Image
-                }
+                "inline_data": {"mime_type": "image/jpeg", "data": base64Image}
               },
               {
                 "text":
-                    '''You are an expert kitchen ingredient detector for a recipe recommendation app called CookSnap.
+                    '''Deteksi bahan makanan MENTAH di foto untuk aplikasi resep CookSnap.
 
-Your job is to analyze images of RAW and UNCOOKED food ingredients that users have in their kitchen or just bought from the market.
+Deteksi: sayuran, protein mentah, bumbu, buah masak, bahan pantry.
+Jangan deteksi: masakan jadi, peralatan dapur, barang non-makanan.
 
-DETECT these types of ingredients:
-- Raw vegetables (tomat, wortel, kentang, bayam, kangkung, buncis, terong, timun, labu, dll)
-- Raw proteins (telur, ayam mentah, daging sapi, ikan, udang, tahu, tempe, dll)
-- Raw aromatics & spices (bawang merah, bawang putih, cabai, jahe, kunyit, lengkuas, serai, dll)
-- Raw fruits used in cooking (jeruk nipis, tomat, pisang, dll)
-- Pantry staples (beras, tepung, minyak, santan, kecap, dll)
-
-DO NOT detect:
-- Cooked or finished dishes (nasi goreng, soto, rendang, dll)
-- Plates, bowls, utensils, or kitchen equipment
-- Non-food items
-
-OUTPUT RULES:
-- Return ONLY a raw JSON array, nothing else
-- Use Indonesian ingredient names
-- Maximum 10 ingredients
-- No markdown, no backticks, no explanation
-- If no ingredients detected, return empty array: []
-
-Example output: ["telur", "tomat", "bawang merah", "cabai merah", "tahu", "tempe"]'''
+Aturan:
+- Nama bahan dalam bahasa Indonesia, singkat dan umum (contoh: "daging sapi", "bawang merah")
+- Jika tidak ada bahan, kembalikan array kosong []'''
               }
             ]
           }
         ],
         "generationConfig": {
           "temperature": 0.1,
-          "maxOutputTokens": 512
+          "maxOutputTokens": 1024,
+          "responseMimeType": "application/json",
+          "responseSchema": {
+            "type": "ARRAY",
+            "items": {"type": "STRING"},
+            "maxItems": 10
+          }
         }
       };
 
@@ -76,20 +63,30 @@ Example output: ["telur", "tomat", "bawang merah", "cabai merah", "tahu", "tempe
         if (responseData.containsKey('candidates') &&
             responseData['candidates'].isNotEmpty) {
           final candidate = responseData['candidates'][0];
+          final finishReason = candidate['finishReason'] as String?;
+
+          if (finishReason == 'MAX_TOKENS') {
+            debugPrint('Gemini response truncated (MAX_TOKENS)');
+          }
 
           if (candidate.containsKey('content') &&
               candidate['content'].containsKey('parts') &&
               candidate['content']['parts'].isNotEmpty) {
-            final textResponse = candidate['content']['parts'][0]['text'];
-            
-            debugPrint('AI response received (${textResponse.length} chars)');
+            final textResponse =
+                candidate['content']['parts'][0]['text'] as String;
+
+            debugPrint('AI raw response: $textResponse');
 
             final ingredients =
                 IngredientParser.parseGeminiResponse(textResponse);
 
             if (ingredients.isEmpty) {
+              final hint = finishReason == 'MAX_TOKENS'
+                  ? ' Respons AI terpotong, coba foto lebih sederhana.'
+                  : '';
               return ScanResult.error(
-                  'Tidak ada bahan makanan yang terdeteksi dalam gambar');
+                'Tidak ada bahan makanan yang terdeteksi.$hint',
+              );
             }
 
             return ScanResult.success(ingredients);
@@ -114,7 +111,8 @@ Example output: ["telur", "tomat", "bawang merah", "cabai merah", "tahu", "tempe
               'API key tidak valid atau tidak memiliki akses';
           return ScanResult.error('Error 403: $errorMessage');
         } catch (e) {
-          return ScanResult.error('API key tidak valid atau tidak memiliki akses');
+          return ScanResult.error(
+              'API key tidak valid atau tidak memiliki akses');
         }
       } else if (response.statusCode == 429) {
         return ScanResult.error('Terlalu banyak permintaan. Coba lagi nanti');

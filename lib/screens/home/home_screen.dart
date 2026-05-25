@@ -101,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   _buildTagChips(),
                   _buildSectionTitle('Resep Populer', topPadding: 16),
                   _buildPopularRecipes(filteredRecipes),
-                  _buildSectionTitle('Resep Terbaru', topPadding: 20),
+                  _buildSectionTitle('Resep Terbaru', topPadding: 20, showAction: false),
                   _buildRecentRecipes(filteredRecipes),
                   const SizedBox(height: AppConstants.spacingXl),
                 ],
@@ -176,7 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String title, {double topPadding = 24.0}) {
+  Widget _buildSectionTitle(String title, {double topPadding = 24.0, bool showAction = true}) {
     return Padding(
       padding: EdgeInsets.fromLTRB(
         AppConstants.paddingScreen,
@@ -188,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(title, style: AppTextStyles.sectionTitle),
-          const SectionActionLink(label: 'Lihat Semua'),
+          if (showAction) const SectionActionLink(label: 'Lihat Semua'),
         ],
       ),
     );
