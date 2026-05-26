@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_constants.dart';
+import '../../core/app_strings.dart';
 import '../../core/app_routes.dart';
 import '../../core/app_text_styles.dart';
 import '../../providers/user_provider.dart';
@@ -56,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final email = _emailController.text.trim();
       final displayName = email.contains('@') ? email.split('@').first : email;
       context.read<UserProvider>().setUser(
-            displayName.isEmpty ? 'User' : displayName,
+            displayName.isEmpty ? AppStrings.defaultUserName : displayName,
             email,
           );
       Navigator.pushReplacementNamed(context, AppRoutes.home);

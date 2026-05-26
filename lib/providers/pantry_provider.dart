@@ -1,14 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../utils/string_utils.dart';
 
 class PantryProvider extends ChangeNotifier {
   static const String _prefsKey = 'pantry_essentials';
-  
+
   static const List<String> _defaultEssentials = [
     'Air',
     'Garam',
-    'Gula',
-    'Merica',
+    'Gula Pasir',
+    'Merica Bubuk',
     'Minyak Goreng',
     'Bawang Putih',
     'Bawang Merah',
@@ -26,10 +27,10 @@ class PantryProvider extends ChangeNotifier {
   Future<void> _loadItems() async {
     final prefs = await SharedPreferences.getInstance();
     final savedItems = prefs.getStringList(_prefsKey);
-    
+
     if (savedItems == null) {
       _items = List.from(_defaultEssentials);
-      _saveItems();
+      await _saveItems();
     } else {
       _items = savedItems;
     }
@@ -44,8 +45,10 @@ class PantryProvider extends ChangeNotifier {
   void add(String item) {
     final trimmed = item.trim();
     if (trimmed.isEmpty) return;
-    
-    final exists = _items.any((e) => e.toLowerCase() == trimmed.toLowerCase());
+
+    final exists = _items.any(
+      (e) => StringUtils.ingredientMatches(e, trimmed),
+    );
     if (!exists) {
       _items.add(trimmed);
       _saveItems();

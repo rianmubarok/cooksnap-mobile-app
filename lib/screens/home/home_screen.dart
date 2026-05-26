@@ -9,20 +9,11 @@ import '../../models/recipe_model.dart';
 import '../../providers/user_provider.dart';
 import '../../widgets/common/app_chip.dart';
 import '../../widgets/common/section_action_link.dart';
+import '../../widgets/home/home_header.dart';
 import '../../widgets/recipe/recipe_card_horizontal.dart';
 import '../../widgets/recipe/recipe_card_grid.dart';
 import '../../widgets/search/recipe_search_field.dart';
-
-/// Tag filter definition for the main filter chips row.
-class _RecipeTag {
-  final String label;
-  final bool Function(Recipe recipe) matcher;
-
-  const _RecipeTag({
-    required this.label,
-    required this.matcher,
-  });
-}
+import 'home_recipe_tags.dart';
 
 /// Home tab — recipes, categories, and sections.
 class HomeScreen extends StatefulWidget {
@@ -33,26 +24,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedTagIndex = 0; // 0 = Semua
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      GlobalKey<RefreshIndicatorState>();
-
-  static final List<_RecipeTag> _tags = [
-    _RecipeTag(label: 'Semua',     matcher: (_) => true),
-    _RecipeTag(label: 'Cepat',     matcher: (r) => r.tags.contains('Cepat')),
-    _RecipeTag(label: 'Sehat',     matcher: (r) => r.tags.contains('Sehat')),
-    _RecipeTag(label: 'Indonesia', matcher: (r) => r.tags.contains('Indonesia')),
-    _RecipeTag(label: 'Minuman',   matcher: (r) => r.tags.contains('Minuman')),
-    _RecipeTag(label: 'Dessert',   matcher: (r) => r.tags.contains('Dessert')),
-    _RecipeTag(label: 'Mudah',     matcher: (r) => r.tags.contains('Mudah')),
-  ];
-
-  late List<_RecipeTag> _displayTags;
+  int _selectedTagIndex = 0;
+  late List<HomeRecipeTag> _displayTags;
 
   @override
   void initState() {
     super.initState();
-    _displayTags = List.from(_tags);
+    _displayTags = List.from(kHomeRecipeTags);
   }
 
   List<Recipe> _applyTagFilter(List<Recipe> recipes) {
@@ -60,17 +38,25 @@ class _HomeScreenState extends State<HomeScreen> {
     return recipes.where(_displayTags[_selectedTagIndex].matcher).toList();
   }
 
+  Future<void> _onRefresh() async {
+    await Future.delayed(const Duration(milliseconds: 600));
+    if (!mounted) return;
+    setState(() {
+      final rest = _displayTags.sublist(1)..shuffle();
+      _displayTags = [_displayTags.first, ...rest];
+      _selectedTagIndex = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final recipeRepo = context.watch<RecipeRepository>();
-    final allRecipes = recipeRepo.getAllRecipes();
-    final filteredRecipes = _applyTagFilter(allRecipes);
+    final filteredRecipes =
+        _applyTagFilter(context.read<RecipeRepository>().getAllRecipes());
 
     return Column(
       children: [
         Expanded(
           child: RefreshIndicator(
-            key: _refreshIndicatorKey,
             onRefresh: _onRefresh,
             color: AppColors.primary,
             backgroundColor: AppColors.cardBackground,
@@ -80,7 +66,9 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildHeader(context),
+                  HomeHeader(
+                    firstName: context.watch<UserProvider>().firstName,
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppConstants.paddingScreen,
@@ -98,11 +86,27 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                   ),
-                  _buildTagChips(),
-                  _buildSectionTitle('Resep Populer', topPadding: 16),
-                  _buildPopularRecipes(filteredRecipes),
-                  _buildSectionTitle('Resep Terbaru', topPadding: 20, showAction: false),
-                  _buildRecentRecipes(filteredRecipes),
+                  _TagFilterRow(
+                    tags: _displayTags,
+                    selectedIndex: _selectedTagIndex,
+                    onSelected: (index) =>
+                        setState(() => _selectedTagIndex = index),
+                  ),
+                  _SectionHeader(
+                    title: 'Resep Populer',
+                    topPadding: 16,
+                    onSeeAll: () => Navigator.pushNamed(
+                      context,
+                      AppRoutes.search,
+                      arguments: '',
+                    ),
+                  ),
+                  _PopularRecipesRow(recipes: filteredRecipes),
+                  const _SectionHeader(
+                    title: 'Resep Terbaru',
+                    topPadding: 20,
+                  ),
+                  _RecentRecipesGrid(recipes: filteredRecipes),
                   const SizedBox(height: AppConstants.spacingXl),
                 ],
               ),
@@ -112,45 +116,21 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     );
   }
+}
 
-  Future<void> _onRefresh() async {
-    await Future.delayed(const Duration(milliseconds: 600));
-    if (mounted) {
-      setState(() {
-        final rest = _displayTags.sublist(1);
-        rest.shuffle();
-        _displayTags = [_displayTags.first, ...rest];
-        _selectedTagIndex = 0; // reset ke Semua
-      });
-    }
-  }
+class _TagFilterRow extends StatelessWidget {
+  final List<HomeRecipeTag> tags;
+  final int selectedIndex;
+  final ValueChanged<int> onSelected;
 
-  Widget _buildHeader(BuildContext context) {
-    final firstName = context.watch<UserProvider>().firstName;
+  const _TagFilterRow({
+    required this.tags,
+    required this.selectedIndex,
+    required this.onSelected,
+  });
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppConstants.paddingScreen,
-        AppConstants.spacingMd,
-        AppConstants.paddingScreen,
-        0,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Hi! $firstName', style: AppTextStyles.greeting),
-          const SizedBox(height: AppConstants.spacingSm),
-          const Text(
-            'Mau masak apa hari ini?',
-            style: AppTextStyles.headlineDisplay,
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Single-select tag filter chips.
-  Widget _buildTagChips() {
+  @override
+  Widget build(BuildContext context) {
     return SizedBox(
       height: AppConstants.chipHeight,
       child: ListView.builder(
@@ -158,43 +138,61 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.symmetric(
           horizontal: AppConstants.paddingScreen,
         ),
-        itemCount: _displayTags.length,
+        itemCount: tags.length,
         itemBuilder: (context, index) {
-          final tag = _displayTags[index];
-          final isSelected = index == _selectedTagIndex;
-
           return Padding(
             padding: const EdgeInsets.only(right: 8),
             child: AppChip(
-              label: tag.label,
-              selected: isSelected,
-              onTap: () => setState(() => _selectedTagIndex = index),
+              label: tags[index].label,
+              selected: index == selectedIndex,
+              onTap: () => onSelected(index),
             ),
           );
         },
       ),
     );
   }
+}
 
-  Widget _buildSectionTitle(String title, {double topPadding = 24.0, bool showAction = true}) {
+class _SectionHeader extends StatelessWidget {
+  final String title;
+  final double topPadding;
+  final VoidCallback? onSeeAll;
+
+  const _SectionHeader({
+    required this.title,
+    this.topPadding = 24,
+    this.onSeeAll,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(
         AppConstants.paddingScreen,
         topPadding,
         AppConstants.paddingScreen,
-        16.0,
+        16,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(title, style: AppTextStyles.sectionTitle),
-          if (showAction) const SectionActionLink(label: 'Lihat Semua'),
+          if (onSeeAll != null)
+            SectionActionLink(label: 'Lihat Semua', onTap: onSeeAll),
         ],
       ),
     );
   }
+}
 
-  Widget _buildPopularRecipes(List<Recipe> recipes) {
+class _PopularRecipesRow extends StatelessWidget {
+  final List<Recipe> recipes;
+
+  const _PopularRecipesRow({required this.recipes});
+
+  @override
+  Widget build(BuildContext context) {
     if (recipes.isEmpty) return const SizedBox.shrink();
     return SizedBox(
       height: 300,
@@ -204,14 +202,20 @@ class _HomeScreenState extends State<HomeScreen> {
           horizontal: AppConstants.paddingScreen,
         ),
         itemCount: recipes.length,
-        itemBuilder: (context, index) {
-          return RecipeCardHorizontal(recipe: recipes[index]);
-        },
+        itemBuilder: (context, index) =>
+            RecipeCardHorizontal(recipe: recipes[index]),
       ),
     );
   }
+}
 
-  Widget _buildRecentRecipes(List<Recipe> recipes) {
+class _RecentRecipesGrid extends StatelessWidget {
+  final List<Recipe> recipes;
+
+  const _RecentRecipesGrid({required this.recipes});
+
+  @override
+  Widget build(BuildContext context) {
     final recent = recipes.take(10).toList();
 
     if (recent.isEmpty) {
@@ -244,9 +248,7 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisSpacing: 16,
           childAspectRatio: 0.72,
         ),
-        itemBuilder: (context, index) {
-          return RecipeCardGrid(recipe: recent[index]);
-        },
+        itemBuilder: (context, index) => RecipeCardGrid(recipe: recent[index]),
       ),
     );
   }

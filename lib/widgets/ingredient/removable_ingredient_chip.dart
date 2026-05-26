@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_text_styles.dart';
+import '../../utils/string_utils.dart';
 
 /// Chip bahan terpilih — lebar mengikuti teks (hug content), bukan pill kategori.
 class RemovableIngredientChip extends StatelessWidget {
@@ -27,7 +28,7 @@ class RemovableIngredientChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            label,
+            StringUtils.capitalizeWords(label),
             style: AppTextStyles.labelMedium.copyWith(color: AppColors.white),
           ),
           const SizedBox(width: 6),

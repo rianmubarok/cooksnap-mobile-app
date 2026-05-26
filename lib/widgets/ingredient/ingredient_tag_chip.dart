@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_text_styles.dart';
+import '../../utils/string_utils.dart';
 
 /// Read-only ingredient tag (e.g. recommendation panel).
 class IngredientTagChip extends StatelessWidget {
@@ -22,7 +23,7 @@ class IngredientTagChip extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            label,
+            StringUtils.capitalizeWords(label),
             style: AppTextStyles.labelMedium.copyWith(color: AppColors.white),
           ),
         ],

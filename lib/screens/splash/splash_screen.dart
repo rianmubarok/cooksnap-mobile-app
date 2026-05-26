@@ -6,12 +6,10 @@ import '../../core/app_constants.dart';
 import '../../core/app_routes.dart';
 import '../../providers/user_provider.dart';
 
-/// Splash Screen — auto-navigates berdasarkan status login user.
+/// Splash Screen — auto-navigates berdasarkan status login dan onboarding.
 /// - Sudah login → langsung ke [AppRoutes.home]
-/// - Belum login → ke [AppRoutes.onboarding]
-///
-/// TODO: Tambahkan SharedPreferences untuk menyimpan status onboarding
-///       agar user yang sudah pernah onboarding tidak diulang setiap sesi baru.
+/// - Onboarding selesai → ke [AppRoutes.login]
+/// - Belum onboarding → ke [AppRoutes.onboarding]
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -49,15 +47,27 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _controller.forward();
+    _navigateAfterSplash();
+  }
 
-    Future.delayed(AppConstants.splashDuration, () {
-      if (!mounted) return;
-      final isLoggedIn = context.read<UserProvider>().isLoggedIn;
-      Navigator.pushReplacementNamed(
-        context,
-        isLoggedIn ? AppRoutes.home : AppRoutes.onboarding,
-      );
-    });
+  Future<void> _navigateAfterSplash() async {
+    await Future.delayed(AppConstants.splashDuration);
+    if (!mounted) return;
+
+    final user = context.read<UserProvider>();
+    await user.waitForInitialization();
+    if (!mounted) return;
+
+    final String route;
+    if (user.isLoggedIn) {
+      route = AppRoutes.home;
+    } else if (user.hasCompletedOnboarding) {
+      route = AppRoutes.login;
+    } else {
+      route = AppRoutes.onboarding;
+    }
+
+    Navigator.pushReplacementNamed(context, route);
   }
 
   @override

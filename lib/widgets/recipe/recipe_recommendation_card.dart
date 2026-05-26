@@ -4,7 +4,6 @@ import '../../core/app_constants.dart';
 import '../../core/app_text_styles.dart';
 import '../../models/recipe_model.dart';
 import '../../utils/recipe_navigation.dart';
-import 'recipe_info_chip.dart';
 import 'recipe_thumbnail.dart';
 
 class RecipeRecommendationCard extends StatelessWidget {

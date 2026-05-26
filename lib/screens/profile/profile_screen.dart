@@ -4,7 +4,9 @@ import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_routes.dart';
 import '../../core/app_text_styles.dart';
+import '../../core/app_strings.dart';
 import '../../providers/user_provider.dart';
+import '../../utils/placeholder_snackbar.dart';
 import '../../widgets/navigation/tab_page_scaffold.dart';
 import '../../widgets/profile/profile_menu_tile.dart';
 
@@ -14,7 +16,8 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = context.watch<UserProvider>();
-    final userName = user.name.isEmpty ? 'Guest' : user.name;
+    final userName =
+        user.name.isEmpty ? AppStrings.guestUserName : user.name;
     final userEmail = user.email;
 
     return TabPageScaffold(
@@ -48,23 +51,32 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: AppConstants.spacingXl),
             ProfileMenuTile(
               icon: Icons.person_outline,
-              title: 'Edit Profile',
-              onTap: () {},
+              title: AppStrings.editProfile,
+              onTap: () => showPlaceholderSnackBar(
+                context,
+                'Fitur edit profil segera hadir',
+              ),
             ),
             ProfileMenuTile(
               icon: Icons.notifications_none_rounded,
-              title: 'Notification Settings',
-              onTap: () {},
+              title: AppStrings.notificationSettings,
+              onTap: () => showPlaceholderSnackBar(
+                context,
+                'Pengaturan notifikasi segera hadir',
+              ),
             ),
             ProfileMenuTile(
               icon: Icons.help_outline_rounded,
-              title: 'Help',
-              onTap: () {},
+              title: AppStrings.help,
+              onTap: () => showPlaceholderSnackBar(
+                context,
+                'Pusat bantuan segera hadir',
+              ),
             ),
             const SizedBox(height: AppConstants.spacingMd),
             ProfileMenuTile(
               icon: Icons.logout_rounded,
-              title: 'Logout',
+              title: AppStrings.logout,
               isDestructive: true,
               onTap: () {
                 context.read<UserProvider>().logout();

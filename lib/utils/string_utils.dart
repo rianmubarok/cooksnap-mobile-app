@@ -44,4 +44,53 @@ class StringUtils {
 
     return false;
   }
+
+  /// Word-set matching for ingredient-to-recipe comparison.
+  ///
+  /// Returns true if [userIng] semantically matches [recipeIng] without
+  /// false positives from naive substring matching.
+  ///
+  /// Strategy: all words in the shorter string must appear (as whole words)
+  /// in the longer string.
+  ///
+  /// Examples:
+  ///   "Ayam"        ↔ "Dada Ayam"      → ✅ "ayam" ∈ ["dada","ayam"]
+  ///   "Telur Ayam"  ↔ "Telur"          → ✅ "telur" ∈ ["telur","ayam"]
+  ///   "Bawang Putih"↔ "Bawang Goreng"  → ❌ "putih" ∉ ["bawang","goreng"]
+  ///   "Daun Bawang" ↔ "Bawang Putih"   → ❌ "daun" ∉ ["bawang","putih"]
+  ///   "Tepung Beras"↔ "Tepung Terigu"  → ❌ "beras" ∉ ["tepung","terigu"]
+  ///   "Ayam Kampung"↔ "Dada Ayam"      → ❌ "kampung" ∉ ["dada","ayam"]
+  static bool ingredientMatches(String recipeIng, String userIng) {
+    recipeIng = recipeIng.trim().toLowerCase();
+    userIng = userIng.trim().toLowerCase();
+
+    if (recipeIng == userIng) return true;
+
+    final recipeWords = recipeIng.split(RegExp(r'\s+'));
+    final userWords = userIng.split(RegExp(r'\s+'));
+
+    // Direction 1: all user words present in recipe words
+    // e.g., user="ayam" vs recipe="dada ayam"
+    if (userWords.every((w) => recipeWords.contains(w))) return true;
+
+    // Direction 2: all recipe words present in user words
+    // e.g., recipe="telur" vs user="telur ayam"
+    if (recipeWords.every((w) => userWords.contains(w))) return true;
+
+    return false;
+  }
+
+  /// True if [list] contains an entry that matches [ingredient].
+  static bool listContainsIngredient(List<String> list, String ingredient) {
+    return list.any((item) => ingredientMatches(ingredient, item));
+  }
+
+  /// Capitalizes the first letter of each word in a string.
+  static String capitalizeWords(String text) {
+    if (text.isEmpty) return text;
+    return text.split(' ').map((word) {
+      if (word.isEmpty) return word;
+      return word[0].toUpperCase() + word.substring(1).toLowerCase();
+    }).join(' ');
+  }
 }

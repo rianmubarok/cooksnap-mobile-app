@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
+import '../../core/app_strings.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_text_styles.dart';
 import '../../providers/pantry_provider.dart';
@@ -94,11 +95,11 @@ class _PantryEssentialsSheetState extends State<PantryEssentialsSheet> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      'Pantry Essentials',
+                      AppStrings.pantryEssentialsTitle,
                       style: AppTextStyles.sectionTitle,
                     ),
                     SectionActionLink(
-                      label: 'Reset Default',
+                      label: AppStrings.resetToDefault,
                       onTap: pantryProvider.resetToDefault,
                     ),
                   ],

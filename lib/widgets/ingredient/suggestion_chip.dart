@@ -6,13 +6,13 @@ import '../../core/app_text_styles.dart';
 /// Chip saran — lebar mengikuti teks, gaya netral seperti sebelumnya.
 class SuggestionChip extends StatelessWidget {
   final String label;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final bool isSelected;
 
   const SuggestionChip({
     super.key,
     required this.label,
-    required this.onTap,
+    this.onTap,
     this.isSelected = false,
   });
 

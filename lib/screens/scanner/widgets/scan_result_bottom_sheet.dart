@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/app_colors.dart';
+import '../../../core/app_strings.dart';
 import '../../../core/app_constants.dart';
 import '../../../core/app_routes.dart';
 import '../../../core/app_text_styles.dart';
@@ -111,7 +112,7 @@ void showScanResultBottomSheet(
                       ),
                       const SizedBox(height: AppConstants.spacingMd),
                       SecondaryButton(
-                        text: 'Scan Ulang',
+                        text: AppStrings.rescan,
                         onPressed: () {
                           Navigator.pop(sheetContext);
                           onRescan?.call();

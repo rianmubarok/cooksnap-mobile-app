@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/app_colors.dart';
+import '../../../core/app_strings.dart';
 import '../../../core/app_constants.dart';
 import '../../../providers/ai_detection_provider.dart';
 
@@ -93,7 +94,7 @@ class ScannerControlsBar extends StatelessWidget {
                 )
               : _ActionButton(
                   icon: Icons.flip_camera_ios_outlined,
-                  label: 'Flip',
+                  label: AppStrings.flipCamera,
                   onTap: () => _showComingSoon(context),
                 ),
         ],

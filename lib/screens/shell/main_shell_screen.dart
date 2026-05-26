@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../../core/app_colors.dart';
 import '../../core/app_decorations.dart';
-import '../../core/app_routes.dart';
 import '../../providers/shell_navigation_provider.dart';
 import '../favorite/favorite_screen.dart';
 import '../home/home_screen.dart';
@@ -11,7 +9,7 @@ import '../profile/profile_screen.dart';
 import '../ingredient/manual_ingredient_screen.dart';
 import '../../widgets/navigation/app_bottom_nav_bar.dart';
 
-/// Main app shell with shared bottom navigation and scanner FAB.
+/// Main app shell with shared bottom navigation across four tabs.
 class MainShellScreen extends StatelessWidget {
   const MainShellScreen({super.key});
 
@@ -41,22 +39,6 @@ class MainShellScreen extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: SizedBox(
-        width: 52,
-        height: 52,
-        child: FloatingActionButton(
-          onPressed: () => Navigator.pushNamed(context, AppRoutes.scanner),
-          backgroundColor: AppColors.primary,
-          elevation: 0,
-          shape: const CircleBorder(),
-          child: const Icon(
-            Icons.camera_alt_outlined,
-            color: AppColors.white,
-            size: 26,
-          ),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: AppBottomNavBar(
         currentIndex: currentIndex,
         onIndexChanged: context.read<ShellNavigationProvider>().selectTab,

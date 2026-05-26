@@ -3,8 +3,6 @@ import 'package:flutter/foundation.dart';
 
 /// Parses Gemini vision responses into a list of Indonesian ingredient names.
 class IngredientParser {
-  static const _maxIngredients = 10;
-
   static const _objectArrayKeys = [
     'ingredients',
     'bahan',
@@ -229,11 +227,12 @@ class IngredientParser {
     final result = <String>[];
 
     for (final raw in ingredients) {
-      final name = raw.trim().toLowerCase();
-      if (name.isEmpty || seen.contains(name)) continue;
-      seen.add(name);
+      final name = raw.trim();
+      if (name.isEmpty) continue;
+      final key = name.toLowerCase();
+      if (seen.contains(key)) continue;
+      seen.add(key);
       result.add(name);
-      if (result.length >= _maxIngredients) break;
     }
 
     return result;

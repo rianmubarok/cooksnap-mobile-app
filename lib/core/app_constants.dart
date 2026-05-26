@@ -5,7 +5,7 @@ class AppConstants {
 
   // App Info
   static const String appName = 'CookSnap';
-  static const String appTagline = 'Snap, Cook, Enjoy!';
+  static const String appTagline = 'Foto, Masak, Nikmati!';
   static const String appVersion = '1.0.0';
 
   // Spacing

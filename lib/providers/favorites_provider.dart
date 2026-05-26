@@ -1,10 +1,15 @@
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../data/repositories/recipe_repository.dart';
 import '../models/recipe_model.dart';
 
 /// Manages favorite recipe IDs — sync with PocketBase later.
 class FavoritesProvider extends ChangeNotifier {
-  FavoritesProvider(this._recipeRepository);
+  static const String _prefsKey = 'favorite_recipe_ids';
+
+  FavoritesProvider(this._recipeRepository) {
+    _loadFavorites();
+  }
 
   final RecipeRepository _recipeRepository;
   final List<String> _favoriteRecipeIds = [];
@@ -26,8 +31,25 @@ class FavoritesProvider extends ChangeNotifier {
     } else {
       _favoriteRecipeIds.add(recipeId);
     }
+    _saveFavorites();
     notifyListeners();
   }
 
   int get favoriteCount => _favoriteRecipeIds.length;
+
+  Future<void> _loadFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getStringList(_prefsKey);
+    if (saved != null) {
+      _favoriteRecipeIds
+        ..clear()
+        ..addAll(saved);
+      notifyListeners();
+    }
+  }
+
+  Future<void> _saveFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_prefsKey, _favoriteRecipeIds);
+  }
 }

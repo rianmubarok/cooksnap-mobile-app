@@ -69,20 +69,6 @@ class Recipe {
   }
 }
 
-class RecipeCategory {
-  final String id;
-  final String name;
-
-  const RecipeCategory({required this.id, required this.name});
-
-  factory RecipeCategory.fromMap(Map<String, dynamic> map) {
-    return RecipeCategory(
-      id: map['id'] as String,
-      name: map['name'] as String,
-    );
-  }
-}
-
 class RecipeRecommendation {
   final Recipe recipe;
   final int matchPercentage;

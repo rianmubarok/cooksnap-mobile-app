@@ -39,8 +39,7 @@ Aturan:
           "responseMimeType": "application/json",
           "responseSchema": {
             "type": "ARRAY",
-            "items": {"type": "STRING"},
-            "maxItems": 10
+            "items": {"type": "STRING"}
           }
         }
       };
@@ -99,26 +98,26 @@ Aturan:
           final errorBody = jsonDecode(response.body);
           final errorMessage =
               errorBody['error']?['message'] ?? 'Permintaan tidak valid';
-          return ScanResult.error('Error 400: $errorMessage');
+          return ScanResult.error('Kesalahan 400: $errorMessage');
         } catch (e) {
           return ScanResult.error(
-              'Error 400: ${response.body.substring(0, response.body.length > 200 ? 200 : response.body.length)}');
+              'Kesalahan 400: ${response.body.substring(0, response.body.length > 200 ? 200 : response.body.length)}');
         }
       } else if (response.statusCode == 403) {
         try {
           final errorBody = jsonDecode(response.body);
           final errorMessage = errorBody['error']?['message'] ??
-              'API key tidak valid atau tidak memiliki akses';
-          return ScanResult.error('Error 403: $errorMessage');
+              'Kunci API tidak valid atau tidak memiliki akses';
+          return ScanResult.error('Kesalahan 403: $errorMessage');
         } catch (e) {
           return ScanResult.error(
-              'API key tidak valid atau tidak memiliki akses');
+              'Kunci API tidak valid atau tidak memiliki akses');
         }
       } else if (response.statusCode == 429) {
         return ScanResult.error('Terlalu banyak permintaan. Coba lagi nanti');
       } else {
         return ScanResult.error(
-            'Gagal mendeteksi bahan: HTTP ${response.statusCode}');
+            'Gagal mendeteksi bahan (kode ${response.statusCode})');
       }
     } on FormatException catch (e) {
       return ScanResult.error('Gagal memproses respons: ${e.message}');
@@ -126,7 +125,7 @@ Aturan:
       final errorMessage = e.toString();
       if (errorMessage.contains('XMLHttpRequest')) {
         return ScanResult.error(
-            'CORS Error: Gemini API tidak dapat dipanggil langsung dari browser. Gunakan aplikasi mobile atau buat backend proxy server.');
+            'Tidak dapat terhubung ke layanan AI. Gunakan aplikasi seluler atau hubungi pengembang.');
       }
       return ScanResult.error('Terjadi kesalahan: $errorMessage');
     }

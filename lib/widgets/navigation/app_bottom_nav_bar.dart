@@ -21,39 +21,39 @@ class AppBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BottomAppBar(
-      height: 56,
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      shape: const CircularNotchedRectangle(),
-      notchMargin: 6,
+    return Container(
       color: AppColors.cardBackground,
-      elevation: 0,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          _NavTile(
-            item: items[0],
-            isSelected: currentIndex == 0,
-            onTap: () => onIndexChanged(0),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 56,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _NavTile(
+                item: items[0],
+                isSelected: currentIndex == 0,
+                onTap: () => onIndexChanged(0),
+              ),
+              _NavTile(
+                item: items[1],
+                isSelected: currentIndex == 1,
+                onTap: () => onIndexChanged(1),
+              ),
+              _NavTile(
+                item: items[2],
+                isSelected: currentIndex == 2,
+                onTap: () => onIndexChanged(2),
+              ),
+              _NavTile(
+                item: items[3],
+                isSelected: currentIndex == 3,
+                onTap: () => onIndexChanged(3),
+              ),
+            ],
           ),
-          _NavTile(
-            item: items[1],
-            isSelected: currentIndex == 1,
-            onTap: () => onIndexChanged(1),
-          ),
-          const SizedBox(width: 40),
-          _NavTile(
-            item: items[2],
-            isSelected: currentIndex == 2,
-            onTap: () => onIndexChanged(2),
-          ),
-          _NavTile(
-            item: items[3],
-            isSelected: currentIndex == 3,
-            onTap: () => onIndexChanged(3),
-          ),
-        ],
+        ),
       ),
     );
   }

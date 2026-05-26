@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
+import '../../providers/user_provider.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_text_styles.dart';
 import '../../core/app_routes.dart';
@@ -33,6 +35,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         curve: Curves.easeInOut,
       );
     } else {
+      context.read<UserProvider>().completeOnboarding();
       Navigator.pushReplacementNamed(context, AppRoutes.login);
     }
   }
