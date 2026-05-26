@@ -50,16 +50,12 @@ class RecipeRecommendationService {
       if (!usesManual) continue;
       validTotal++;
 
-      final usesEssential = rec.recipe.ingredients.any(
-        (ing) => pantryItems.any(
-          (pantry) => StringUtils.ingredientMatches(ing.name, pantry),
-        ),
-      );
-
-      if (usesEssential) {
-        combined.add(rec);
-      } else {
+      // Specific = 100% match (Ready to cook)
+      // Combined = < 100% match (Needs additional ingredients)
+      if (rec.isFullMatch) {
         specific.add(rec);
+      } else {
+        combined.add(rec);
       }
     }
 
@@ -87,8 +83,6 @@ class RecipeRecommendationService {
     required int validTotal,
     required int displayedCount,
   }) {
-    if (validTotal > 3 && displayedCount > 2) return const [];
-
     final missingCounts = <String, int>{};
 
     for (final rec in allRecommendations) {

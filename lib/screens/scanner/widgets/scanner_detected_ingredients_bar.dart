@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import '../../../core/app_colors.dart';
 import '../../../core/app_constants.dart';
@@ -37,7 +38,7 @@ class ScannerDetectedIngredientsBar extends StatelessWidget {
               Row(
                 children: [
                   const Icon(
-                    Icons.check_circle_outline,
+                    LucideIcons.checkCircle,
                     size: 20,
                     color: AppColors.success,
                   ),
@@ -50,7 +51,7 @@ class ScannerDetectedIngredientsBar extends StatelessWidget {
                   ),
                   const Spacer(),
                   const Icon(
-                    Icons.keyboard_arrow_up,
+                    LucideIcons.chevronUp,
                     color: AppColors.textSecondary,
                   ),
                 ],

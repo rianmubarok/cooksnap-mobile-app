@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
@@ -122,7 +123,7 @@ class _MatchInfo extends StatelessWidget {
     return Row(
       children: [
         Icon(
-          recommendation.isFullMatch ? Icons.check_circle_outline : Icons.info_outline,
+          recommendation.isFullMatch ? LucideIcons.checkCircle : LucideIcons.info,
           size: 14,
           color: color,
         ),

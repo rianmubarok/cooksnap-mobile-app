@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
@@ -11,7 +12,7 @@ class SquareIconButton extends StatelessWidget {
   const SquareIconButton({
     super.key,
     required this.onPressed,
-    this.icon = Icons.add_rounded,
+    this.icon = LucideIcons.plus,
     this.size = 60,
   });
 

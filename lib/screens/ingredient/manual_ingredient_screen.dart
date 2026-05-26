@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_constants.dart';
@@ -170,7 +171,7 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
         TabPageScaffold(
           title: 'Bahan apa yang kamu punya?',
           action: CircularHeaderButton(
-            icon: Icons.more_vert,
+            icon: LucideIcons.moreVertical,
             onPressed: () => showPantryEssentialsSheet(context),
           ),
           body: SingleChildScrollView(

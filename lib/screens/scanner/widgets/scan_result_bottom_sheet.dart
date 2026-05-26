@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/app_colors.dart';
@@ -53,7 +54,7 @@ void showScanResultBottomSheet(
                     ] else if (provider.hasError) ...[
                       const SizedBox(height: 20),
                       Icon(
-                        Icons.error_outline,
+                        LucideIcons.alertCircle,
                         size: 60,
                         color: Colors.red.shade400,
                       ),
@@ -108,7 +109,7 @@ void showScanResultBottomSheet(
                             arguments: provider.detectedIngredients,
                           );
                         },
-                        icon: Icons.search,
+                        icon: LucideIcons.search,
                       ),
                       const SizedBox(height: AppConstants.spacingMd),
                       SecondaryButton(
@@ -117,7 +118,7 @@ void showScanResultBottomSheet(
                           Navigator.pop(sheetContext);
                           onRescan?.call();
                         },
-                        icon: Icons.refresh,
+                        icon: LucideIcons.refreshCcw,
                       ),
                     ],
                   ],

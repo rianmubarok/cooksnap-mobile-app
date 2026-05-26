@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import '../custom_text_field.dart';
 
@@ -29,7 +30,7 @@ class RecipeSearchField extends StatelessWidget {
         'Nasi Goreng',
         'Sop Ikan',
       ],
-      prefixIcon: Icons.search_rounded,
+      prefixIcon: LucideIcons.search,
       iconSize: 24,
       large: true,
       clearable: clearable,

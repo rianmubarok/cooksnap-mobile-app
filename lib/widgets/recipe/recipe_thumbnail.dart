@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
@@ -12,7 +13,7 @@ class RecipeThumbnail extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Icon(
-        Icons.restaurant_menu_rounded,
+        LucideIcons.utensils,
         size: iconSize,
         color: AppColors.primary.withValues(alpha: 0.35),
       ),

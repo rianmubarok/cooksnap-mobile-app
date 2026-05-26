@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
@@ -59,7 +60,7 @@ class ProfileMenuTile extends StatelessWidget {
               ),
             ),
             Icon(
-              Icons.chevron_right,
+              LucideIcons.chevronRight,
               size: 22,
               color: isDestructive
                   ? AppColors.error.withValues(alpha: 0.5)

@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_constants.dart';
@@ -17,7 +18,7 @@ class FavoriteScreen extends StatelessWidget {
       title: 'Resep Favorit',
       body: favorites.isEmpty
           ? const EmptyStateView(
-              icon: Icons.favorite_border,
+              icon: LucideIcons.heart,
               title: 'Belum ada resep favorit',
               subtitle:
                   'Simpan resep kesukaanmu di sini\nagar mudah ditemukan kembali',

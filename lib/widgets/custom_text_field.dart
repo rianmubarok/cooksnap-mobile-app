@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
@@ -124,8 +125,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
         child: IconButton(
           icon: Icon(
             _obscureText
-                ? Icons.visibility_off_outlined
-                : Icons.visibility_outlined,
+                ? LucideIcons.eyeOff
+                : LucideIcons.eye,
             color: AppColors.textHint,
             size: _iconSize,
           ),
@@ -144,7 +145,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       return Padding(
         padding: _suffixIconPadding,
         child: IconButton(
-          icon: Icon(Icons.close_rounded, color: AppColors.textHint, size: _iconSize),
+          icon: Icon(LucideIcons.x, color: AppColors.textHint, size: _iconSize),
           onPressed: () {
             widget.controller!.clear();
             widget.onChanged?.call('');

@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/app_colors.dart';
@@ -38,7 +39,7 @@ class RecipeDetailSliverAppBar extends StatelessWidget {
         padding: const EdgeInsets.only(left: AppConstants.paddingScreen),
         child: Center(
           child: CircularHeaderButton(
-            icon: Icons.arrow_back_ios_new,
+            icon: LucideIcons.chevronLeft,
             onPressed: onBack,
           ),
         ),
@@ -48,7 +49,7 @@ class RecipeDetailSliverAppBar extends StatelessWidget {
           padding: const EdgeInsets.only(right: AppConstants.paddingScreen),
           child: Center(
             child: CircularHeaderButton(
-              icon: isFavorite ? Icons.favorite : Icons.favorite_border,
+              icon: isFavorite ? LucideIcons.heart : LucideIcons.heart,
               iconColor: isFavorite ? Colors.red : null,
               onPressed: onToggleFavorite,
             ),

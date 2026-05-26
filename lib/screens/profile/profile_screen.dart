@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
@@ -50,7 +51,7 @@ class ProfileScreen extends StatelessWidget {
             Text(userEmail, style: AppTextStyles.bodySmall),
             const SizedBox(height: AppConstants.spacingXl),
             ProfileMenuTile(
-              icon: Icons.person_outline,
+              icon: LucideIcons.user,
               title: AppStrings.editProfile,
               onTap: () => showPlaceholderSnackBar(
                 context,
@@ -58,7 +59,7 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             ProfileMenuTile(
-              icon: Icons.notifications_none_rounded,
+              icon: LucideIcons.bell,
               title: AppStrings.notificationSettings,
               onTap: () => showPlaceholderSnackBar(
                 context,
@@ -66,7 +67,7 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             ProfileMenuTile(
-              icon: Icons.help_outline_rounded,
+              icon: LucideIcons.helpCircle,
               title: AppStrings.help,
               onTap: () => showPlaceholderSnackBar(
                 context,
@@ -75,7 +76,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: AppConstants.spacingMd),
             ProfileMenuTile(
-              icon: Icons.logout_rounded,
+              icon: LucideIcons.logOut,
               title: AppStrings.logout,
               isDestructive: true,
               onTap: () {

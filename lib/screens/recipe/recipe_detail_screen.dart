@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
@@ -94,12 +95,12 @@ class _RecipeDetailBody extends StatelessWidget {
           child: Row(
             children: [
               RecipeInfoChip(
-                icon: Icons.access_time,
+                icon: LucideIcons.clock,
                 text: recipe.cookingTimeLabel,
               ),
               const SizedBox(width: AppConstants.spacingXl),
               RecipeInfoChip(
-                icon: Icons.restaurant,
+                icon: LucideIcons.utensils,
                 text: recipe.difficulty,
               ),
             ],
@@ -132,7 +133,7 @@ class _RecipeDetailBody extends StatelessWidget {
           const SizedBox(height: 20),
           PrimaryButton(
             text: 'Lihat Video',
-            icon: Icons.play_circle_fill,
+            icon: LucideIcons.playCircle,
             useGradient: true,
             onPressed: () => showPlaceholderSnackBar(
               context,
@@ -176,7 +177,7 @@ class _SourceLink extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.link, size: 20, color: AppColors.primary),
+              const Icon(LucideIcons.link, size: 20, color: AppColors.primary),
               const SizedBox(width: 12),
               Text(
                 _displayLabel,

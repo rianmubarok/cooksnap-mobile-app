@@ -74,12 +74,16 @@ class RecipeRecommendation {
   final int matchPercentage;
   final String matchText;
   final String? missingIngredientName;
+  final int matchedCount;
+  final int partialMatchedCount;
 
   const RecipeRecommendation({
     required this.recipe,
     required this.matchPercentage,
     required this.matchText,
     this.missingIngredientName,
+    this.matchedCount = 0,
+    this.partialMatchedCount = 0,
   });
 
   bool get isFullMatch => matchPercentage >= 100;

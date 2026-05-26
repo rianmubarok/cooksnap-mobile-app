@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
@@ -79,8 +80,8 @@ class _IngredientCategoryAccordionState
                     ),
                     Icon(
                       _isExpanded
-                          ? Icons.keyboard_arrow_up_rounded
-                          : Icons.keyboard_arrow_down_rounded,
+                          ? LucideIcons.chevronUp
+                          : LucideIcons.chevronDown,
                       color: AppColors.textSecondary,
                     ),
                   ],

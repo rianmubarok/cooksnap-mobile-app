@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -92,7 +93,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               alignment: Alignment.centerLeft,
               child: CircularHeaderButton(
                 onPressed: () => Navigator.pop(context),
-                icon: Icons.arrow_back_ios_new,
+                icon: LucideIcons.chevronLeft,
               ),
             ),
             const SizedBox(height: AppConstants.spacingMd),
@@ -103,7 +104,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             const SizedBox(height: AppConstants.spacingXl),
             CustomTextField(
               hintText: 'Nama Lengkap',
-              prefixIcon: Icons.person_outline,
+              prefixIcon: LucideIcons.user,
               controller: _nameController,
               large: true,
               validator: (value) {
@@ -114,7 +115,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             const SizedBox(height: AppConstants.spacingMd),
             CustomTextField(
               hintText: 'Alamat Email',
-              prefixIcon: Icons.email_outlined,
+              prefixIcon: LucideIcons.mail,
               keyboardType: TextInputType.emailAddress,
               controller: _emailController,
               large: true,
@@ -127,7 +128,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             const SizedBox(height: AppConstants.spacingMd),
             CustomTextField(
               hintText: 'Kata Sandi',
-              prefixIcon: Icons.lock_outline,
+              prefixIcon: LucideIcons.lock,
               isPassword: true,
               controller: _passwordController,
               large: true,
@@ -142,7 +143,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             const SizedBox(height: AppConstants.spacingMd),
             CustomTextField(
               hintText: 'Konfirmasi Kata Sandi',
-              prefixIcon: Icons.lock_outline,
+              prefixIcon: LucideIcons.lock,
               isPassword: true,
               controller: _confirmPasswordController,
               textInputAction: TextInputAction.done,

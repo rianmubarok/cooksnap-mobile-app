@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
@@ -41,21 +42,42 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   }
 
   void _runSearch(String query) {
-    final q = query.trim();
+    final q = query.trim().toLowerCase();
     if (q.isEmpty) return;
 
     final repo = context.read<RecipeRepository>();
     final all = repo.getAllRecipes();
-    final qLower = q.toLowerCase();
+    final words = q.split(' ').where((w) => w.isNotEmpty).toList();
+    
+    final scoredResults = <MapEntry<Recipe, int>>[];
+    
+    for (final r in all) {
+      final nameLower = r.recipeName.toLowerCase();
+      int score = 0;
+
+      // Exact phrase matches
+      if (nameLower == q) {
+        score += 100;
+      } else if (nameLower.contains(q)) {
+        score += 50;
+      }
+
+      // Individual word matches
+      for (final w in words) {
+        if (nameLower.contains(w)) score += 10;
+        if (r.tags.any((t) => t.toLowerCase().contains(w))) score += 5;
+        if (r.ingredients.any((i) => i.name.toLowerCase().contains(w))) score += 2;
+      }
+
+      if (score > 0) {
+        scoredResults.add(MapEntry(r, score));
+      }
+    }
+
+    scoredResults.sort((a, b) => b.value.compareTo(a.value));
     
     setState(() {
-      _results = all.where((r) {
-        return r.recipeName.toLowerCase().contains(qLower) ||
-            r.tags.any((t) => t.toLowerCase().contains(qLower)) ||
-            r.ingredients.any(
-              (i) => i.name.toLowerCase().contains(qLower),
-            );
-      }).toList();
+      _results = scoredResults.map((e) => e.key).toList();
     });
   }
 
@@ -78,7 +100,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CircularHeaderButton(
-                    icon: Icons.arrow_back_ios_new,
+                    icon: LucideIcons.chevronLeft,
                     onPressed: () => Navigator.pop(context),
                   ),
                   const SizedBox(width: AppConstants.spacingSm),
@@ -98,7 +120,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   ),
                   const SizedBox(width: AppConstants.spacingSm),
                   CircularHeaderButton(
-                    icon: Icons.tune_rounded,
+                    icon: LucideIcons.sliders,
                     onPressed: () {
                       // TODO: Implement filter sheet
                     },
@@ -117,7 +139,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     if (_results.isEmpty) {
       final q = _controller.text.trim();
       return EmptyStateView(
-        icon: Icons.sentiment_dissatisfied_outlined,
+        icon: LucideIcons.frown,
         title: 'Resep "$q" tidak ditemukan',
         subtitle: 'Coba kata kunci lain atau periksa ejaan',
       );
@@ -139,19 +161,27 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           ),
         ),
         Expanded(
-          child: GridView.builder(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppConstants.paddingScreen,
-            ),
-            itemCount: _results.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 16,
-              childAspectRatio: 0.65,
-            ),
-            itemBuilder: (context, index) {
-              return RecipeCardGrid(recipe: _results[index]);
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final itemWidth = (constraints.maxWidth - (AppConstants.paddingScreen * 2) - 12) / 2;
+              final itemHeight = itemWidth + 86;
+              final aspectRatio = itemWidth / itemHeight;
+
+              return GridView.builder(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppConstants.paddingScreen,
+                ),
+                itemCount: _results.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: aspectRatio,
+                ),
+                itemBuilder: (context, index) {
+                  return RecipeCardGrid(recipe: _results[index]);
+                },
+              );
             },
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 
@@ -13,10 +14,10 @@ class AppBottomNavBar extends StatelessWidget {
   });
 
   static const List<AppNavItem> items = [
-    AppNavItem(icon: Icons.home_rounded, semanticsLabel: 'Beranda'),
-    AppNavItem(icon: Icons.soup_kitchen_outlined, semanticsLabel: 'Input Bahan'),
-    AppNavItem(icon: Icons.bookmark_outline_rounded, semanticsLabel: 'Simpan'),
-    AppNavItem(icon: Icons.person_outline_rounded, semanticsLabel: 'Profil'),
+    AppNavItem(icon: LucideIcons.home, semanticsLabel: 'Beranda'),
+    AppNavItem(icon: LucideIcons.chefHat, semanticsLabel: 'Input Bahan'),
+    AppNavItem(icon: LucideIcons.bookmark, semanticsLabel: 'Simpan'),
+    AppNavItem(icon: LucideIcons.user, semanticsLabel: 'Profil'),
   ];
 
   @override

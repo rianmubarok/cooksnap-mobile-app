@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/app_colors.dart';
@@ -44,7 +45,7 @@ class ScannerControlsBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _ActionButton(
-            icon: Icons.photo_library_outlined,
+            icon: LucideIcons.image,
             label: 'Galeri',
             onTap: onGallery,
           ),
@@ -77,7 +78,7 @@ class ScannerControlsBar extends StatelessWidget {
                         );
                       }
                       return Icon(
-                        hasImage ? Icons.search : Icons.camera,
+                        hasImage ? LucideIcons.search : Icons.camera,
                         color: AppColors.white,
                         size: 28,
                       );
@@ -89,12 +90,12 @@ class ScannerControlsBar extends StatelessWidget {
           ),
           hasImage
               ? _ActionButton(
-                  icon: Icons.close,
+                  icon: LucideIcons.x,
                   label: 'Batal',
                   onTap: onClear,
                 )
               : _ActionButton(
-                  icon: Icons.flip_camera_ios_outlined,
+                  icon: LucideIcons.camera,
                   label: AppStrings.flipCamera,
                   onTap: () => _showComingSoon(context),
                 ),

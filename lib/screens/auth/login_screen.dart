@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_constants.dart';
@@ -84,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: AppConstants.spacingXl),
             CustomTextField(
               hintText: 'Alamat Email',
-              prefixIcon: Icons.email_outlined,
+              prefixIcon: LucideIcons.mail,
               keyboardType: TextInputType.emailAddress,
               controller: _emailController,
               large: true,
@@ -92,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: AppConstants.spacingMd),
             CustomTextField(
               hintText: 'Kata Sandi',
-              prefixIcon: Icons.lock_outline,
+              prefixIcon: LucideIcons.lock,
               isPassword: true,
               controller: _passwordController,
               textInputAction: TextInputAction.done,

@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
@@ -102,7 +103,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CircularHeaderButton(
-                    icon: Icons.arrow_back_ios_new,
+                    icon: LucideIcons.chevronLeft,
                     onPressed: () => Navigator.pop(context),
                   ),
                   const SizedBox(width: AppConstants.spacingSm),
@@ -145,7 +146,7 @@ class _SearchScreenState extends State<SearchScreen> {
             )
           else ...[
             ..._autocompleteSuggestions.map((s) => ListTile(
-              leading: const Icon(Icons.search, color: AppColors.textSecondary),
+              leading: const Icon(LucideIcons.search, color: AppColors.textSecondary),
               title: Text(s, style: AppTextStyles.bodyMedium),
               onTap: () => _runSearch(s),
               contentPadding: EdgeInsets.zero,

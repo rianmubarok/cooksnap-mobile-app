@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
@@ -161,7 +162,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
         backgroundColor: Colors.transparent,
         foregroundColor: AppColors.white,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+          icon: const Icon(LucideIcons.chevronLeft, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(

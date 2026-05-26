@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
@@ -77,7 +78,7 @@ class ScannerPreviewPanel extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Icon(
-                              Icons.camera_alt_outlined,
+                              LucideIcons.camera,
                               color: AppColors.white,
                               size: 48,
                             ),

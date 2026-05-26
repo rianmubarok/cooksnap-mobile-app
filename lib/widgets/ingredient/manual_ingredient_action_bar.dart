@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
@@ -42,14 +43,14 @@ class ManualIngredientActionBar extends StatelessWidget {
                   borderRadius: BorderRadius.circular(AppConstants.radiusLg),
                 ),
               ),
-              child: const Icon(Icons.camera_alt_outlined, size: 24),
+              child: const Icon(LucideIcons.camera, size: 24),
             ),
           ),
           const SizedBox(width: AppConstants.spacingMd),
           Expanded(
             child: FilledButton.icon(
               onPressed: onFindRecipes,
-              icon: const Icon(Icons.search_rounded, size: 24),
+              icon: const Icon(LucideIcons.search, size: 24),
               label: const Text('Cari Resep'),
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.chipBackground,

@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
@@ -47,12 +48,12 @@ class RecipeListTile extends StatelessWidget {
                   Row(
                     children: [
                       RecipeInfoChip(
-                        icon: Icons.timer_outlined,
+                        icon: LucideIcons.clock,
                         text: recipe.cookingTimeLabel,
                       ),
                       const SizedBox(width: 12),
                       RecipeInfoChip(
-                        icon: Icons.restaurant_menu_outlined,
+                        icon: LucideIcons.utensils,
                         text: recipe.difficulty,
                       ),
                     ],

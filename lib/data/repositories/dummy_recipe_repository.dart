@@ -33,16 +33,30 @@ class DummyRecipeRepository implements RecipeRepository {
 
     for (final recipe in _recipes) {
       var matched = 0;
+      var partialMatched = 0;
       String? firstMissing;
 
       for (final required in recipe.ingredients) {
+        final reqNameLower = required.name.toLowerCase();
         final found = detected.any(
-          (item) => StringUtils.ingredientMatches(required.name, item),
+          (item) => StringUtils.ingredientMatches(reqNameLower, item),
         );
+        
         if (found) {
           matched++;
         } else {
           firstMissing ??= required.name;
+          
+          // If they share any significant word (length > 3)
+          final reqWords = reqNameLower.split(RegExp(r'\s+')).where((w) => w.length > 3);
+          final isPartial = detected.any((item) {
+            final itemWords = item.toLowerCase().split(RegExp(r'\s+')).where((w) => w.length > 3);
+            return reqWords.any((rw) => itemWords.contains(rw));
+          });
+          
+          if (isPartial) {
+            partialMatched++;
+          }
         }
       }
 
@@ -59,13 +73,25 @@ class DummyRecipeRepository implements RecipeRepository {
               ? 'Semua bahan tersedia!'
               : 'Kurang ${total - matched} bahan',
           missingIngredientName: percentage >= 100 ? null : firstMissing,
+          matchedCount: matched,
+          partialMatchedCount: partialMatched,
         ),
       );
     }
 
-    recommendations.sort(
-      (a, b) => b.matchPercentage.compareTo(a.matchPercentage),
-    );
+    recommendations.sort((a, b) {
+      final pctCompare = b.matchPercentage.compareTo(a.matchPercentage);
+      if (pctCompare != 0) return pctCompare;
+      
+      final countCompare = b.matchedCount.compareTo(a.matchedCount);
+      if (countCompare != 0) return countCompare;
+
+      final partialCompare = b.partialMatchedCount.compareTo(a.partialMatchedCount);
+      if (partialCompare != 0) return partialCompare;
+
+      // Break ties by fewest total ingredients (simpler recipes show first)
+      return a.recipe.ingredients.length.compareTo(b.recipe.ingredients.length);
+    });
 
     return recommendations;
   }

@@ -1,3 +1,4 @@
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
@@ -69,7 +70,7 @@ class _RecipeRecommendationScreenState
                 highlightElevation: 0,
                 focusElevation: 0,
                 hoverElevation: 0,
-                icon: const Icon(Icons.check, color: AppColors.primary),
+                icon: const Icon(LucideIcons.check, color: AppColors.primary),
                 label: Text(
                   'Simpan Perubahan',
                   style: AppTextStyles.labelMedium.copyWith(
@@ -84,7 +85,7 @@ class _RecipeRecommendationScreenState
             padding: const EdgeInsets.only(left: AppConstants.paddingScreen),
             child: UnconstrainedBox(
               child: CircularHeaderButton(
-                icon: Icons.arrow_back_ios_new,
+                icon: LucideIcons.chevronLeft,
                 onPressed: () => Navigator.pop(context, _currentIngredients),
               ),
             ),
@@ -146,7 +147,7 @@ class _RecipeRecommendationScreenState
             if (data.validTotal == 0)
               const SliverFillRemaining(
                 child: EmptyStateView(
-                  icon: Icons.restaurant_menu_outlined,
+                  icon: LucideIcons.utensils,
                   title: 'Belum ada resep yang cocok',
                   subtitle:
                       'Coba pindai bahan lain atau tambah bahan manual',
@@ -163,7 +164,7 @@ class _RecipeRecommendationScreenState
                       16,
                     ),
                     child: Text(
-                      'Resep Spesifik',
+                      'Siap Dibuat',
                       style: AppTextStyles.sectionTitle,
                     ),
                   ),
@@ -241,7 +242,7 @@ class _RecipeRecommendationScreenState
                       16,
                     ),
                     child: Text(
-                      'Ditambah Bahan Dasar',
+                      'Butuh Tambahan Bahan',
                       style: AppTextStyles.sectionTitle,
                     ),
                   ),
