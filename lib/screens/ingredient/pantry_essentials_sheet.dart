@@ -107,7 +107,7 @@ class _PantryEssentialsSheetState extends State<PantryEssentialsSheet> {
                 const SizedBox(height: AppConstants.spacingSm),
                 Text(
                   'Bahan-bahan di bawah ini diasumsikan selalu tersedia di dapurmu.',
-                  style: AppTextStyles.bodySmall.copyWith(height: 1.5),
+                  style: AppTextStyles.bodyMedium.copyWith(height: 1.5),
                 ),
                 const SizedBox(height: AppConstants.spacingLg),
                 Row(
@@ -180,6 +180,7 @@ class _PantryEssentialsSheetState extends State<PantryEssentialsSheet> {
                     ),
                     const SizedBox(width: AppConstants.spacingSm),
                     SquareIconButton(
+                      size: 52,
                       onPressed: () => _addIngredient(pantryProvider),
                     ),
                   ],

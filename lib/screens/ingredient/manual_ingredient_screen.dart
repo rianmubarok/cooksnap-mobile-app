@@ -51,10 +51,7 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
 
   void _fillInput(String ingredient) {
     _ingredientController.text = ingredient;
-    _ingredientController.selection = TextSelection.collapsed(
-      offset: ingredient.length,
-    );
-    _focusNode.requestFocus();
+    _addIngredient();
   }
 
   void _showInvalidIngredientMessage(String raw) {
@@ -196,7 +193,10 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
                       ),
                     ),
                     const SizedBox(width: AppConstants.spacingSm),
-                    SquareIconButton(onPressed: _addIngredient),
+                    SquareIconButton(
+                      size: 52,
+                      onPressed: _addIngredient,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 12),

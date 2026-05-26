@@ -27,7 +27,7 @@ class SuggestionChip extends StatelessWidget {
           color: isSelected
               ? AppColors.primary.withValues(alpha: 0.1)
               : AppColors.cardBackground,
-          borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+          borderRadius: BorderRadius.circular(AppConstants.radiusRound),
           border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.border,
           ),

@@ -57,7 +57,7 @@ class RecipeRecommendationCard extends StatelessWidget {
                       recipe.description,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.bodySmall,
+                      style: AppTextStyles.bodyMedium,
                     ),
                     if (!recommendation.isFullMatch) ...[
                       const SizedBox(height: 12),

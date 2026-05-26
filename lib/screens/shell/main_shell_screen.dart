@@ -10,15 +10,54 @@ import '../ingredient/manual_ingredient_screen.dart';
 import '../../widgets/navigation/app_bottom_nav_bar.dart';
 
 /// Main app shell with shared bottom navigation across four tabs.
-class MainShellScreen extends StatelessWidget {
+class MainShellScreen extends StatefulWidget {
   const MainShellScreen({super.key});
 
-  static const List<Widget> _pages = [
-    HomeScreen(),
-    ManualIngredientScreen(),
-    FavoriteScreen(),
-    ProfileScreen(),
-  ];
+  @override
+  State<MainShellScreen> createState() => _MainShellScreenState();
+}
+
+class _MainShellScreenState extends State<MainShellScreen> {
+  final ScrollController _homeScrollController = ScrollController();
+  final GlobalKey<RefreshIndicatorState> _homeRefreshKey = GlobalKey<RefreshIndicatorState>();
+
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      HomeScreen(
+        scrollController: _homeScrollController,
+        refreshKey: _homeRefreshKey,
+      ),
+      const ManualIngredientScreen(),
+      const FavoriteScreen(),
+      const ProfileScreen(),
+    ];
+  }
+
+  @override
+  void dispose() {
+    _homeScrollController.dispose();
+    super.dispose();
+  }
+
+  void _onBottomNavTapped(int index) {
+    final provider = context.read<ShellNavigationProvider>();
+    if (index == 0 && provider.currentIndex == 0) {
+      if (_homeScrollController.hasClients) {
+        _homeScrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+        _homeRefreshKey.currentState?.show();
+      }
+    } else {
+      provider.selectTab(index);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +80,7 @@ class MainShellScreen extends StatelessWidget {
       ),
       bottomNavigationBar: AppBottomNavBar(
         currentIndex: currentIndex,
-        onIndexChanged: context.read<ShellNavigationProvider>().selectTab,
+        onIndexChanged: _onBottomNavTapped,
       ),
       ),
     );

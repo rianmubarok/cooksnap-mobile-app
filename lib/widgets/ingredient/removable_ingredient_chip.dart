@@ -19,17 +19,17 @@ class RemovableIngredientChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: AppConstants.chipHeight,
-      padding: const EdgeInsets.only(left: 14, right: 8),
+      padding: const EdgeInsets.only(left: 16, right: 8),
       decoration: BoxDecoration(
         color: AppColors.primary,
-        borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+        borderRadius: BorderRadius.circular(AppConstants.radiusRound),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             StringUtils.capitalizeWords(label),
-            style: AppTextStyles.labelMedium.copyWith(color: AppColors.white),
+            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.white),
           ),
           const SizedBox(width: 6),
           GestureDetector(

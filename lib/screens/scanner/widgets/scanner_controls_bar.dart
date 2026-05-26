@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/app_colors.dart';
 import '../../../core/app_strings.dart';
 import '../../../core/app_constants.dart';
+import '../../../core/app_text_styles.dart';
 import '../../../providers/ai_detection_provider.dart';
 
 class ScannerControlsBar extends StatelessWidget {
@@ -124,7 +125,7 @@ class _ActionButton extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             label,
-            style: const TextStyle(color: AppColors.white, fontSize: 14),
+            style: AppTextStyles.labelMedium.copyWith(color: AppColors.white),
           ),
         ],
       ),

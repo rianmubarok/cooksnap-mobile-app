@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_text_styles.dart';
+import '../../core/app_decorations.dart';
 import '../../data/repositories/recipe_repository.dart';
 import '../../providers/pantry_provider.dart';
 import '../../services/recipe_recommendation_service.dart';
@@ -10,6 +11,7 @@ import '../../widgets/common/empty_state_view.dart';
 import '../../widgets/ingredient/ingredient_tag_chip.dart';
 import '../../widgets/ingredient/suggestion_chip.dart';
 import '../../widgets/recipe/recipe_recommendation_card.dart';
+import '../../widgets/navigation/circular_header_button.dart';
 
 class RecipeRecommendationScreen extends StatefulWidget {
   final List<String> ingredients;
@@ -62,35 +64,64 @@ class _RecipeRecommendationScreenState
         floatingActionButton: _selectedSuggestions.isNotEmpty
             ? FloatingActionButton.extended(
                 onPressed: _applySuggestions,
-                backgroundColor: AppColors.primary,
+                backgroundColor: AppColors.chipBackground,
                 elevation: 0,
                 highlightElevation: 0,
                 focusElevation: 0,
                 hoverElevation: 0,
-                icon: const Icon(Icons.check, color: AppColors.white),
+                icon: const Icon(Icons.check, color: AppColors.primary),
                 label: Text(
                   'Simpan Perubahan',
                   style: AppTextStyles.labelMedium.copyWith(
-                    color: AppColors.white,
+                    color: AppColors.primary,
                   ),
                 ),
               )
             : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context, _currentIngredients),
+          leading: Padding(
+            padding: const EdgeInsets.only(left: AppConstants.paddingScreen),
+            child: UnconstrainedBox(
+              child: CircularHeaderButton(
+                icon: Icons.arrow_back_ios_new,
+                onPressed: () => Navigator.pop(context, _currentIngredients),
+              ),
+            ),
           ),
+          leadingWidth: 72,
           title: Text(
             'Resep Rekomendasi',
-            style: AppTextStyles.h3.copyWith(color: AppColors.textOnPrimary),
+            style: AppTextStyles.h3.copyWith(color: AppColors.primary),
           ),
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.textOnPrimary,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [AppColors.chipBackground, AppColors.background],
+              ),
+            ),
+          ),
+          backgroundColor: Colors.transparent,
+          foregroundColor: AppColors.primary,
+          elevation: 0,
         ),
-        body: CustomScrollView(
-          slivers: [
+        body: ShaderMask(
+            shaderCallback: (Rect bounds) {
+              return LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: const [
+                  Colors.transparent,
+                  Colors.black,
+                ],
+                stops: [0.0, bounds.height > 0 ? 24.0 / bounds.height : 0.05],
+              ).createShader(bounds);
+            },
+            blendMode: BlendMode.dstIn,
+            child: CustomScrollView(
+              slivers: [
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(
@@ -241,7 +272,8 @@ class _RecipeRecommendationScreenState
             ),
           ],
         ),
-      ),
+          ),
+        ),
     );
   }
 }
@@ -256,7 +288,7 @@ class _IngredientsPanel extends StatelessWidget {
     if (ingredients.isEmpty) {
       return const Text(
         'Tidak ada bahan',
-        style: AppTextStyles.bodySmall,
+        style: AppTextStyles.bodyMedium,
       );
     }
 

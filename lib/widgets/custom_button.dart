@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
 import '../core/app_constants.dart';
+import '../core/app_text_styles.dart';
 
 /// Primary filled button with gradient option
 class PrimaryButton extends StatelessWidget {
@@ -71,12 +72,7 @@ class PrimaryButton extends StatelessWidget {
                         ],
                         Text(
                           text,
-                          style: const TextStyle(
-                            color: AppColors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            letterSpacing: -0.6,
-                          ),
+                          style: AppTextStyles.buttonLarge.copyWith(color: AppColors.white),
                         ),
                       ],
                     ),

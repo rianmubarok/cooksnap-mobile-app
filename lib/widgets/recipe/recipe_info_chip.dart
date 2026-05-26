@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
+import '../../core/app_text_styles.dart';
 
 /// Compact icon + label chip used across recipe cards and detail screens.
 ///
@@ -31,8 +32,7 @@ class RecipeInfoChip extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           text,
-          style: TextStyle(
-            fontSize: 14,
+          style: AppTextStyles.bodyMedium.copyWith(
             color: AppColors.textSecondary,
             fontWeight: outlined ? FontWeight.w500 : FontWeight.w400,
           ),

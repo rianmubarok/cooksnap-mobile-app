@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
+import '../../core/app_text_styles.dart';
 import '../../models/recipe_model.dart';
 import '../navigation/circular_header_button.dart';
 
@@ -28,13 +29,9 @@ class RecipeDetailSliverAppBar extends StatelessWidget {
       backgroundColor: AppColors.primary,
       foregroundColor: AppColors.white,
       systemOverlayStyle: SystemUiOverlayStyle.light,
-      title: const Text(
+      title: Text(
         'Detail Resep',
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w500,
-          color: Colors.white,
-        ),
+        style: AppTextStyles.sectionTitle.copyWith(color: AppColors.white),
       ),
       leadingWidth: 40 + AppConstants.paddingScreen,
       leading: Padding(
@@ -119,16 +116,16 @@ class _PlaceholderHero extends StatelessWidget {
           colors: [AppColors.primary, AppColors.primaryLight],
         ),
       ),
-      child: const Center(
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 40),
-            Text('🍽️', style: TextStyle(fontSize: 72)),
-            SizedBox(height: 8),
+            const SizedBox(height: 40),
+            const Text('🍽️', style: TextStyle(fontSize: 72)),
+            const SizedBox(height: 8),
             Text(
               'Foto Resep',
-              style: TextStyle(color: Colors.white54, fontSize: 14),
+              style: AppTextStyles.bodyMedium.copyWith(color: Colors.white54),
             ),
           ],
         ),

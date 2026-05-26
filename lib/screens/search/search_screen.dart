@@ -4,11 +4,11 @@ import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_text_styles.dart';
 import '../../data/repositories/recipe_repository.dart';
-import '../../models/recipe_model.dart';
-import '../../widgets/common/empty_state_view.dart';
+import '../../widgets/common/app_chip.dart';
+import '../../widgets/common/section_action_link.dart';
 import '../../widgets/navigation/circular_header_button.dart';
-import '../../widgets/recipe/recipe_list_tile.dart';
 import '../../widgets/search/recipe_search_field.dart';
+import '../../core/app_routes.dart';
 
 class SearchScreen extends StatefulWidget {
   final String initialQuery;
@@ -21,16 +21,23 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   late final TextEditingController _controller;
-  late List<Recipe> _results;
+  // Search Hub States
+  List<String> _autocompleteSuggestions = [];
+  
+  // Mock Data for Zero-State
+  final List<String> _recentSearches = ['Nasi Goreng', 'Ayam Bakar', 'Soto Ayam'];
+  final List<String> _popularSearches = ['Rendang', 'Sate Ayam', 'Opor Ayam', 'Sambal Goreng'];
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.initialQuery);
-    _results = [];
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _runSearch(widget.initialQuery);
-    });
+    
+    if (widget.initialQuery.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _runSearch(widget.initialQuery);
+      });
+    }
   }
 
   @override
@@ -39,21 +46,41 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
-  void _runSearch(String query) {
+  void _onChanged(String query) {
+    
+    final q = query.trim().toLowerCase();
+    if (q.isEmpty) {
+      setState(() => _autocompleteSuggestions = []);
+      return;
+    }
+    
+    // Simulate "ajax" autocomplete by searching recipe names
     final repo = context.read<RecipeRepository>();
     final all = repo.getAllRecipes();
-    final q = query.trim().toLowerCase();
+    final suggestions = all
+        .where((r) => r.recipeName.toLowerCase().contains(q))
+        .map((r) => r.recipeName)
+        .take(6)
+        .toList();
+        
     setState(() {
-      _results = q.isEmpty
-          ? all
-          : all.where((r) {
-              return r.recipeName.toLowerCase().contains(q) ||
-                  r.tags.any((t) => t.toLowerCase().contains(q)) ||
-                  r.ingredients.any(
-                    (i) => i.name.toLowerCase().contains(q),
-                  );
-            }).toList();
+      _autocompleteSuggestions = suggestions;
     });
+  }
+
+  void _runSearch(String query) {
+    final q = query.trim();
+    if (q.isEmpty) return;
+
+    // Update History
+    if (!_recentSearches.contains(q)) {
+      setState(() {
+        _recentSearches.insert(0, q);
+        if (_recentSearches.length > 5) _recentSearches.removeLast();
+      });
+    }
+
+    Navigator.pushNamed(context, AppRoutes.searchResult, arguments: q);
   }
 
   @override
@@ -84,7 +111,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       controller: _controller,
                       clearable: true,
                       autofocus: widget.initialQuery.isEmpty,
-                      onChanged: _runSearch,
+                      onChanged: _onChanged,
                       onSubmitted: _runSearch,
                     ),
                   ),
@@ -99,47 +126,72 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _buildBody() {
-    if (_results.isEmpty) {
-      final q = _controller.text.trim();
-      return EmptyStateView(
-        icon: q.isEmpty
-            ? Icons.search_rounded
-            : Icons.sentiment_dissatisfied_outlined,
-        title: q.isEmpty
-            ? 'Ketik untuk mencari resep'
-            : 'Resep "$q" tidak ditemukan',
-        subtitle: q.isEmpty
-            ? 'Cari berdasarkan nama, kategori, atau bahan'
-            : 'Coba kata kunci lain atau periksa ejaan',
-      );
-    }
+    final q = _controller.text.trim();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(
+        AppConstants.paddingScreen,
+        0,
+        AppConstants.paddingScreen,
+        AppConstants.paddingScreen,
+      ),
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(
-            AppConstants.paddingScreen,
-            0,
-            AppConstants.paddingScreen,
-            AppConstants.spacingSm,
-          ),
-          child: Text(
-            '${_results.length} resep ditemukan',
-            style: AppTextStyles.labelMedium,
-          ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppConstants.paddingScreen,
+        // Autocomplete State
+        if (q.isNotEmpty) ...[
+          if (_autocompleteSuggestions.isEmpty)
+            const Padding(
+              padding: EdgeInsets.only(bottom: 24),
+              child: Text('Tekan enter untuk mencari...', style: AppTextStyles.bodyMedium),
+            )
+          else ...[
+            ..._autocompleteSuggestions.map((s) => ListTile(
+              leading: const Icon(Icons.search, color: AppColors.textSecondary),
+              title: Text(s, style: AppTextStyles.bodyMedium),
+              onTap: () => _runSearch(s),
+              contentPadding: EdgeInsets.zero,
+              visualDensity: VisualDensity.compact,
+            )),
+            const SizedBox(height: 24),
+          ],
+        ],
+        
+        // Zero-State (History & Popular)
+        if (q.isEmpty) ...[
+          if (_recentSearches.isNotEmpty) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Pencarian Terakhir', style: AppTextStyles.sectionTitle),
+                SectionActionLink(
+                  label: 'Hapus',
+                  onTap: () => setState(() => _recentSearches.clear()),
+                ),
+              ],
             ),
-            itemCount: _results.length,
-            itemBuilder: (context, index) {
-              return RecipeListTile(recipe: _results[index]);
-            },
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: _recentSearches.map((s) => AppChip(
+                label: s,
+                selected: false,
+                onTap: () => _runSearch(s),
+              )).toList(),
+            ),
+            const SizedBox(height: 32),
+          ],
+          const Text('Pencarian Populer', style: AppTextStyles.sectionTitle),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: _popularSearches.map((s) => AppChip(
+              label: s,
+              selected: false,
+              onTap: () => _runSearch(s),
+            )).toList(),
           ),
-        ),
+        ],
       ],
     );
   }

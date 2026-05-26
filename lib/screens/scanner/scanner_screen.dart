@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_strings.dart';
+import '../../core/app_text_styles.dart';
 import '../../providers/ai_detection_provider.dart';
 import 'widgets/scan_result_bottom_sheet.dart';
 import 'widgets/scanner_controls_bar.dart';
@@ -163,13 +164,9 @@ class _ScannerScreenState extends State<ScannerScreen> {
           icon: const Icon(Icons.arrow_back_ios_new, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           AppStrings.scanIngredientsTitle,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-            color: AppColors.white,
-          ),
+          style: AppTextStyles.h4.copyWith(color: AppColors.white),
         ),
       ),
       body: Column(

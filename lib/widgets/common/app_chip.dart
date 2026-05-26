@@ -24,7 +24,6 @@ class AppChip extends StatelessWidget {
         duration: AppConstants.animFast,
         height: AppConstants.chipHeight,
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        alignment: Alignment.center,
         decoration: BoxDecoration(
           color: selected ? AppColors.primary : AppColors.cardBackground,
           borderRadius: BorderRadius.circular(AppConstants.radiusRound),
@@ -32,12 +31,17 @@ class AppChip extends StatelessWidget {
             color: selected ? AppColors.primary : AppColors.border,
           ),
         ),
-        child: Text(
-          label,
-          style: AppTextStyles.bodyMedium.copyWith(
-            fontWeight: selected ? FontWeight.w500 : FontWeight.w400,
-            color: selected ? AppColors.white : AppColors.textPrimary,
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: AppTextStyles.bodyMedium.copyWith(
+                fontWeight: selected ? FontWeight.w500 : FontWeight.w400,
+                color: selected ? AppColors.white : AppColors.textPrimary,
+              ),
+            ),
+          ],
         ),
       ),
     );

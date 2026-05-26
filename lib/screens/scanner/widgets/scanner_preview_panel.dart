@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import '../../../core/app_colors.dart';
 import '../../../core/app_constants.dart';
+import '../../../core/app_text_styles.dart';
 
 class ScannerPreviewPanel extends StatelessWidget {
   final Uint8List? imageBytes;
@@ -53,21 +54,21 @@ class ScannerPreviewPanel extends StatelessWidget {
                     ),
                     borderRadius: BorderRadius.circular(AppConstants.radiusLg),
                   ),
-                  child: const Stack(
+                  child: Stack(
                     children: [
-                      _ScannerCorner(
+                      const _ScannerCorner(
                         alignment: Alignment.topLeft,
                         borderRadius: BorderRadius.only(topLeft: Radius.circular(AppConstants.radiusLg)),
                       ),
-                      _ScannerCorner(
+                      const _ScannerCorner(
                         alignment: Alignment.topRight,
                         borderRadius: BorderRadius.only(topRight: Radius.circular(AppConstants.radiusLg)),
                       ),
-                      _ScannerCorner(
+                      const _ScannerCorner(
                         alignment: Alignment.bottomLeft,
                         borderRadius: BorderRadius.only(bottomLeft: Radius.circular(AppConstants.radiusLg)),
                       ),
-                      _ScannerCorner(
+                      const _ScannerCorner(
                         alignment: Alignment.bottomRight,
                         borderRadius: BorderRadius.only(bottomRight: Radius.circular(AppConstants.radiusLg)),
                       ),
@@ -75,20 +76,16 @@ class ScannerPreviewPanel extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.camera_alt_outlined,
                               color: AppColors.white,
                               size: 48,
                             ),
-                            SizedBox(height: 12),
+                            const SizedBox(height: 12),
                             Text(
                               'Arahkan kamera ke\nbahan makanan',
                               textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: AppColors.white,
-                                fontSize: 14,
-                                height: 1.5,
-                              ),
+                              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.white),
                             ),
                           ],
                         ),
@@ -117,10 +114,10 @@ class ScannerPreviewPanel extends StatelessWidget {
                 ],
               ),
             ),
-            child: const Text(
+            child: Text(
               'AI akan mendeteksi bahan makanan secara otomatis',
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.white, fontSize: 14),
+              style: AppTextStyles.bodyMedium.copyWith(color: AppColors.white),
             ),
           ),
         ),

@@ -11,11 +11,11 @@ class AppTextStyles {
 
   // Headings
   static const TextStyle headlineDisplay = TextStyle(
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
     height: 1.2,
-    letterSpacing: -1.5,
+    letterSpacing: -1.0,
   );
 
   /// Auth screen title — alias for [headlineDisplay].
@@ -23,22 +23,22 @@ class AppTextStyles {
 
   /// Section headers on home and tab screens.
   static const TextStyle sectionTitle = TextStyle(
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
     height: 1.2,
-    letterSpacing: -1.2,
+    letterSpacing: -0.8,
   );
 
   static const TextStyle h3 = TextStyle(
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
     height: 1.3,
   );
 
   static const TextStyle h4 = TextStyle(
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
     height: 1.4,
@@ -46,7 +46,7 @@ class AppTextStyles {
 
   // Body
   static const TextStyle bodyLarge = TextStyle(
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: FontWeight.w400,
     color: AppColors.textPrimary,
     height: 1.5,
@@ -60,7 +60,7 @@ class AppTextStyles {
   );
 
   static const TextStyle bodySmall = TextStyle(
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
     height: 1.4,
@@ -68,71 +68,71 @@ class AppTextStyles {
 
   /// Subtitle under auth titles and muted descriptions.
   static const TextStyle subtitleMuted = TextStyle(
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: FontWeight.w400,
     color: AppColors.grey666,
     height: 1.4,
-    letterSpacing: -0.4,
+    letterSpacing: -0.6,
   );
 
   /// Home greeting line.
   static const TextStyle greeting = TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeight.w500,
-    color: AppColors.textPrimary,
-    height: 1.4,
-    letterSpacing: -1,
-  );
-  // Labels
-  static const TextStyle labelLarge = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
-    letterSpacing: 0.3,
+    height: 1.4,
+    letterSpacing: -0.5,
+  );
+  
+  // Labels
+  static const TextStyle labelLarge = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
+    color: AppColors.textPrimary,
+    letterSpacing: 0.2,
   );
 
   static const TextStyle labelMedium = TextStyle(
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
   );
 
   static const TextStyle labelSmall = TextStyle(
-    fontSize: 14,
+    fontSize: 11,
     fontWeight: FontWeight.w500,
     color: AppColors.textSecondary,
-    letterSpacing: 0.5,
+    letterSpacing: 0.3,
   );
 
   // Button Text
   static const TextStyle buttonLarge = TextStyle(
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: FontWeight.w500,
-    letterSpacing: 0.5,
+    letterSpacing: 0.3,
     height: 1.0,
   );
 
   static const TextStyle buttonSmall = TextStyle(
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: FontWeight.w500,
-    letterSpacing: 0.3,
+    letterSpacing: 0.2,
     height: 1.0,
   );
 
   // Caption
   static const TextStyle caption = TextStyle(
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: FontWeight.w400,
     color: AppColors.textHint,
-    letterSpacing: 0.3,
+    letterSpacing: 0.2,
   );
 
   /// Underlined inline link (auth footer, forgot password).
   static const TextStyle link = TextStyle(
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: FontWeight.w500,
     decoration: TextDecoration.underline,
     color: AppColors.textPrimary,
   );
 }
-

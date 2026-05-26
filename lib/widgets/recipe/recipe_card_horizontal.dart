@@ -20,7 +20,7 @@ class RecipeCardHorizontal extends StatelessWidget {
       onTap: () => context.openRecipeDetail(recipe.id),
       child: Container(
         width: 240,
-        margin: const EdgeInsets.only(right: 16),
+        margin: const EdgeInsets.only(right: 12),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(AppConstants.radiusLg),
           child: Stack(

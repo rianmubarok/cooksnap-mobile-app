@@ -68,7 +68,7 @@ class RecipeIngredientsSection extends StatelessWidget {
                 Expanded(
                   child: Text(
                     ing.name,
-                    style: AppTextStyles.labelMedium.copyWith(
+                    style: AppTextStyles.bodyMedium.copyWith(
                       decoration: TextDecoration.underline,
                       color: AppColors.textPrimary,
                     ),
@@ -76,7 +76,9 @@ class RecipeIngredientsSection extends StatelessWidget {
                 ),
                 Text(
                   '${ing.quantity} ${ing.unit}',
-                  style: AppTextStyles.labelMedium,
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: AppColors.grey666,
+                  ),
                 ),
               ],
             ),

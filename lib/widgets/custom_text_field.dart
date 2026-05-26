@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
 import '../core/app_constants.dart';
+import '../core/app_text_styles.dart';
 
 /// Reusable text input field with icon and validation
 class CustomTextField extends StatefulWidget {
@@ -44,8 +45,8 @@ class CustomTextField extends StatefulWidget {
     this.focusNode,
   });
 
-  static const double largeFontSize = 18;
-  static const double largeMinHeight = 60;
+  static const double largeFontSize = 16;
+  static const double largeMinHeight = 52;
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -100,15 +101,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
     if (widget.clearable || widget.animatedHints != null) setState(() {});
   }
 
-  double get _fontSize => widget.large ? CustomTextField.largeFontSize : 15;
+  double get _fontSize => widget.large ? CustomTextField.largeFontSize : 14;
 
-  double get _iconSize => widget.iconSize ?? (widget.large ? 20 : 18);
+  double get _iconSize => widget.iconSize ?? (widget.large ? 18 : 16);
 
   double get _horizontalPadding =>
       widget.large ? AppConstants.paddingScreen : AppConstants.spacingMd;
 
   EdgeInsets get _prefixIconPadding => EdgeInsets.only(
-        left: widget.large ? 18 : 14,
+        left: widget.large ? 16 : 12,
         right: widget.large ? 10 : 8,
       );
 
@@ -170,11 +171,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         if (widget.labelText != null) ...[
           Text(
             widget.labelText!,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textPrimary,
-            ),
+            style: AppTextStyles.labelLarge,
           ),
           const SizedBox(height: AppConstants.spacingSm),
         ],
@@ -188,7 +185,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           onFieldSubmitted: widget.onSubmitted,
           onChanged: widget.onChanged,
           validator: widget.validator,
-          style: TextStyle(
+          style: AppTextStyles.bodyLarge.copyWith(
             fontSize: _fontSize,
             color: AppColors.textPrimary,
           ),
@@ -221,7 +218,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     child: Text(
                       widget.animatedHints![_currentHintIndex],
                       key: ValueKey<int>(_currentHintIndex),
-                      style: TextStyle(
+                      style: AppTextStyles.bodyLarge.copyWith(
                         color: AppColors.textHint,
                         fontSize: _fontSize,
                       ),
@@ -232,13 +229,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 ? FloatingLabelBehavior.never
                 : null,
             hintText: widget.animatedHints != null ? null : widget.hintText,
-            hintStyle: TextStyle(
+            hintStyle: AppTextStyles.bodyLarge.copyWith(
               color: AppColors.textHint,
               fontSize: _fontSize,
             ),
             contentPadding: EdgeInsets.symmetric(
               horizontal: _horizontalPadding,
-              vertical: widget.large ? 18 : AppConstants.spacingMd,
+              vertical: widget.large ? 14 : 12,
             ),
             constraints: widget.large
                 ? const BoxConstraints(minHeight: CustomTextField.largeMinHeight)

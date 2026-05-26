@@ -110,7 +110,10 @@ class _RecipeDetailBody extends StatelessWidget {
         const SizedBox(height: AppConstants.spacingMd),
         Text(
           recipe.description,
-          style: AppTextStyles.bodySmall.copyWith(height: 1.6),
+          style: AppTextStyles.bodyMedium.copyWith(
+            height: 1.6,
+            color: AppColors.grey666,
+          ),
         ),
         const SizedBox(height: 20),
         RecipeIngredientsSection(

@@ -70,7 +70,7 @@ class EmptyStateView extends StatelessWidget {
               Text(
                 subtitle!,
                 textAlign: TextAlign.center,
-                style: AppTextStyles.bodySmall.copyWith(height: 1.5),
+                style: AppTextStyles.bodyMedium.copyWith(height: 1.5),
               ),
             ],
           ],

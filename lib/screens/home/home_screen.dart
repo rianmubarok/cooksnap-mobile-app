@@ -17,7 +17,14 @@ import 'home_recipe_tags.dart';
 
 /// Home tab — recipes, categories, and sections.
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final ScrollController? scrollController;
+  final GlobalKey<RefreshIndicatorState>? refreshKey;
+
+  const HomeScreen({
+    super.key,
+    this.scrollController,
+    this.refreshKey,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -57,59 +64,82 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         Expanded(
           child: RefreshIndicator(
+            key: widget.refreshKey,
             onRefresh: _onRefresh,
             color: AppColors.primary,
             backgroundColor: AppColors.cardBackground,
             strokeWidth: 2.5,
-            child: SingleChildScrollView(
+            child: CustomScrollView(
+              controller: widget.scrollController,
               physics: const AlwaysScrollableScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  HomeHeader(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: HomeHeader(
                     firstName: context.watch<UserProvider>().firstName,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppConstants.paddingScreen,
-                      vertical: 12,
+                ),
+                SliverAppBar(
+                  floating: true,
+                  snap: true,
+                  elevation: 0,
+                  backgroundColor: Colors.transparent,
+                  surfaceTintColor: Colors.transparent,
+                  automaticallyImplyLeading: false,
+                  toolbarHeight: 120,
+                  flexibleSpace: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppConstants.paddingScreen,
+                            vertical: 12,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.search,
+                                arguments: '',
+                              );
+                            },
+                            child: const AbsorbPointer(
+                              child: RecipeSearchField(),
+                            ),
+                          ),
+                        ),
+                        _TagFilterRow(
+                          tags: _displayTags,
+                          selectedIndex: _selectedTagIndex,
+                          onSelected: (index) =>
+                              setState(() => _selectedTagIndex = index),
+                        ),
+                      ],
                     ),
-                    child: RecipeSearchField(
-                      onSubmitted: (query) {
-                        if (query.trim().isNotEmpty) {
-                          Navigator.pushNamed(
-                            context,
-                            AppRoutes.search,
-                            arguments: query.trim(),
-                          );
-                        }
-                      },
-                    ),
                   ),
-                  _TagFilterRow(
-                    tags: _displayTags,
-                    selectedIndex: _selectedTagIndex,
-                    onSelected: (index) =>
-                        setState(() => _selectedTagIndex = index),
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _SectionHeader(
+                        title: 'Resep Populer',
+                        topPadding: 16,
+                        onSeeAll: () => Navigator.pushNamed(
+                          context,
+                          AppRoutes.search,
+                          arguments: '',
+                        ),
+                      ),
+                      _PopularRecipesRow(recipes: filteredRecipes),
+                      const _SectionHeader(
+                        title: 'Untuk Kamu',
+                        topPadding: 20,
+                      ),
+                      _RecentRecipesGrid(recipes: filteredRecipes),
+                      const SizedBox(height: AppConstants.spacingXl),
+                    ],
                   ),
-                  _SectionHeader(
-                    title: 'Resep Populer',
-                    topPadding: 16,
-                    onSeeAll: () => Navigator.pushNamed(
-                      context,
-                      AppRoutes.search,
-                      arguments: '',
-                    ),
-                  ),
-                  _PopularRecipesRow(recipes: filteredRecipes),
-                  const _SectionHeader(
-                    title: 'Resep Terbaru',
-                    topPadding: 20,
-                  ),
-                  _RecentRecipesGrid(recipes: filteredRecipes),
-                  const SizedBox(height: AppConstants.spacingXl),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -228,7 +258,7 @@ class _RecentRecipesGrid extends StatelessWidget {
           child: Text(
             'Tidak ada resep yang cocok\ndengan filter yang dipilih.',
             textAlign: TextAlign.center,
-            style: AppTextStyles.bodySmall.copyWith(height: 1.6),
+            style: AppTextStyles.bodyMedium.copyWith(height: 1.6),
           ),
         ),
       );
@@ -238,17 +268,27 @@ class _RecentRecipesGrid extends StatelessWidget {
       padding: const EdgeInsets.symmetric(
         horizontal: AppConstants.paddingScreen,
       ),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: recent.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 16,
-          childAspectRatio: 0.72,
-        ),
-        itemBuilder: (context, index) => RecipeCardGrid(recipe: recent[index]),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final itemWidth = (constraints.maxWidth - 12) / 2;
+          // Calculate exact height needed: itemWidth (image) + ~86px for text and chips
+          final itemHeight = itemWidth + 86;
+          final aspectRatio = itemWidth / itemHeight;
+
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: recent.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: aspectRatio,
+            ),
+            itemBuilder: (context, index) =>
+                RecipeCardGrid(recipe: recent[index]),
+          );
+        },
       ),
     );
   }

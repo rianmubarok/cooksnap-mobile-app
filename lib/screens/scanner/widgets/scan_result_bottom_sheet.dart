@@ -82,7 +82,7 @@ void showScanResultBottomSheet(
                           child: Text(
                             'Tidak ada bahan makanan yang terdeteksi.',
                             textAlign: TextAlign.center,
-                            style: AppTextStyles.bodySmall,
+                            style: AppTextStyles.bodyMedium,
                           ),
                         )
                       else
