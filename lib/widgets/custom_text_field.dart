@@ -26,6 +26,7 @@ class CustomTextField extends StatefulWidget {
   final double? iconSize;
   final List<String>? animatedHints;
   final FocusNode? focusNode;
+  final bool readOnly;
 
   const CustomTextField({
     super.key,
@@ -45,6 +46,7 @@ class CustomTextField extends StatefulWidget {
     this.iconSize,
     this.animatedHints,
     this.focusNode,
+    this.readOnly = false,
   });
 
   static const double largeMinHeight = 52;
@@ -176,6 +178,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
           focusNode: widget.focusNode,
           autofocus: widget.autofocus,
           obscureText: widget.isPassword ? _obscureText : false,
+          readOnly: widget.readOnly,
+          enabled: !widget.readOnly,
           keyboardType: widget.keyboardType,
           textInputAction: widget.textInputAction,
           onFieldSubmitted: widget.onSubmitted,
@@ -183,10 +187,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
           validator: widget.validator,
           style: (widget.large ? AppTextStyles.h3 : AppTextStyles.bodyMedium)
               .copyWith(
-            color: AppColors.textPrimary,
+            color: widget.readOnly ? AppColors.textSecondary : AppColors.textPrimary,
             fontWeight: FontWeight.w400,
           ),
           decoration: InputDecoration(
+            fillColor: widget.readOnly ? AppColors.divider.withValues(alpha: 0.5) : null,
             label: widget.animatedHints != null
                 ? AnimatedSwitcher(
                     duration: const Duration(milliseconds: 500),
@@ -241,7 +246,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 : null,
             border: _outlineBorder(AppColors.border),
             enabledBorder: _outlineBorder(AppColors.border),
-            focusedBorder: _outlineBorder(AppColors.primary, width: 2),
+            disabledBorder: _outlineBorder(AppColors.border),
+            focusedBorder: _outlineBorder(AppColors.border),
             errorBorder: _outlineBorder(AppColors.error),
             focusedErrorBorder: _outlineBorder(AppColors.error, width: 2),
             prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),

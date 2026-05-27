@@ -8,10 +8,11 @@ import '../../core/app_routes.dart';
 import '../../core/app_text_styles.dart';
 import '../../providers/user_provider.dart';
 import '../../utils/auth_mock.dart';
-import '../../utils/placeholder_snackbar.dart';
+
 import '../../widgets/auth/auth_footer_link.dart';
 import '../../widgets/auth/auth_header.dart';
 import '../../widgets/auth/auth_screen_layout.dart';
+import '../../widgets/auth/terms_conditions_sheet.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/navigation/circular_header_button.dart';
@@ -69,11 +70,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() => _isLoading = true);
     await runMockAuth(context, onComplete: () {
       setState(() => _isLoading = false);
-      context.read<UserProvider>().setUser(
-            _nameController.text.trim(),
-            _emailController.text.trim(),
-          );
-      Navigator.pushReplacementNamed(context, AppRoutes.home);
+      // Removed context.read<UserProvider>().setUser(...) because the user needs to verify their email first
+      final email = _emailController.text.trim();
+      Navigator.pushReplacementNamed(
+        context,
+        AppRoutes.verifyEmail,
+        arguments: email,
+      );
     });
   }
 
@@ -207,10 +210,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     text: 'Syarat & Ketentuan',
                     style: AppTextStyles.link,
                     recognizer: TapGestureRecognizer()
-                      ..onTap = () => showPlaceholderSnackBar(
-                            context,
-                            'Fitur syarat & ketentuan segera hadir',
-                          ),
+                      ..onTap = () => showTermsConditionsSheet(context),
                   ),
                   const TextSpan(text: ' CookSnap'),
                 ],

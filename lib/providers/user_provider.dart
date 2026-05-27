@@ -63,6 +63,16 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateProfile(String name, String email) async {
+    _name = name;
+    _email = email;
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyName, name);
+    await prefs.setString(_keyEmail, email);
+    notifyListeners();
+  }
+
   Future<void> completeOnboarding() async {
     _hasCompletedOnboarding = true;
     final prefs = await SharedPreferences.getInstance();

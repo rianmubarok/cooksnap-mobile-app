@@ -34,8 +34,8 @@ class ProfileMenuTile extends StatelessWidget {
           children: [
             Icon(
               icon,
-              size: 22,
-              color: isDestructive ? AppColors.error : AppColors.primary,
+              size: 20,
+              color: isDestructive ? AppColors.error : AppColors.textHint,
             ),
             const SizedBox(width: AppConstants.spacingMd),
             Expanded(

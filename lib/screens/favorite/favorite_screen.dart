@@ -18,9 +18,28 @@ class FavoriteScreen extends StatefulWidget {
 }
 
 class _FavoriteScreenState extends State<FavoriteScreen> {
+  final _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final favorites = context.watch<FavoritesProvider>().favoriteRecipes;
+    final allFavorites = context.watch<FavoritesProvider>().favoriteRecipes;
+    final favorites = _searchQuery.isEmpty
+        ? allFavorites
+        : allFavorites
+            .where((r) => r.recipeName.toLowerCase().contains(_searchQuery))
+            .toList();
 
     return TabPageScaffold(
       title: 'Resep Favorit',
@@ -32,17 +51,22 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
               horizontal: AppConstants.paddingScreen,
               vertical: 12,
             ),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  AppRoutes.search,
-                  arguments: '',
-                );
+            child: RecipeSearchField(
+              controller: _searchController,
+              clearable: true,
+              onSubmitted: (value) {
+                setState(() {
+                  _searchQuery = value.trim().toLowerCase();
+                });
               },
-              child: const AbsorbPointer(
-                child: RecipeSearchField(),
-              ),
+              onChanged: (value) {
+                // Also clear the search results when the user presses the 'x' button (which clears the text)
+                if (value.isEmpty) {
+                  setState(() {
+                    _searchQuery = '';
+                  });
+                }
+              },
             ),
           ),
           Expanded(

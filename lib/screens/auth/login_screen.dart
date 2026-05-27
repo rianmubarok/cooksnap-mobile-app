@@ -103,10 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Align(
               alignment: Alignment.centerLeft,
               child: GestureDetector(
-                onTap: () => showPlaceholderSnackBar(
-                  context,
-                  'Fitur reset kata sandi segera hadir',
-                ),
+                onTap: () => Navigator.pushNamed(context, AppRoutes.forgotPassword),
                 child:
                     const Text('Lupa Kata Sandi?', style: AppTextStyles.link),
               ),

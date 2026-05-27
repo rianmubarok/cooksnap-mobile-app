@@ -89,12 +89,24 @@ class AppTheme {
           disabledBackgroundColor: AppColors.primary,
           disabledForegroundColor: AppColors.textOnPrimary,
           elevation: 0,
+          shadowColor: Colors.transparent,
           minimumSize: const Size(double.infinity, AppConstants.buttonHeight),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppConstants.radiusLg),
           ),
           textStyle: AppTextStyles.buttonLarge,
         ),
+      ),
+
+      // Floating Action Button
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        elevation: 0,
+        focusElevation: 0,
+        hoverElevation: 0,
+        highlightElevation: 0,
+        disabledElevation: 0,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.white,
       ),
 
       // Outlined Button
@@ -143,7 +155,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusLg),
-          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+          borderSide: const BorderSide(color: AppColors.border),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusLg),

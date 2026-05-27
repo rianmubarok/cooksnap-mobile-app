@@ -8,6 +8,7 @@ import '../../core/app_strings.dart';
 import '../../providers/user_provider.dart';
 import '../../utils/placeholder_snackbar.dart';
 import '../../widgets/navigation/tab_page_scaffold.dart';
+import '../../widgets/common/app_confirm_dialog.dart';
 import '../../widgets/profile/profile_menu_tile.dart';
 import '../../widgets/common/app_text.dart';
 
@@ -81,11 +82,8 @@ class ProfileScreen extends StatelessWidget {
 
             ProfileMenuTile(
               icon: LucideIcons.user,
-              title: AppStrings.editProfile,
-              onTap: () => showPlaceholderSnackBar(
-                context,
-                'Fitur edit profil segera hadir',
-              ),
+              title: 'Informasi Profil',
+              onTap: () => Navigator.pushNamed(context, AppRoutes.editProfile),
             ),
             ProfileMenuTile(
               icon: LucideIcons.bell,
@@ -98,30 +96,36 @@ class ProfileScreen extends StatelessWidget {
             ProfileMenuTile(
               icon: LucideIcons.helpCircle,
               title: AppStrings.help,
-              onTap: () => showPlaceholderSnackBar(
-                context,
-                'Pusat bantuan segera hadir',
-              ),
+              onTap: () => Navigator.pushNamed(context, AppRoutes.help),
             ),
             ProfileMenuTile(
               icon: LucideIcons.info,
               title: 'Tentang Aplikasi',
-              onTap: () => showPlaceholderSnackBar(
-                context,
-                'Cooksnap v1.0.0',
-              ),
+              onTap: () => Navigator.pushNamed(context, AppRoutes.about),
             ),
             ProfileMenuTile(
               icon: LucideIcons.logOut,
               title: AppStrings.logout,
               isDestructive: true,
-              onTap: () {
-                context.read<UserProvider>().logout();
-                Navigator.of(context, rootNavigator: true)
-                    .pushNamedAndRemoveUntil(
-                  AppRoutes.login,
-                  (route) => false,
+              onTap: () async {
+                final confirmed = await AppConfirmDialog.show(
+                  context,
+                  title: 'Keluar',
+                  message: 'Apakah Anda yakin ingin keluar dari akun Anda?',
+                  confirmText: 'Keluar',
+                  cancelText: 'Batal',
+                  icon: LucideIcons.logOut,
+                  iconColor: AppColors.error,
                 );
+
+                if (confirmed == true && context.mounted) {
+                  context.read<UserProvider>().logout();
+                  Navigator.of(context, rootNavigator: true)
+                      .pushNamedAndRemoveUntil(
+                    AppRoutes.login,
+                    (route) => false,
+                  );
+                }
               },
             ),
             const SizedBox(height: 40),

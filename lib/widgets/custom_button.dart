@@ -136,8 +136,16 @@ class SecondaryButton extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       height: AppConstants.buttonHeight,
-      child: OutlinedButton(
+      child: FilledButton(
         onPressed: onPressed,
+        style: FilledButton.styleFrom(
+          backgroundColor: AppColors.chipBackground,
+          foregroundColor: AppColors.primary,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+          ),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

@@ -29,18 +29,17 @@ void showAppSnackBar(
   final messenger = ScaffoldMessenger.maybeOf(context);
   if (messenger == null) return;
 
-  messenger
-    ..hideCurrentSnackBar()
-    ..showSnackBar(
+  messenger.showSnackBar(
       SnackBar(
         content: AppText(
           message,
-          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textOnPrimary),
+          style: AppTextStyles.bodyMedium.copyWith(color: AppColors.primary),
         ),
         behavior: SnackBarBehavior.floating,
         elevation: 0,
+        margin: const EdgeInsets.only(bottom: 32, left: AppConstants.paddingScreen, right: AppConstants.paddingScreen),
         duration: duration,
-        backgroundColor: _backgroundFor(variant),
+        backgroundColor: AppColors.chipBackground,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusLg),
         ),

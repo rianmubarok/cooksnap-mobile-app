@@ -28,7 +28,7 @@ class RecipeInfoChip extends StatelessWidget {
     final content = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: outlined ? 18 : 16, color: AppColors.textSecondary),
+        Icon(icon, size: outlined ? 16 : 14, color: AppColors.textSecondary),
         const SizedBox(width: 4),
         AppText(
           text,

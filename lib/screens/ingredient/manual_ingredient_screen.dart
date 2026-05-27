@@ -228,23 +228,35 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
                   onClearAll: _clearAll,
                   onRemove: _removeIngredient,
                 ),
-                if (suggestions.isNotEmpty) ...[
-                  const SizedBox(height: 20),
-                  const Text('Saran', style: AppTextStyles.sectionTitle),
-                  const SizedBox(height: AppConstants.spacingMd),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: suggestions
-                        .map(
-                          (ingredient) => SuggestionChip(
-                            label: ingredient,
-                            onTap: () => _fillInput(ingredient),
-                          ),
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  alignment: Alignment.topCenter,
+                  child: suggestions.isNotEmpty
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 20),
+                            const Text('Saran', style: AppTextStyles.sectionTitle),
+                            const SizedBox(height: AppConstants.spacingMd),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: suggestions
+                                  .map(
+                                    (ingredient) => SuggestionChip(
+                                      key: ValueKey(ingredient),
+                                      label: ingredient,
+                                      animateOutOnTap: true,
+                                      onTap: () => _fillInput(ingredient),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          ],
                         )
-                        .toList(),
-                  ),
-                ],
+                      : const SizedBox.shrink(),
+                ),
                 const SizedBox(height: 20),
                 Theme(
                   data: Theme.of(context).copyWith(
