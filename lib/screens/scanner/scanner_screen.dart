@@ -8,6 +8,7 @@ import '../../core/app_colors.dart';
 import '../../core/app_strings.dart';
 import '../../core/app_text_styles.dart';
 import '../../providers/ai_detection_provider.dart';
+import '../../utils/app_snackbar.dart';
 import 'widgets/scan_result_bottom_sheet.dart';
 import 'widgets/scanner_controls_bar.dart';
 import 'widgets/scanner_detected_ingredients_bar.dart';
@@ -103,12 +104,11 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
   void _showErrorSnackBar(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
-      ),
+    showAppSnackBar(
+      context,
+      message,
+      variant: AppSnackBarVariant.error,
+      duration: const Duration(seconds: 3),
     );
   }
 

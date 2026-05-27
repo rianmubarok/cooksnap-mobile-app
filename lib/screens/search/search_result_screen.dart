@@ -1,6 +1,7 @@
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_text_styles.dart';
@@ -9,6 +10,7 @@ import '../../models/recipe_model.dart';
 import '../../widgets/common/empty_state_view.dart';
 import '../../widgets/navigation/circular_header_button.dart';
 import '../../widgets/recipe/recipe_card_grid.dart';
+import '../../widgets/recipe/recipe_grid.dart';
 import '../../widgets/search/recipe_search_field.dart';
 
 class SearchResultScreen extends StatefulWidget {
@@ -22,17 +24,27 @@ class SearchResultScreen extends StatefulWidget {
 
 class _SearchResultScreenState extends State<SearchResultScreen> {
   late final TextEditingController _controller;
-  late List<Recipe> _results;
+
+  List<Recipe> _results = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.query);
-    _results = [];
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _runSearch(widget.query);
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant SearchResultScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.query != widget.query) {
+      _controller.text = widget.query;
+      _runSearch(widget.query);
+    }
   }
 
   @override
@@ -41,43 +53,22 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     super.dispose();
   }
 
-  void _runSearch(String query) {
-    final q = query.trim().toLowerCase();
+  /// Delegates search to the repository — PocketBase will run this server-side;
+  /// dummy repo runs it in memory. Either way the UI stays identical.
+  Future<void> _runSearch(String query) async {
+    final q = query.trim();
     if (q.isEmpty) return;
 
-    final repo = context.read<RecipeRepository>();
-    final all = repo.getAllRecipes();
-    final words = q.split(' ').where((w) => w.isNotEmpty).toList();
-    
-    final scoredResults = <MapEntry<Recipe, int>>[];
-    
-    for (final r in all) {
-      final nameLower = r.recipeName.toLowerCase();
-      int score = 0;
+    setState(() => _isLoading = true);
 
-      // Exact phrase matches
-      if (nameLower == q) {
-        score += 100;
-      } else if (nameLower.contains(q)) {
-        score += 50;
-      }
+    final results = await context
+        .read<RecipeRepository>()
+        .searchRecipes(q, perPage: 50);
 
-      // Individual word matches
-      for (final w in words) {
-        if (nameLower.contains(w)) score += 10;
-        if (r.tags.any((t) => t.toLowerCase().contains(w))) score += 5;
-        if (r.ingredients.any((i) => i.name.toLowerCase().contains(w))) score += 2;
-      }
-
-      if (score > 0) {
-        scoredResults.add(MapEntry(r, score));
-      }
-    }
-
-    scoredResults.sort((a, b) => b.value.compareTo(a.value));
-    
+    if (!mounted) return;
     setState(() {
-      _results = scoredResults.map((e) => e.key).toList();
+      _results = results;
+      _isLoading = false;
     });
   }
 
@@ -136,6 +127,15 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   }
 
   Widget _buildBody() {
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(
+          strokeWidth: 2.5,
+          color: AppColors.primary,
+        ),
+      );
+    }
+
     if (_results.isEmpty) {
       final q = _controller.text.trim();
       return EmptyStateView(
@@ -161,28 +161,15 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           ),
         ),
         Expanded(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final itemWidth = (constraints.maxWidth - (AppConstants.paddingScreen * 2) - 12) / 2;
-              final itemHeight = itemWidth + 86;
-              final aspectRatio = itemWidth / itemHeight;
-
-              return GridView.builder(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppConstants.paddingScreen,
-                ),
-                itemCount: _results.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: aspectRatio,
-                ),
-                itemBuilder: (context, index) {
-                  return RecipeCardGrid(recipe: _results[index]);
-                },
-              );
-            },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppConstants.paddingScreen,
+            ),
+            child: RecipeGrid(
+              recipes: _results,
+              padding: EdgeInsets.zero,
+              itemBuilder: (context, recipe) => RecipeCardGrid(recipe: recipe),
+            ),
           ),
         ),
       ],

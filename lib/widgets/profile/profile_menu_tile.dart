@@ -1,8 +1,7 @@
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_text_styles.dart';
+import '../common/app_text.dart';
 
 /// Single row in the profile settings list.
 class ProfileMenuTile extends StatelessWidget {
@@ -33,38 +32,18 @@ class ProfileMenuTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: isDestructive
-                    ? AppColors.error.withValues(alpha: 0.08)
-                    : AppColors.primary.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(AppConstants.radiusSm),
-              ),
-              child: Center(
-                child: Icon(
-                  icon,
-                  size: 22,
-                  color: isDestructive ? AppColors.error : AppColors.primary,
-                ),
-              ),
+            Icon(
+              icon,
+              size: 22,
+              color: isDestructive ? AppColors.error : AppColors.primary,
             ),
             const SizedBox(width: AppConstants.spacingMd),
             Expanded(
-              child: Text(
+              child: AppText(
                 title,
-                style: AppTextStyles.labelLarge.copyWith(
-                  color: isDestructive ? AppColors.error : AppColors.textPrimary,
-                ),
+                variant: AppTextVariant.bodyMedium,
+                color: isDestructive ? AppColors.error : AppColors.textPrimary,
               ),
-            ),
-            Icon(
-              LucideIcons.chevronRight,
-              size: 22,
-              color: isDestructive
-                  ? AppColors.error.withValues(alpha: 0.5)
-                  : AppColors.textHint,
             ),
           ],
         ),

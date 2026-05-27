@@ -1,4 +1,4 @@
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 
@@ -14,10 +14,26 @@ class AppBottomNavBar extends StatelessWidget {
   });
 
   static const List<AppNavItem> items = [
-    AppNavItem(icon: LucideIcons.home, semanticsLabel: 'Beranda'),
-    AppNavItem(icon: LucideIcons.chefHat, semanticsLabel: 'Input Bahan'),
-    AppNavItem(icon: LucideIcons.bookmark, semanticsLabel: 'Simpan'),
-    AppNavItem(icon: LucideIcons.user, semanticsLabel: 'Profil'),
+    AppNavItem(
+      fillIconPath: 'assets/icons/nav/home_fill.svg',
+      outlineIconPath: 'assets/icons/nav/home_outline.svg',
+      semanticsLabel: 'Beranda',
+    ),
+    AppNavItem(
+      fillIconPath: 'assets/icons/nav/cooking_pot_fill.svg',
+      outlineIconPath: 'assets/icons/nav/cooking_pot_outline.svg',
+      semanticsLabel: 'Input Bahan',
+    ),
+    AppNavItem(
+      fillIconPath: 'assets/icons/nav/bookmark_fill.svg',
+      outlineIconPath: 'assets/icons/nav/bookmark_outline.svg',
+      semanticsLabel: 'Simpan',
+    ),
+    AppNavItem(
+      fillIconPath: 'assets/icons/nav/profile_fill.svg',
+      outlineIconPath: 'assets/icons/nav/profile_outline.svg',
+      semanticsLabel: 'Profil',
+    ),
   ];
 
   @override
@@ -31,28 +47,13 @@ class AppBottomNavBar extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _NavTile(
-                item: items[0],
-                isSelected: currentIndex == 0,
-                onTap: () => onIndexChanged(0),
-              ),
-              _NavTile(
-                item: items[1],
-                isSelected: currentIndex == 1,
-                onTap: () => onIndexChanged(1),
-              ),
-              _NavTile(
-                item: items[2],
-                isSelected: currentIndex == 2,
-                onTap: () => onIndexChanged(2),
-              ),
-              _NavTile(
-                item: items[3],
-                isSelected: currentIndex == 3,
-                onTap: () => onIndexChanged(3),
-              ),
-            ],
+            children: List.generate(items.length, (index) {
+              return _NavTile(
+                item: items[index],
+                isSelected: currentIndex == index,
+                onTap: () => onIndexChanged(index),
+              );
+            }),
           ),
         ),
       ),
@@ -61,11 +62,13 @@ class AppBottomNavBar extends StatelessWidget {
 }
 
 class AppNavItem {
-  final IconData icon;
+  final String fillIconPath;
+  final String outlineIconPath;
   final String semanticsLabel;
 
   const AppNavItem({
-    required this.icon,
+    required this.fillIconPath,
+    required this.outlineIconPath,
     required this.semanticsLabel,
   });
 }
@@ -83,7 +86,10 @@ class _NavTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isSelected ? AppColors.primary : AppColors.textHint;
+    const activeColor = AppColors.primary;
+    final theme = Theme.of(context);
+    final inactiveColor =
+        theme.bottomNavigationBarTheme.unselectedItemColor ?? AppColors.textHint;
 
     return Semantics(
       label: item.semanticsLabel,
@@ -93,7 +99,15 @@ class _NavTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          child: Icon(item.icon, color: color, size: 26),
+          child: SvgPicture.asset(
+            isSelected ? item.fillIconPath : item.outlineIconPath,
+            width: 26,
+            height: 26,
+            colorFilter: ColorFilter.mode(
+              isSelected ? activeColor : inactiveColor,
+              BlendMode.srcIn,
+            ),
+          ),
         ),
       ),
     );

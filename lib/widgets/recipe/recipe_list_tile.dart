@@ -2,9 +2,9 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_text_styles.dart';
 import '../../models/recipe_model.dart';
 import '../../utils/recipe_navigation.dart';
+import '../common/app_text.dart';
 import 'recipe_info_chip.dart';
 import 'recipe_thumbnail.dart';
 
@@ -35,14 +35,12 @@ class RecipeListTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  AppText(
                     recipe.recipeName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.h3.copyWith(
-                      letterSpacing: -1.2,
-                      height: 1.2,
-                    ),
+                    variant: AppTextVariant.h3,
+                    height: 1.2,
                   ),
                   const SizedBox(height: 8),
                   Row(

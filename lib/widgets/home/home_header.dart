@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_text_styles.dart';
+import '../common/app_text.dart';
 
 /// Greeting header on the home tab.
 class HomeHeader extends StatelessWidget {
@@ -20,11 +20,11 @@ class HomeHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Hai, $firstName!', style: AppTextStyles.greeting),
+          AppText('Hai, $firstName!', variant: AppTextVariant.greeting),
           const SizedBox(height: AppConstants.spacingSm),
-          const Text(
+          const AppText(
             'Mau masak apa hari ini?',
-            style: AppTextStyles.headlineDisplay,
+            variant: AppTextVariant.headlineDisplay,
           ),
         ],
       ),

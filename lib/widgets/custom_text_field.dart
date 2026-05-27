@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../core/app_colors.dart';
 import '../core/app_constants.dart';
 import '../core/app_text_styles.dart';
+import 'common/app_text.dart';
 
 /// Reusable text input field with icon and validation
 class CustomTextField extends StatefulWidget {
@@ -17,7 +18,7 @@ class CustomTextField extends StatefulWidget {
   final TextInputAction textInputAction;
   final void Function(String)? onSubmitted;
   final ValueChanged<String>? onChanged;
-  /// Larger field for auth screens (18px text, taller touch target).
+  /// Larger field for auth screens with larger typography and touch target.
   final bool large;
   /// Shows a clear button when the field has text (e.g. search).
   final bool clearable;
@@ -46,7 +47,6 @@ class CustomTextField extends StatefulWidget {
     this.focusNode,
   });
 
-  static const double largeFontSize = 16;
   static const double largeMinHeight = 52;
 
   @override
@@ -101,8 +101,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
   void _onControllerChanged() {
     if (widget.clearable || widget.animatedHints != null) setState(() {});
   }
-
-  double get _fontSize => widget.large ? CustomTextField.largeFontSize : 14;
 
   double get _iconSize => widget.iconSize ?? (widget.large ? 18 : 16);
 
@@ -170,10 +168,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (widget.labelText != null) ...[
-          Text(
-            widget.labelText!,
-            style: AppTextStyles.labelLarge,
-          ),
+          AppText(widget.labelText!, variant: AppTextVariant.labelLarge),
           const SizedBox(height: AppConstants.spacingSm),
         ],
         TextFormField(
@@ -186,10 +181,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
           onFieldSubmitted: widget.onSubmitted,
           onChanged: widget.onChanged,
           validator: widget.validator,
-          style: AppTextStyles.bodyLarge.copyWith(
-            fontSize: _fontSize,
-            color: AppColors.textPrimary,
-          ),
+          style: (widget.large ? AppTextStyles.h3 : AppTextStyles.bodyMedium)
+              .copyWith(color: AppColors.textPrimary),
           decoration: InputDecoration(
             label: widget.animatedHints != null
                 ? AnimatedSwitcher(
@@ -216,13 +209,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         ),
                       );
                     },
-                    child: Text(
+                    child: AppText(
                       widget.animatedHints![_currentHintIndex],
                       key: ValueKey<int>(_currentHintIndex),
-                      style: AppTextStyles.bodyLarge.copyWith(
-                        color: AppColors.textHint,
-                        fontSize: _fontSize,
-                      ),
+                      variant: widget.large
+                          ? AppTextVariant.h3
+                          : AppTextVariant.bodyMedium,
+                      color: AppColors.textHint,
                     ),
                   )
                 : null,
@@ -230,9 +223,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 ? FloatingLabelBehavior.never
                 : null,
             hintText: widget.animatedHints != null ? null : widget.hintText,
-            hintStyle: AppTextStyles.bodyLarge.copyWith(
+            hintStyle: (widget.large ? AppTextStyles.h3 : AppTextStyles.bodyMedium)
+                .copyWith(
               color: AppColors.textHint,
-              fontSize: _fontSize,
             ),
             contentPadding: EdgeInsets.symmetric(
               horizontal: _horizontalPadding,

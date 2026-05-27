@@ -4,12 +4,12 @@ import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_routes.dart';
-import '../../core/app_text_styles.dart';
 import '../../core/app_strings.dart';
 import '../../providers/user_provider.dart';
 import '../../utils/placeholder_snackbar.dart';
 import '../../widgets/navigation/tab_page_scaffold.dart';
 import '../../widgets/profile/profile_menu_tile.dart';
+import '../../widgets/common/app_text.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -19,37 +19,66 @@ class ProfileScreen extends StatelessWidget {
     final user = context.watch<UserProvider>();
     final userName =
         user.name.isEmpty ? AppStrings.guestUserName : user.name;
-    final userEmail = user.email;
+    final userEmail = user.email.isEmpty ? 'guest@cooksnap.app' : user.email;
 
     return TabPageScaffold(
       title: 'Profil',
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppConstants.paddingScreen),
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: AppConstants.paddingScreen),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              width: 96,
-              height: 96,
-              decoration: BoxDecoration(
-                gradient: AppColors.primaryGradient,
-                shape: BoxShape.circle,
-                border: Border.all(color: AppColors.secondary, width: 3),
-              ),
-              child: Center(
-                child: Text(
-                  userName[0].toUpperCase(),
-                  style: AppTextStyles.headlineDisplay.copyWith(
-                    fontSize: 40,
-                    color: Colors.white,
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppConstants.spacingSm),
+              child: Row(
+                children: [
+                  Container(
+                    width: 64,
+                    height: 64,
+                    decoration: const BoxDecoration(
+                      gradient: AppColors.primaryGradient,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: AppText(
+                        userName.isNotEmpty ? userName[0].toUpperCase() : 'G',
+                        variant: AppTextVariant.headlineDisplaySemibold,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(width: AppConstants.spacingMd),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AppText(
+                          userName,
+                          variant: AppTextVariant.h3Semibold,
+                        ),
+                        const SizedBox(height: 4),
+                        AppText(
+                          userEmail,
+                          variant: AppTextVariant.bodyMedium,
+                          color: AppColors.textSecondary,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: AppConstants.spacingMd),
-            Text(userName, style: AppTextStyles.h3),
-            const SizedBox(height: 4),
-            Text(userEmail, style: AppTextStyles.bodySmall),
-            const SizedBox(height: AppConstants.spacingXl),
+            const SizedBox(height: 24),
+            const Padding(
+              padding: EdgeInsets.only(left: 4, bottom: 12),
+              child: AppText(
+                'Pengaturan',
+                variant: AppTextVariant.sectionTitle,
+              ),
+            ),
+
             ProfileMenuTile(
               icon: LucideIcons.user,
               title: AppStrings.editProfile,
@@ -63,7 +92,7 @@ class ProfileScreen extends StatelessWidget {
               title: AppStrings.notificationSettings,
               onTap: () => showPlaceholderSnackBar(
                 context,
-                'Pengaturan notifikasi segera hadir',
+                'Notifikasi segera hadir',
               ),
             ),
             ProfileMenuTile(
@@ -74,7 +103,14 @@ class ProfileScreen extends StatelessWidget {
                 'Pusat bantuan segera hadir',
               ),
             ),
-            const SizedBox(height: AppConstants.spacingMd),
+            ProfileMenuTile(
+              icon: LucideIcons.info,
+              title: 'Tentang Aplikasi',
+              onTap: () => showPlaceholderSnackBar(
+                context,
+                'Cooksnap v1.0.0',
+              ),
+            ),
             ProfileMenuTile(
               icon: LucideIcons.logOut,
               title: AppStrings.logout,
@@ -88,6 +124,7 @@ class ProfileScreen extends StatelessWidget {
                 );
               },
             ),
+            const SizedBox(height: 40),
           ],
         ),
       ),

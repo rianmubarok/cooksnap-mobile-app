@@ -2,9 +2,9 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_text_styles.dart';
 import '../../models/recipe_model.dart';
 import '../../utils/recipe_navigation.dart';
+import '../common/app_text.dart';
 import 'recipe_thumbnail.dart';
 
 class RecipeRecommendationCard extends StatelessWidget {
@@ -43,22 +43,20 @@ class RecipeRecommendationCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    AppText(
                       recipe.recipeName,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
-                        height: 1.3,
-                      ),
+                      variant: AppTextVariant.bodyMediumSemibold,
+                      color: AppColors.textPrimary,
+                      height: 1.3,
                     ),
                     const SizedBox(height: 6),
-                    Text(
+                    AppText(
                       recipe.description,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.bodyMedium,
+                      variant: AppTextVariant.bodyMedium,
                     ),
                     if (!recommendation.isFullMatch) ...[
                       const SizedBox(height: 12),
@@ -129,9 +127,10 @@ class _MatchInfo extends StatelessWidget {
         ),
         const SizedBox(width: 4),
         Expanded(
-          child: Text(
+          child: AppText(
             recommendation.matchText,
-            style: AppTextStyles.labelMedium.copyWith(color: color),
+            variant: AppTextVariant.labelMedium,
+            color: color,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -163,9 +162,10 @@ class _MatchProgressBar extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 8),
-        Text(
+        AppText(
           '${recommendation.matchPercentage}%',
-          style: AppTextStyles.labelMedium.copyWith(color: color),
+          variant: AppTextVariant.labelMedium,
+          color: color,
         ),
       ],
     );

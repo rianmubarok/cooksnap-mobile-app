@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_routes.dart';
@@ -8,12 +9,19 @@ import '../../data/repositories/recipe_repository.dart';
 import '../../models/recipe_model.dart';
 import '../../providers/user_provider.dart';
 import '../../widgets/common/app_chip.dart';
-import '../../widgets/common/section_action_link.dart';
+import '../../widgets/common/section_header_row.dart';
 import '../../widgets/home/home_header.dart';
 import '../../widgets/recipe/recipe_card_horizontal.dart';
 import '../../widgets/recipe/recipe_card_grid.dart';
+import '../../widgets/recipe/recipe_grid.dart';
 import '../../widgets/search/recipe_search_field.dart';
 import 'home_recipe_tags.dart';
+
+/// Maximum recipes shown in the horizontal "Resep Populer" row.
+const int _kPopularLimit = 10;
+
+/// Maximum recipes shown in the "Untuk Kamu" grid section.
+const int _kRecentGridLimit = 10;
 
 /// Home tab — recipes, categories, and sections.
 class HomeScreen extends StatefulWidget {
@@ -34,10 +42,30 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedTagIndex = 0;
   late List<HomeRecipeTag> _displayTags;
 
+  List<Recipe> _allRecipes = [];
+  bool _isLoading = true;
+
   @override
   void initState() {
     super.initState();
     _displayTags = List.from(kHomeRecipeTags);
+    _loadRecipes();
+  }
+
+  /// Fetches all recipes from the repository (instant for dummy,
+  /// network call for PocketBase) and caches them in state.
+  Future<void> _loadRecipes() async {
+    if (!mounted) return;
+    setState(() => _isLoading = true);
+
+    final recipes =
+        await context.read<RecipeRepository>().getAllRecipes();
+
+    if (!mounted) return;
+    setState(() {
+      _allRecipes = recipes;
+      _isLoading = false;
+    });
   }
 
   List<Recipe> _applyTagFilter(List<Recipe> recipes) {
@@ -46,19 +74,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _onRefresh() async {
-    await Future.delayed(const Duration(milliseconds: 600));
-    if (!mounted) return;
+    final rest = _displayTags.sublist(1)..shuffle();
     setState(() {
-      final rest = _displayTags.sublist(1)..shuffle();
       _displayTags = [_displayTags.first, ...rest];
       _selectedTagIndex = 0;
     });
+    await _loadRecipes();
   }
 
   @override
   Widget build(BuildContext context) {
-    final filteredRecipes =
-        _applyTagFilter(context.read<RecipeRepository>().getAllRecipes());
+    final filteredRecipes = _applyTagFilter(_allRecipes);
 
     return Column(
       children: [
@@ -88,56 +114,67 @@ class _HomeScreenState extends State<HomeScreen> {
                   toolbarHeight: 120,
                   flexibleSpace: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppConstants.paddingScreen,
-                            vertical: 12,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppConstants.paddingScreen,
+                          vertical: 12,
+                        ),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.search,
+                              arguments: '',
+                            );
+                          },
+                          child: const AbsorbPointer(
+                            child: RecipeSearchField(),
                           ),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(
+                        ),
+                      ),
+                      _TagFilterRow(
+                        tags: _displayTags,
+                        selectedIndex: _selectedTagIndex,
+                        onSelected: (index) =>
+                            setState(() => _selectedTagIndex = index),
+                      ),
+                    ],
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: _isLoading
+                      ? const _LoadingSkeleton()
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _SectionHeader(
+                              title: 'Resep Populer',
+                              topPadding: 16,
+                              onSeeAll: () => Navigator.pushNamed(
                                 context,
                                 AppRoutes.search,
                                 arguments: '',
-                              );
-                            },
-                            child: const AbsorbPointer(
-                              child: RecipeSearchField(),
+                              ),
                             ),
-                          ),
+                            // Limit to [_kPopularLimit] — avoids rendering
+                            // all recipes in one horizontal ListView.
+                            _PopularRecipesRow(
+                              recipes:
+                                  filteredRecipes.take(_kPopularLimit).toList(),
+                            ),
+                            const _SectionHeader(
+                              title: 'Untuk Kamu',
+                              topPadding: 20,
+                            ),
+                            _RecentRecipesGrid(
+                              recipes: filteredRecipes
+                                  .take(_kRecentGridLimit)
+                                  .toList(),
+                            ),
+                            const SizedBox(height: AppConstants.spacingXl),
+                          ],
                         ),
-                        _TagFilterRow(
-                          tags: _displayTags,
-                          selectedIndex: _selectedTagIndex,
-                          onSelected: (index) =>
-                              setState(() => _selectedTagIndex = index),
-                        ),
-                      ],
-                    ),
-                  ),
-                SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _SectionHeader(
-                        title: 'Resep Populer',
-                        topPadding: 16,
-                        onSeeAll: () => Navigator.pushNamed(
-                          context,
-                          AppRoutes.search,
-                          arguments: '',
-                        ),
-                      ),
-                      _PopularRecipesRow(recipes: filteredRecipes),
-                      const _SectionHeader(
-                        title: 'Untuk Kamu',
-                        topPadding: 20,
-                      ),
-                      _RecentRecipesGrid(recipes: filteredRecipes),
-                      const SizedBox(height: AppConstants.spacingXl),
-                    ],
-                  ),
                 ),
               ],
             ),
@@ -147,6 +184,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
+// ── Sub-widgets ──────────────────────────────────────────────────────────────
 
 class _TagFilterRow extends StatelessWidget {
   final List<HomeRecipeTag> tags;
@@ -204,13 +243,10 @@ class _SectionHeader extends StatelessWidget {
         AppConstants.paddingScreen,
         16,
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title, style: AppTextStyles.sectionTitle),
-          if (onSeeAll != null)
-            SectionActionLink(label: 'Lihat Semua', onTap: onSeeAll),
-        ],
+      child: SectionHeaderRow(
+        title: title,
+        actionLabel: onSeeAll == null ? null : 'Lihat Semua',
+        onAction: onSeeAll,
       ),
     );
   }
@@ -246,9 +282,7 @@ class _RecentRecipesGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final recent = recipes.take(10).toList();
-
-    if (recent.isEmpty) {
+    if (recipes.isEmpty) {
       return Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: AppConstants.paddingScreen,
@@ -268,27 +302,29 @@ class _RecentRecipesGrid extends StatelessWidget {
       padding: const EdgeInsets.symmetric(
         horizontal: AppConstants.paddingScreen,
       ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final itemWidth = (constraints.maxWidth - 12) / 2;
-          // Calculate exact height needed: itemWidth (image) + ~86px for text and chips
-          final itemHeight = itemWidth + 86;
-          final aspectRatio = itemWidth / itemHeight;
+      child: RecipeGrid(
+        recipes: recipes,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (context, recipe) => RecipeCardGrid(recipe: recipe),
+      ),
+    );
+  }
+}
 
-          return GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: recent.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: aspectRatio,
-            ),
-            itemBuilder: (context, index) =>
-                RecipeCardGrid(recipe: recent[index]),
-          );
-        },
+/// Placeholder skeleton shown while recipes are loading.
+class _LoadingSkeleton extends StatelessWidget {
+  const _LoadingSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 60),
+      child: Center(
+        child: CircularProgressIndicator(
+          strokeWidth: 2.5,
+          color: AppColors.primary,
+        ),
       ),
     );
   }

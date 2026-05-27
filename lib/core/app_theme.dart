@@ -42,7 +42,11 @@ class AppTheme {
   }
 
   static ThemeData get lightTheme {
-    final baseTextTheme = ThemeData.light().textTheme.apply(fontFamily: AppTextStyles.fontFamily);
+    final baseTextTheme = ThemeData.light().textTheme.apply(
+          fontFamily: AppTextStyles.fontFamily,
+          bodyColor: AppColors.textPrimary,
+          displayColor: AppColors.textPrimary,
+        );
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
@@ -89,12 +93,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppConstants.radiusLg),
           ),
-          textStyle: const TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            letterSpacing: -0.6,
-          ),
+          textStyle: AppTextStyles.buttonLarge,
         ),
       ),
 
@@ -107,12 +106,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppConstants.radiusLg),
           ),
-          textStyle: const TextStyle(
-            fontFamily: AppTextStyles.fontFamily,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            letterSpacing: -0.6,
-          ),
+          textStyle: AppTextStyles.buttonLarge,
         ),
       ),
 
@@ -120,11 +114,14 @@ class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.primary,
-          textStyle: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            letterSpacing: -0.5,
-          ),
+          textStyle: AppTextStyles.buttonLarge,
+        ),
+      ),
+
+      // Filled Button (Material 3)
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          textStyle: AppTextStyles.buttonLarge,
         ),
       ),
 
@@ -152,9 +149,8 @@ class AppTheme {
           borderRadius: BorderRadius.circular(AppConstants.radiusLg),
           borderSide: const BorderSide(color: AppColors.error),
         ),
-        hintStyle: const TextStyle(
+        hintStyle: AppTextStyles.bodyMedium.copyWith(
           color: AppColors.textHint,
-          fontSize: 14,
         ),
       ),
 
@@ -175,14 +171,8 @@ class AppTheme {
         unselectedItemColor: AppColors.textHint,
         type: BottomNavigationBarType.fixed,
         elevation: 0,
-        selectedLabelStyle: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-        unselectedLabelStyle: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-        ),
+        selectedLabelStyle: AppTextStyles.labelLarge,
+        unselectedLabelStyle: AppTextStyles.bodyMedium,
       ),
 
       // Divider
@@ -190,6 +180,18 @@ class AppTheme {
         color: AppColors.divider,
         thickness: 1,
         space: 1,
+      ),
+
+      // SnackBar
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: AppColors.info,
+        contentTextStyle: AppTextStyles.bodyMedium.copyWith(
+          color: AppColors.textOnPrimary,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+        ),
       ),
     );
   }

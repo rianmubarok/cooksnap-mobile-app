@@ -2,9 +2,9 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_text_styles.dart';
 import '../../models/recipe_model.dart';
 import '../../utils/recipe_navigation.dart';
+import '../common/app_text.dart';
 import 'recipe_info_chip.dart';
 import 'recipe_thumbnail.dart';
 
@@ -62,15 +62,13 @@ class RecipeCardGrid extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           // Title
-          Text(
+          AppText(
             recipe.recipeName,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: AppTextStyles.bodyMedium.copyWith(
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-              height: 1.3,
-            ),
+            variant: AppTextVariant.bodyMediumSemibold,
+            color: AppColors.textPrimary,
+            height: 1.3,
           ),
           const SizedBox(height: 6),
           // Info chips

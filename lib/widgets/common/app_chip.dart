@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_text_styles.dart';
+import 'app_text.dart';
 
 /// Category filter chip on the home screen (pill shape).
 class AppChip extends StatelessWidget {
@@ -34,12 +34,12 @@ class AppChip extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
+            AppText(
               label,
-              style: AppTextStyles.bodyMedium.copyWith(
-                fontWeight: selected ? FontWeight.w500 : FontWeight.w400,
-                color: selected ? AppColors.white : AppColors.textPrimary,
-              ),
+              variant: selected
+                  ? AppTextVariant.labelLarge
+                  : AppTextVariant.bodyMedium,
+              color: selected ? AppColors.white : AppColors.textPrimary,
             ),
           ],
         ),

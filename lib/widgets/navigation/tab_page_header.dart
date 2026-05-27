@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_text_styles.dart';
+import '../common/app_text.dart';
 
 /// Shared header for main shell tab pages (below shell [SafeArea]).
 class TabPageHeader extends StatelessWidget {
@@ -26,10 +26,7 @@ class TabPageHeader extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: action!,
             ),
-          Text(
-            title,
-            style: AppTextStyles.headlineDisplay,
-          ),
+          AppText(title, variant: AppTextVariant.headlineDisplay),
         ],
       ),
     );

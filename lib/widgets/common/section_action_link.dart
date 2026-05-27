@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
-import '../../core/app_text_styles.dart';
+import 'app_text.dart';
 
 /// Muted tappable label for section headers (e.g. "Hapus semua", "Lihat Semua").
 class SectionActionLink extends StatelessWidget {
@@ -17,9 +17,10 @@ class SectionActionLink extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Text(
+      child: AppText(
         label,
-        style: AppTextStyles.labelMedium.copyWith(color: AppColors.grey666),
+        variant: AppTextVariant.labelMedium,
+        color: AppColors.grey666,
       ),
     );
   }

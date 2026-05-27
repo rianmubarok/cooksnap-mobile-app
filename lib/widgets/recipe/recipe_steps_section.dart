@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_text_styles.dart';
+import '../common/app_text.dart';
 import 'recipe_step_item.dart';
 
 /// Numbered cooking steps on recipe detail.
@@ -14,7 +14,7 @@ class RecipeStepsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Instruksi', style: AppTextStyles.sectionTitle),
+        const AppText('Instruksi', variant: AppTextVariant.sectionTitle),
         const SizedBox(height: AppConstants.spacingMd),
         ...List.generate(
           steps.length,

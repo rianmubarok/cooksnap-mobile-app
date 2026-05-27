@@ -2,7 +2,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_text_styles.dart';
+import '../common/app_text.dart';
 
 /// Chip saran — lebar mengikuti teks, gaya netral seperti sebelumnya.
 class SuggestionChip extends StatelessWidget {
@@ -39,16 +39,15 @@ class SuggestionChip extends StatelessWidget {
             if (isSelected) ...[
               const Icon(LucideIcons.check, size: 16, color: AppColors.primary),
               const SizedBox(width: 6),
-              Text(
+              AppText(
                 label,
-                style: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.primary,
-                ),
+                variant: AppTextVariant.bodyMedium,
+                color: AppColors.primary,
               ),
             ] else
-              Text(
+              AppText(
                 '+ $label',
-                style: AppTextStyles.bodyMedium,
+                variant: AppTextVariant.bodyMedium,
               ),
           ],
         ),

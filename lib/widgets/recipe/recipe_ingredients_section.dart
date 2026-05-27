@@ -2,9 +2,9 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_text_styles.dart';
 import '../../models/recipe_model.dart';
 import '../../utils/string_utils.dart';
+import '../common/app_text.dart';
 
 /// Ingredients list with availability indicators.
 class RecipeIngredientsSection extends StatelessWidget {
@@ -29,7 +29,7 @@ class RecipeIngredientsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Bahan-bahan', style: AppTextStyles.sectionTitle),
+        const AppText('Bahan-bahan', variant: AppTextVariant.sectionTitle),
         const SizedBox(height: AppConstants.spacingMd),
         ...ingredients.map((ing) {
           final isAvailable = _isAvailable(ing);
@@ -67,19 +67,17 @@ class RecipeIngredientsSection extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text(
+                  child: AppText(
                     ing.name,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      decoration: TextDecoration.underline,
-                      color: AppColors.textPrimary,
-                    ),
+                    variant: AppTextVariant.bodyMedium,
+                    decoration: TextDecoration.underline,
+                    color: AppColors.textPrimary,
                   ),
                 ),
-                Text(
+                AppText(
                   '${ing.quantity} ${ing.unit}',
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.grey666,
-                  ),
+                  variant: AppTextVariant.bodyMedium,
+                  color: AppColors.grey666,
                 ),
               ],
             ),

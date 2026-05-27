@@ -6,12 +6,13 @@ import '../../core/app_constants.dart';
 import '../../core/app_text_styles.dart';
 import '../../providers/pantry_provider.dart';
 import '../../widgets/common/bottom_sheet_handle.dart';
-import '../../widgets/common/section_action_link.dart';
+import '../../widgets/common/section_header_row.dart';
 import '../../widgets/common/square_icon_button.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/ingredient/removable_ingredient_chip.dart';
 import '../../data/dummy/dummy_ingredients.dart';
 import '../../utils/string_utils.dart';
+import '../../utils/app_snackbar.dart';
 
 void showPantryEssentialsSheet(BuildContext context) {
   showModalBottomSheet(
@@ -58,12 +59,10 @@ class _PantryEssentialsSheetState extends State<PantryEssentialsSheet> {
 
     for (var existing in pantryProvider.items) {
       if (StringUtils.isSimilar(existing, value)) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Bahan "$value" sudah ada atau mirip dengan "$existing".'),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-          ),
+        showAppSnackBar(
+          context,
+          'Bahan "$value" sudah ada atau mirip dengan "$existing".',
+          variant: AppSnackBarVariant.error,
         );
         _newIngredientController.clear();
         return;
@@ -91,18 +90,10 @@ class _PantryEssentialsSheetState extends State<PantryEssentialsSheet> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const BottomSheetHandle(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      AppStrings.pantryEssentialsTitle,
-                      style: AppTextStyles.sectionTitle,
-                    ),
-                    SectionActionLink(
-                      label: AppStrings.resetToDefault,
-                      onTap: pantryProvider.resetToDefault,
-                    ),
-                  ],
+                SectionHeaderRow(
+                  title: AppStrings.pantryEssentialsTitle,
+                  actionLabel: AppStrings.resetToDefault,
+                  onAction: pantryProvider.resetToDefault,
                 ),
                 const SizedBox(height: AppConstants.spacingSm),
                 Text(

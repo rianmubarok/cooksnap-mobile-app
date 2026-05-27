@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_text_styles.dart';
+import '../common/app_text.dart';
 import '../common/section_action_link.dart';
 import 'removable_ingredient_chip.dart';
 
@@ -26,7 +26,7 @@ class SelectedIngredientsPanel extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Dipilih', style: AppTextStyles.sectionTitle),
+            const AppText('Dipilih', variant: AppTextVariant.sectionTitle),
             Opacity(
               opacity: ingredients.isNotEmpty ? 1.0 : 0.0,
               child: SectionActionLink(
@@ -61,9 +61,9 @@ class SelectedIngredientsPanel extends StatelessWidget {
               border: Border.all(color: AppColors.border),
             ),
             alignment: Alignment.center,
-            child: const Text(
+            child: const AppText(
               'Belum ada bahan yang ditambahkan',
-              style: AppTextStyles.bodySmall,
+              variant: AppTextVariant.bodySmall,
             ),
           ),
       ],

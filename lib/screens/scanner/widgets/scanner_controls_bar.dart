@@ -6,6 +6,7 @@ import '../../../core/app_strings.dart';
 import '../../../core/app_constants.dart';
 import '../../../core/app_text_styles.dart';
 import '../../../providers/ai_detection_provider.dart';
+import '../../../utils/app_snackbar.dart';
 
 class ScannerControlsBar extends StatelessWidget {
   final bool hasImage;
@@ -22,13 +23,7 @@ class ScannerControlsBar extends StatelessWidget {
   });
 
   void _showComingSoon(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Fitur segera hadir'),
-        behavior: SnackBarBehavior.floating,
-        duration: Duration(seconds: 2),
-      ),
-    );
+    showAppSnackBar(context, 'Fitur segera hadir');
   }
 
   @override

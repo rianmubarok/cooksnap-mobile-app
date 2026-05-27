@@ -8,7 +8,7 @@ class AppStrings {
 
   // Profil
   static const String editProfile = 'Edit Profil';
-  static const String notificationSettings = 'Pengaturan Notifikasi';
+  static const String notificationSettings = 'Notifikasi';
   static const String help = 'Bantuan';
   static const String logout = 'Keluar';
 

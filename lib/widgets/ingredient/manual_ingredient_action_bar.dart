@@ -2,7 +2,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_text_styles.dart';
+import '../common/app_text.dart';
 
 /// Floating scan + search bar at the bottom of the manual ingredient tab.
 class ManualIngredientActionBar extends StatelessWidget {
@@ -51,18 +51,13 @@ class ManualIngredientActionBar extends StatelessWidget {
             child: FilledButton.icon(
               onPressed: onFindRecipes,
               icon: const Icon(LucideIcons.search, size: 24),
-              label: const Text('Cari Resep'),
+              label: const AppText('Cari Resep', variant: AppTextVariant.buttonLarge),
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.chipBackground,
                 foregroundColor: AppColors.primary,
                 minimumSize: const Size.fromHeight(AppConstants.buttonHeight),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppConstants.radiusLg),
-                ),
-                textStyle: AppTextStyles.buttonLarge.copyWith(
-                  color: AppColors.primary,
-                  fontFamily: AppTextStyles.fontFamily,
-                  letterSpacing: -0.6,
                 ),
               ),
             ),

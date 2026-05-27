@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_text_styles.dart';
+import 'app_text.dart';
 
 /// Centered empty-state placeholder for lists and tabs.
 class EmptyStateView extends StatelessWidget {
@@ -56,21 +56,19 @@ class EmptyStateView extends StatelessWidget {
                   ? AppConstants.spacingLg
                   : AppConstants.spacingMd,
             ),
-            Text(
+            AppText(
               title,
               textAlign: TextAlign.center,
-              style: showIconCircle
-                  ? AppTextStyles.h3
-                  : AppTextStyles.h4.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+              variant: showIconCircle ? AppTextVariant.h3 : AppTextVariant.h4,
+              color: showIconCircle ? null : AppColors.textSecondary,
             ),
             if (subtitle != null) ...[
               const SizedBox(height: AppConstants.spacingSm),
-              Text(
+              AppText(
                 subtitle!,
                 textAlign: TextAlign.center,
-                style: AppTextStyles.bodyMedium.copyWith(height: 1.5),
+                variant: AppTextVariant.bodyMedium,
+                height: 1.5,
               ),
             ],
           ],

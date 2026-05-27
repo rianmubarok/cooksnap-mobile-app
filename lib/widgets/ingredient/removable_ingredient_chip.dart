@@ -2,8 +2,8 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_text_styles.dart';
 import '../../utils/string_utils.dart';
+import '../common/app_text.dart';
 
 /// Chip bahan terpilih — lebar mengikuti teks (hug content), bukan pill kategori.
 class RemovableIngredientChip extends StatelessWidget {
@@ -28,9 +28,10 @@ class RemovableIngredientChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
+          AppText(
             StringUtils.capitalizeWords(label),
-            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.white),
+            variant: AppTextVariant.bodyMedium,
+            color: AppColors.white,
           ),
           const SizedBox(width: 6),
           GestureDetector(

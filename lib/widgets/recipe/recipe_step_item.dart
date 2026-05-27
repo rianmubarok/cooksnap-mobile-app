@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
-import '../../core/app_text_styles.dart';
+import '../common/app_text.dart';
 
 /// Numbered cooking instruction row on recipe detail.
 class RecipeStepItem extends StatelessWidget {
@@ -26,22 +26,19 @@ class RecipeStepItem extends StatelessWidget {
             shape: BoxShape.circle,
           ),
           child: Center(
-            child: Text(
+            child: AppText(
               '$stepNumber',
-              style: AppTextStyles.labelMedium.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              variant: AppTextVariant.labelMediumSemibold,
             ),
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: Text(
+          child: AppText(
             instruction,
-            style: AppTextStyles.bodyMedium.copyWith(
-              height: 1.5,
-              color: AppColors.grey666,
-            ),
+            variant: AppTextVariant.bodyMedium,
+            height: 1.5,
+            color: AppColors.grey666,
           ),
         ),
       ],

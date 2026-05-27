@@ -1,10 +1,11 @@
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_text_styles.dart';
 import '../../models/recipe_model.dart';
+import '../common/app_text.dart';
 import '../navigation/circular_header_button.dart';
 
 /// Collapsing header with recipe image and favorite action.
@@ -30,9 +31,10 @@ class RecipeDetailSliverAppBar extends StatelessWidget {
       backgroundColor: AppColors.primary,
       foregroundColor: AppColors.white,
       systemOverlayStyle: SystemUiOverlayStyle.light,
-      title: Text(
+      title: const AppText(
         'Detail Resep',
-        style: AppTextStyles.sectionTitle.copyWith(color: AppColors.white),
+        variant: AppTextVariant.sectionTitle,
+        color: AppColors.white,
       ),
       leadingWidth: 40 + AppConstants.paddingScreen,
       leading: Padding(
@@ -48,9 +50,8 @@ class RecipeDetailSliverAppBar extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(right: AppConstants.paddingScreen),
           child: Center(
-            child: CircularHeaderButton(
-              icon: isFavorite ? LucideIcons.heart : LucideIcons.heart,
-              iconColor: isFavorite ? Colors.red : null,
+            child: _FavoriteSvgButton(
+              isFavorite: isFavorite,
               onPressed: onToggleFavorite,
             ),
           ),
@@ -117,19 +118,67 @@ class _PlaceholderHero extends StatelessWidget {
           colors: [AppColors.primary, AppColors.primaryLight],
         ),
       ),
-      child: Center(
+      child: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(height: 40),
-            const Text('🍽️', style: TextStyle(fontSize: 72)),
-            const SizedBox(height: 8),
-            Text(
+            SizedBox(height: 40),
+            AppText(
+              '🍽️',
+              variant: AppTextVariant.emojiHero,
+            ),
+            SizedBox(height: 8),
+            AppText(
               'Foto Resep',
-              style: AppTextStyles.bodyMedium.copyWith(color: Colors.white54),
+              variant: AppTextVariant.bodyMedium,
+              color: Colors.white54,
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _FavoriteSvgButton extends StatelessWidget {
+  final bool isFavorite;
+  final VoidCallback onPressed;
+
+  const _FavoriteSvgButton({
+    required this.isFavorite,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final fillColor = isFavorite ? '#F44336' : 'none';
+    final strokeColor = isFavorite ? '#F44336' : '#1F2937';
+    
+    final String svgString = '''
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="$fillColor" stroke="$strokeColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+</svg>
+''';
+
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+      ),
+      child: IconButton(
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints(
+          minWidth: 40,
+          minHeight: 40,
+        ),
+        icon: SvgPicture.string(
+          svgString,
+          width: 22,
+          height: 22,
+        ),
+        onPressed: onPressed,
       ),
     );
   }

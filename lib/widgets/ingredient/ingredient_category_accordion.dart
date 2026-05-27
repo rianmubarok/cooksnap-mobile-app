@@ -2,7 +2,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_text_styles.dart';
+import '../common/app_text.dart';
 import 'ingredient_selectable_chip.dart';
 import 'suggestion_chip.dart';
 
@@ -70,12 +70,9 @@ class _IngredientCategoryAccordionState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: Text(
+                      child: AppText(
                         '${widget.emoji} ${widget.category}',
-                        style: AppTextStyles.h4.copyWith(
-                          fontFamily: AppTextStyles.fontFamily,
-                          letterSpacing: -0.5,
-                        ),
+                        variant: AppTextVariant.h4,
                       ),
                     ),
                     Icon(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_text_styles.dart';
+import '../common/app_text.dart';
 
 /// Footer row on auth screens: "Belum punya akun? Daftar"
 class AuthFooterLink extends StatelessWidget {
@@ -27,13 +27,10 @@ class AuthFooterLink extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(prompt, style: AppTextStyles.bodySmall),
+          AppText(prompt, variant: AppTextVariant.bodySmall),
           GestureDetector(
             onTap: onTap,
-            child: Text(
-              actionLabel,
-              style: AppTextStyles.link,
-            ),
+            child: AppText(actionLabel, variant: AppTextVariant.link),
           ),
         ],
       ),

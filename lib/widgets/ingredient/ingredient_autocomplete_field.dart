@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_text_styles.dart';
 import '../../utils/ingredient_resolver.dart';
+import '../common/app_text.dart';
 import '../custom_text_field.dart';
 
 /// Autocomplete input — pilih opsi hanya mengisi field, tidak menambah chip.
@@ -80,7 +80,10 @@ class IngredientAutocompleteField extends StatelessWidget {
                         horizontal: 16,
                         vertical: 12,
                       ),
-                      child: Text(option, style: AppTextStyles.bodyMedium),
+                      child: AppText(
+                        option,
+                        variant: AppTextVariant.bodyMedium,
+                      ),
                     ),
                   );
                 },

@@ -1,13 +1,13 @@
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_text_styles.dart';
-import '../../core/app_decorations.dart';
-import '../../data/repositories/recipe_repository.dart';
 import '../../providers/pantry_provider.dart';
-import '../../services/recipe_recommendation_service.dart';
+import '../../providers/recommendation_provider.dart';
 import '../../widgets/common/empty_state_view.dart';
 import '../../widgets/ingredient/ingredient_tag_chip.dart';
 import '../../widgets/ingredient/suggestion_chip.dart';
@@ -29,6 +29,10 @@ class _RecipeRecommendationScreenState
   late List<String> _currentIngredients;
   final Set<String> _selectedSuggestions = {};
 
+  /// Cached inputs to avoid redundant recommendation recomputes.
+  List<String> _lastSyncedIngredients = const [];
+  List<String> _lastSyncedPantry = const [];
+
   @override
   void initState() {
     super.initState();
@@ -36,22 +40,60 @@ class _RecipeRecommendationScreenState
   }
 
   void _applySuggestions() {
+    if (_selectedSuggestions.isEmpty) return;
     setState(() {
-      _currentIngredients.addAll(_selectedSuggestions);
+      _currentIngredients = [..._currentIngredients, ..._selectedSuggestions];
       _selectedSuggestions.clear();
+    });
+  }
+
+  /// Schedules a recommendation computation when inputs change.
+  ///
+  /// [RecommendationProvider.setInputs] already has its own input-equality
+  /// guard, but we add a local guard here to avoid unnecessary post-frame
+  /// callbacks on every rebuild.
+  ///
+  /// Note: [repo] is no longer passed here — the provider received it at
+  /// construction time via [AppProviders].
+  void _scheduleRecommendationSync(List<String> pantryItems) {
+    if (listEquals(_lastSyncedIngredients, _currentIngredients) &&
+        listEquals(_lastSyncedPantry, pantryItems)) {
+      return;
+    }
+
+    _lastSyncedIngredients = List.unmodifiable(_currentIngredients);
+    _lastSyncedPantry = List.unmodifiable(pantryItems);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      await context.read<RecommendationProvider>().setInputs(
+            currentIngredients: _currentIngredients,
+            pantryItems: pantryItems,
+          );
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final repo = context.read<RecipeRepository>();
     final pantryItems = context.watch<PantryProvider>().items;
+    _scheduleRecommendationSync(pantryItems);
 
-    final data = RecipeRecommendationService.compute(
-      repo: repo,
-      currentIngredients: _currentIngredients,
-      pantryItems: pantryItems,
-    );
+    final recommendationProvider = context.watch<RecommendationProvider>();
+    final data = recommendationProvider.data;
+
+    // Show spinner on first load (data is null) or while recomputing
+    // after ingredient changes.
+    if (data == null || recommendationProvider.isComputing) {
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(
+          child: CircularProgressIndicator(
+            strokeWidth: 2.5,
+            color: AppColors.primary,
+          ),
+        ),
+      );
+    }
 
     return PopScope(
       canPop: false,
@@ -109,172 +151,174 @@ class _RecipeRecommendationScreenState
           elevation: 0,
         ),
         body: ShaderMask(
-            shaderCallback: (Rect bounds) {
-              return LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: const [
-                  Colors.transparent,
-                  Colors.black,
-                ],
-                stops: [0.0, bounds.height > 0 ? 24.0 / bounds.height : 0.05],
-              ).createShader(bounds);
-            },
-            blendMode: BlendMode.dstIn,
-            child: CustomScrollView(
-              slivers: [
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppConstants.paddingScreen,
-                  AppConstants.paddingScreen,
-                  AppConstants.paddingScreen,
-                  AppConstants.spacingLg,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${data.validTotal} resep cocok dengan ${data.displayedIngredients.length} bahan kamu',
-                      style: AppTextStyles.sectionTitle,
-                    ),
-                    const SizedBox(height: AppConstants.spacingMd),
-                    _IngredientsPanel(ingredients: data.displayedIngredients),
-                  ],
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: const [Colors.transparent, Colors.black],
+              stops: [
+                0.0,
+                bounds.height > 0 ? 24.0 / bounds.height : 0.05,
+              ],
+            ).createShader(bounds);
+          },
+          blendMode: BlendMode.dstIn,
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppConstants.paddingScreen,
+                    AppConstants.paddingScreen,
+                    AppConstants.paddingScreen,
+                    AppConstants.spacingLg,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${data.validTotal} resep cocok dengan '
+                        '${data.displayedIngredients.length} bahan kamu',
+                        style: AppTextStyles.sectionTitle,
+                      ),
+                      const SizedBox(height: AppConstants.spacingMd),
+                      _IngredientsPanel(ingredients: data.displayedIngredients),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            if (data.validTotal == 0)
-              const SliverFillRemaining(
-                child: EmptyStateView(
-                  icon: LucideIcons.utensils,
-                  title: 'Belum ada resep yang cocok',
-                  subtitle:
-                      'Coba pindai bahan lain atau tambah bahan manual',
-                ),
-              )
-            else ...[
-              if (data.specific.isNotEmpty) ...[
-                const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      AppConstants.paddingScreen,
-                      0,
-                      AppConstants.paddingScreen,
-                      16,
-                    ),
-                    child: Text(
-                      'Siap Dibuat',
-                      style: AppTextStyles.sectionTitle,
-                    ),
+              if (data.validTotal == 0)
+                const SliverFillRemaining(
+                  child: EmptyStateView(
+                    icon: LucideIcons.utensils,
+                    title: 'Belum ada resep yang cocok',
+                    subtitle: 'Coba pindai bahan lain atau tambah bahan manual',
                   ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppConstants.paddingScreen,
-                  ),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) => Padding(
-                        padding: EdgeInsets.only(
-                          bottom: index == data.specific.length - 1 ? 24 : 16,
-                        ),
-                        child: RecipeRecommendationCard(
-                          recommendation: data.specific[index],
-                          userIngredients: _currentIngredients,
-                        ),
+                )
+              else ...[
+                if (data.specific.isNotEmpty) ...[
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        AppConstants.paddingScreen,
+                        0,
+                        AppConstants.paddingScreen,
+                        16,
                       ),
-                      childCount: data.specific.length,
-                    ),
-                  ),
-                ),
-              ],
-              if (data.suggestions.isNotEmpty)
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppConstants.paddingScreen,
-                      0,
-                      AppConstants.paddingScreen,
-                      24,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Apakah Kamu Punya',
-                          style: AppTextStyles.sectionTitle,
-                        ),
-                        const SizedBox(height: AppConstants.spacingMd),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: data.suggestions.map((ing) {
-                            final isSelected =
-                                _selectedSuggestions.contains(ing);
-                            return SuggestionChip(
-                              label: ing,
-                              isSelected: isSelected,
-                              onTap: () {
-                                setState(() {
-                                  if (isSelected) {
-                                    _selectedSuggestions.remove(ing);
-                                  } else {
-                                    _selectedSuggestions.add(ing);
-                                  }
-                                });
-                              },
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              if (data.combined.isNotEmpty) ...[
-                const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      AppConstants.paddingScreen,
-                      0,
-                      AppConstants.paddingScreen,
-                      16,
-                    ),
-                    child: Text(
-                      'Butuh Tambahan Bahan',
-                      style: AppTextStyles.sectionTitle,
-                    ),
-                  ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppConstants.paddingScreen,
-                  ),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) => Padding(
-                        padding: EdgeInsets.only(
-                          bottom: index == data.combined.length - 1 ? 24 : 16,
-                        ),
-                        child: RecipeRecommendationCard(
-                          recommendation: data.combined[index],
-                          userIngredients: _currentIngredients,
-                        ),
+                      child: Text(
+                        'Siap Dibuat',
+                        style: AppTextStyles.sectionTitle,
                       ),
-                      childCount: data.combined.length,
                     ),
                   ),
-                ),
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppConstants.paddingScreen,
+                    ),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) => Padding(
+                          padding: EdgeInsets.only(
+                            bottom:
+                                index == data.specific.length - 1 ? 24 : 16,
+                          ),
+                          child: RecipeRecommendationCard(
+                            recommendation: data.specific[index],
+                            userIngredients: _currentIngredients,
+                          ),
+                        ),
+                        childCount: data.specific.length,
+                      ),
+                    ),
+                  ),
+                ],
+                if (data.suggestions.isNotEmpty)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        AppConstants.paddingScreen,
+                        0,
+                        AppConstants.paddingScreen,
+                        24,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Apakah Kamu Punya',
+                            style: AppTextStyles.sectionTitle,
+                          ),
+                          const SizedBox(height: AppConstants.spacingMd),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: data.suggestions.map((ing) {
+                              final isSelected =
+                                  _selectedSuggestions.contains(ing);
+                              return SuggestionChip(
+                                label: ing,
+                                isSelected: isSelected,
+                                onTap: () {
+                                  setState(() {
+                                    if (isSelected) {
+                                      _selectedSuggestions.remove(ing);
+                                    } else {
+                                      _selectedSuggestions.add(ing);
+                                    }
+                                  });
+                                },
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                if (data.combined.isNotEmpty) ...[
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        AppConstants.paddingScreen,
+                        0,
+                        AppConstants.paddingScreen,
+                        16,
+                      ),
+                      child: Text(
+                        'Butuh Tambahan Bahan',
+                        style: AppTextStyles.sectionTitle,
+                      ),
+                    ),
+                  ),
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppConstants.paddingScreen,
+                    ),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) => Padding(
+                          padding: EdgeInsets.only(
+                            bottom:
+                                index == data.combined.length - 1 ? 24 : 16,
+                          ),
+                          child: RecipeRecommendationCard(
+                            recommendation: data.combined[index],
+                            userIngredients: _currentIngredients,
+                          ),
+                        ),
+                        childCount: data.combined.length,
+                      ),
+                    ),
+                  ),
+                ],
               ],
+              const SliverToBoxAdapter(
+                child: SizedBox(height: AppConstants.spacingXl),
+              ),
             ],
-            const SliverToBoxAdapter(
-              child: SizedBox(height: AppConstants.spacingXl),
-            ),
-          ],
-        ),
           ),
         ),
+      ),
     );
   }
 }

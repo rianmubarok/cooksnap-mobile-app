@@ -1,0 +1,281 @@
+[
+  {
+    "recipe_name": "Nasi Goreng Spesial",
+    "description": "Nasi goreng dengan bumbu rahasia, telur, dan ayam suwir. Cocok untuk sarapan dan makan malam.",
+    "image_url": "https://images.unsplash.com/photo-1645696301019-35adcc18fc21?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {"name": "Nasi Putih", "quantity": 2, "unit": "piring"},
+      {"name": "Telur Ayam", "quantity": 2, "unit": "butir"},
+      {"name": "Bawang Putih", "quantity": 3, "unit": "siung"},
+      {"name": "Bawang Merah", "quantity": 5, "unit": "siung"},
+      {"name": "Kecap Manis", "quantity": 2, "unit": "sdm"},
+      {"name": "Minyak Goreng", "quantity": 1, "unit": "sdm"},
+      {"name": "Garam", "quantity": 1, "unit": "sdt"}
+    ],
+    "steps": [
+      "Siapkan semua bahan. Haluskan bawang putih dan bawang merah menggunakan ulekan atau blender hingga benar-benar halus.",
+      "Panaskan wajan dengan minyak goreng di atas api sedang. Masukkan bumbu yang sudah dihaluskan, lalu tumis perlahan hingga harum dan matang.",
+      "Sisihkan bumbu ke pinggir wajan, kemudian pecahkan telur di tengah wajan. Orak-arik telur dengan cepat hingga matang dan berbulir.",
+      "Masukkan nasi putih ke dalam wajan. Aduk dengan cepat dan merata agar nasi tidak menggumpal dan tercampur sempurna dengan bumbu dan telur.",
+      "Tuangkan kecap manis secara merata di atas nasi, tambahkan garam sesuai selera. Aduk terus menerus dengan api yang agak besar agar mendapatkan aroma masakan yang sedap.",
+      "Koreksi rasa terlebih dahulu. Jika sudah pas, angkat dan sajikan selagi hangat di atas piring saji."
+    ],
+    "cooking_time": 15,
+    "difficulty": "Mudah",
+    "category": "Indonesia",
+    "tags": ["Indonesia", "Cepat", "Mudah"],
+    "source_url": "https://cooksnap.com/recipes/nasi-goreng-spesial",
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  {
+    "recipe_name": "Ayam Geprek Sambal Bawang",
+    "description": "Ayam goreng tepung crispy dengan sambal bawang pedas. Favorit mahasiswa!",
+    "image_url": "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {"name": "Dada Ayam", "quantity": 2, "unit": "potong"},
+      {"name": "Tepung Terigu", "quantity": 100, "unit": "gram"},
+      {"name": "Tepung Maizena", "quantity": 50, "unit": "gram"},
+      {"name": "Cabai Rawit", "quantity": 10, "unit": "buah"},
+      {"name": "Bawang Putih", "quantity": 5, "unit": "siung"},
+      {"name": "Garam", "quantity": 1, "unit": "sdt"},
+      {"name": "Merica Bubuk", "quantity": 1, "unit": "sdt"},
+      {"name": "Minyak Goreng", "quantity": 500, "unit": "ml"}
+    ],
+    "steps": [
+      "Cuci bersih dada ayam, lalu marinasi dengan garam dan merica. Diamkan selama kurang lebih 15 menit agar bumbu meresap sempurna ke dalam daging.",
+      "Di wadah terpisah, campurkan tepung terigu dan tepung maizena secara merata sebagai bahan pelapis ayam.",
+      "Ambil ayam yang sudah dimarinasi, baluri secara merata dengan campuran tepung. Cubit-cubit permukaannya sedikit agar nantinya bisa keriting saat digoreng.",
+      "Panaskan minyak goreng dalam jumlah banyak di atas wajan. Goreng ayam tepung dengan api sedang hingga berwarna kuning kecoklatan (golden brown) dan matang sempurna.",
+      "Sambil menunggu ayam matang, siapkan cobek. Ulek kasar cabai rawit, bawang putih, dan sedikit garam. Siram dengan sedikit minyak panas sisa menggoreng ayam.",
+      "Letakkan ayam goreng yang sudah matang di atas cobek berisi sambal, lalu geprek perlahan menggunakan ulekan agar sambal meresap ke serat daging. Sajikan bersama nasi hangat."
+    ],
+    "cooking_time": 25,
+    "difficulty": "Sedang",
+    "category": "Indonesia",
+    "tags": ["Indonesia", "Mudah"],
+    "source_url": "https://cooksnap.com/recipes/ayam-geprek",
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  {
+    "recipe_name": "Mie Goreng Jawa",
+    "description": "Mie goreng tradisional dengan bumbu kecap manis dan sayuran segar.",
+    "image_url": "https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {"name": "Mie Telur", "quantity": 2, "unit": "bungkus"},
+      {"name": "Telur Ayam", "quantity": 1, "unit": "butir"},
+      {"name": "Daun Bawang", "quantity": 1, "unit": "batang"},
+      {"name": "Sawi Hijau", "quantity": 2, "unit": "lembar"},
+      {"name": "Kecap Manis", "quantity": 3, "unit": "sdm"},
+      {"name": "Bawang Putih", "quantity": 2, "unit": "siung"},
+      {"name": "Garam", "quantity": 1, "unit": "sdt"}
+    ],
+    "steps": [
+      "Didihkan air secukupnya dalam panci, lalu rebus mie telur hingga teksturnya kenyal namun tidak terlalu lembek. Tiriskan dan lumuri dengan sedikit minyak agar tidak lengket.",
+      "Panaskan wajan dengan sedikit minyak. Tumis bawang putih cincang hingga mengeluarkan aroma harum dan warnanya agak kecoklatan.",
+      "Sisihkan tumisan bawang ke tepi wajan, kemudian masukkan telur dan buat orak-arik hingga telurnya benar-benar matang.",
+      "Masukkan irisan sayur sawi dan daun bawang ke dalam wajan. Tumis sebentar saja agar sayuran tetap memiliki tekstur renyah dan warnanya tetap segar.",
+      "Masukkan mie rebus ke dalam campuran bumbu dan sayuran. Tambahkan kecap manis, garam, dan lada. Aduk dengan cepat hingga bumbu meresap sempurna.",
+      "Aduk terus menggunakan api besar selama beberapa menit hingga tercium aroma khas mie goreng yang sedap. Matikan api dan sajikan hangat."
+    ],
+    "cooking_time": 20,
+    "difficulty": "Mudah",
+    "category": "Indonesia",
+    "tags": ["Indonesia", "Cepat", "Mudah"],
+    "source_url": "https://cooksnap.com/recipes/mie-goreng-jawa",
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  {
+    "recipe_name": "Sop Sayur Bening",
+    "description": "Sop sayur segar dengan wortel, kentang, dan buncis. Sehat dan lezat.",
+    "image_url": "https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {"name": "Wortel", "quantity": 2, "unit": "buah"},
+      {"name": "Kentang", "quantity": 2, "unit": "buah"},
+      {"name": "Buncis", "quantity": 100, "unit": "gram"},
+      {"name": "Daun Bawang", "quantity": 2, "unit": "batang"},
+      {"name": "Bawang Putih", "quantity": 3, "unit": "siung"},
+      {"name": "Garam", "quantity": 1, "unit": "sdt"},
+      {"name": "Air", "quantity": 500, "unit": "ml"}
+    ],
+    "steps": [
+      "Kupas kentang dan wortel, lalu potong dadu atau sesuai selera. Bersihkan buncis dan potong menjadi ukuran memanjang sekitar 3 cm.",
+      "Siapkan panci berukuran sedang dan rebus sekitar 500ml air hingga benar-benar mendidih. Pastikan air sudah bergejolak sebelum memasukkan bahan.",
+      "Masukkan potongan kentang dan wortel ke dalam air mendidih. Rebus selama kurang lebih 5-7 menit hingga teksturnya menjadi setengah empuk.",
+      "Setelah sayuran keras mulai empuk, tambahkan potongan buncis ke dalam panci agar matangnya bisa bersamaan tanpa membuatnya overcook.",
+      "Di tempat terpisah, tumis sebentar bawang putih halus lalu masukkan ke dalam kuah rebusan. Tambahkan garam, merica bubuk, dan irisan daun bawang.",
+      "Biarkan mendidih beberapa saat lagi hingga semua sayuran empuk dan kuahnya terasa sedap. Angkat panci dan hidangkan selagi panas."
+    ],
+    "cooking_time": 30,
+    "difficulty": "Mudah",
+    "category": "Indonesia",
+    "tags": ["Indonesia", "Sehat", "Mudah"],
+    "source_url": "https://cooksnap.com/recipes/sop-sayur",
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  {
+    "recipe_name": "Es Teh Manis Lemon",
+    "description": "Minuman segar teh manis dengan perasan lemon. Perfect untuk cuaca panas.",
+    "image_url": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {"name": "Teh celup", "quantity": 2, "unit": "kantong"},
+      {"name": "Gula pasir", "quantity": 3, "unit": "sdm"},
+      {"name": "Lemon", "quantity": 1, "unit": "buah"},
+      {"name": "Es batu", "quantity": 5, "unit": "buah"},
+      {"name": "Air", "quantity": 300, "unit": "ml"}
+    ],
+    "steps": [
+      "Siapkan teko kecil. Masukkan kantong teh celup dan seduh menggunakan air panas yang baru mendidih agar sari teh keluar dengan maksimal.",
+      "Tambahkan gula pasir ke dalam teh panas, lalu aduk perlahan hingga seluruh kristal gula benar-benar larut.",
+      "Diamkan teh selama beberapa menit hingga mencapai suhu ruang. Proses ini membuat rasa teh lebih stabil dan tidak mencairkan es terlalu cepat.",
+      "Siapkan gelas saji yang cukup tinggi, kemudian masukkan bongkahan es batu hingga memenuhi setengah atau tiga perempat volume gelas.",
+      "Tuangkan perlahan teh manis yang sudah dingin ke dalam gelas. Belah buah lemon dan peras airnya langsung ke dalam teh sesuai selera keasaman.",
+      "Aduk campuran teh dan air lemon secara merata. Anda bisa menambahkan irisan lemon di pinggir gelas sebagai pemanis visual sebelum disajikan."
+    ],
+    "cooking_time": 5,
+    "difficulty": "Mudah",
+    "category": "Minuman",
+    "tags": ["Minuman", "Cepat", "Mudah"],
+    "source_url": "https://cooksnap.com/recipes/es-teh-lemon",
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  {
+    "recipe_name": "Pancake Coklat Keju",
+    "description": "Pancake lembut dengan topping coklat leleh dan parutan keju melimpah. Pas untuk sarapan atau camilan.",
+    "image_url": "https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {"name": "Tepung Terigu", "quantity": 150, "unit": "gram"},
+      {"name": "Susu Cair", "quantity": 200, "unit": "ml"},
+      {"name": "Telur Ayam", "quantity": 1, "unit": "butir"},
+      {"name": "Mentega", "quantity": 2, "unit": "sdm"},
+      {"name": "Gula Pasir", "quantity": 2, "unit": "sdm"},
+      {"name": "Baking Powder", "quantity": 1, "unit": "sdt"},
+      {"name": "Mesis Coklat", "quantity": 3, "unit": "sdm"},
+      {"name": "Keju Cheddar", "quantity": 50, "unit": "gram"}
+    ],
+    "steps": [
+      "Ayak terlebih dahulu tepung terigu dan baking powder ke dalam sebuah mangkuk besar agar tidak ada gumpalan, lalu campurkan dengan gula pasir.",
+      "Dalam wadah lain, kocok lepas telur lalu tuangkan susu cair sedikit demi sedikit sambil terus diaduk rata.",
+      "Campurkan adonan basah ke dalam campuran tepung secara bertahap. Aduk ringan saja menggunakan whisk, lalu tuangkan mentega cair dan aduk kembali.",
+      "Panaskan teflon anti lengket di atas api kecil-sedang. Tuangkan satu sendok sayur adonan ke tengah teflon dan biarkan menyebar membentuk lingkaran.",
+      "Tunggu hingga permukaan pancake mulai memunculkan rongga-rongga kecil atau gelembung. Balik perlahan dan masak sisi lainnya selama beberapa detik saja.",
+      "Angkat pancake yang sudah matang dan letakkan di piring saji. Berikan taburan keju parut dan mesis coklat di atasnya saat pancake masih dalam keadaan panas."
+    ],
+    "cooking_time": 20,
+    "difficulty": "Mudah",
+    "category": "Sarapan",
+    "tags": ["Penutup", "Cepat", "Mudah"],
+    "source_url": "https://cooksnap.com/recipes/pancake-coklat-keju",
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  {
+    "recipe_name": "Sate Ayam Madura",
+    "description": "Sate ayam empuk dengan bumbu kacang khas Madura yang manis gurih.",
+    "image_url": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {"name": "Dada Ayam", "quantity": 500, "unit": "gram"},
+      {"name": "Kacang Tanah", "quantity": 200, "unit": "gram"},
+      {"name": "Bawang Putih", "quantity": 4, "unit": "siung"},
+      {"name": "Bawang Merah", "quantity": 5, "unit": "siung"},
+      {"name": "Kecap Manis", "quantity": 5, "unit": "sdm"},
+      {"name": "Jeruk Limau", "quantity": 2, "unit": "buah"},
+      {"name": "Tusuk Sate", "quantity": 20, "unit": "buah"}
+    ],
+    "steps": [
+      "Cuci bersih fillet dada ayam, lalu potong-potong membentuk dadu kecil dengan ukuran yang seragam agar matangnya bisa merata saat dibakar.",
+      "Tusuk potongan daging ayam menggunakan tusukan sate bambu. Isi masing-masing tusukan dengan 4 hingga 5 potong daging, lalu sisihkan.",
+      "Untuk membuat bumbu, goreng kacang tanah, bawang putih, dan bawang merah hingga matang, lalu haluskan menggunakan blender atau ulekan.",
+      "Tumis bumbu kacang halus di atas wajan dengan api sedang, tambahkan sedikit air, garam, dan kecap manis. Masak hingga mengeluarkan minyak dan teksturnya mengental.",
+      "Ambil beberapa sendok bumbu kacang, campurkan dengan sedikit kecap manis, lalu lumuri sate mentah secara merata sebelum diletakkan di atas panggangan.",
+      "Bakar sate di atas bara api sambil sesekali dibalik dan dioles sisa bumbu hingga matang sempurna. Sajikan sate dengan siraman bumbu kacang tebal dan perasan jeruk limau."
+    ],
+    "cooking_time": 45,
+    "difficulty": "Sedang",
+    "category": "Indonesia",
+    "tags": ["Indonesia"],
+    "source_url": "https://cooksnap.com/recipes/sate-ayam-madura",
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  {
+    "recipe_name": "Jus Alpukat Susu",
+    "description": "Jus alpukat kental dengan tambahan susu kental manis coklat. Sangat mengenyangkan.",
+    "image_url": "https://images.unsplash.com/photo-1601758177498-842c23f2b4ff?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {"name": "Alpukat", "quantity": 2, "unit": "buah"},
+      {"name": "Susu Kental Manis", "quantity": 3, "unit": "sdm"},
+      {"name": "Gula Pasir", "quantity": 2, "unit": "sdm"},
+      {"name": "Air", "quantity": 200, "unit": "ml"},
+      {"name": "Es Batu", "quantity": 1, "unit": "gelas"}
+    ],
+    "steps": [
+      "Pilih alpukat yang sudah matang sempurna. Belah buah menjadi dua bagian, buang bijinya, lalu keruk semua daging buahnya menggunakan sendok makan.",
+      "Siapkan blender yang sudah dibersihkan. Masukkan daging buah alpukat, takaran air putih, dan gula pasir ke dalam tabung blender.",
+      "Tambahkan bongkahan es batu secukupnya ke dalam blender. Proses semua bahan dengan kecepatan tinggi selama beberapa menit hingga teksturnya menjadi sangat halus dan creamy.",
+      "Siapkan gelas saji ukuran besar. Tuangkan susu kental manis coklat melingkar di sekeliling dinding bagian dalam gelas sebagai hiasan dan penambah rasa.",
+      "Tuangkan jus alpukat secara perlahan dari tabung blender ke dalam gelas saji yang sudah dihias tadi.",
+      "Jus alpukat yang segar dan kental siap dinikmati. Pastikan untuk meminumnya dalam keadaan dingin agar rasanya lebih maksimal."
+    ],
+    "cooking_time": 10,
+    "difficulty": "Mudah",
+    "category": "Minuman",
+    "tags": ["Minuman", "Cepat", "Mudah", "Sehat"],
+    "source_url": "https://cooksnap.com/recipes/jus-alpukat",
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  {
+    "recipe_name": "Salad Buah Segar",
+    "description": "Campuran buah-buahan segar dengan saus mayonaise dan taburan keju yang melimpah.",
+    "image_url": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {"name": "Apel", "quantity": 1, "unit": "buah"},
+      {"name": "Anggur", "quantity": 100, "unit": "gram"},
+      {"name": "Melon", "quantity": 100, "unit": "gram"},
+      {"name": "Nata De Coco", "quantity": 100, "unit": "gram"},
+      {"name": "Mayonaise", "quantity": 4, "unit": "sdm"},
+      {"name": "Susu Kental Manis", "quantity": 2, "unit": "sdm"},
+      {"name": "Yogurt Plain", "quantity": 2, "unit": "sdm"},
+      {"name": "Keju Cheddar", "quantity": 50, "unit": "gram"}
+    ],
+    "steps": [
+      "Cuci bersih apel dan anggur dengan air mengalir. Kupas melon dan potong-potong seluruh buah menjadi dadu kecil yang ukurannya cukup untuk satu kali gigitan.",
+      "Dalam mangkuk saji yang besar, masukkan semua potongan buah, lalu tambahkan nata de coco yang airnya sudah dibuang terlebih dahulu.",
+      "Di dalam wadah terpisah yang lebih kecil, campurkan mayonaise, susu kental manis, dan yogurt plain. Aduk memutar hingga seluruh bahan saus ini menyatu sempurna.",
+      "Siramkan saus mayonaise yang sudah diracik tersebut tepat di atas campuran buah. Gunakan spatula atau sendok untuk mengaduk perlahan hingga seluruh buah terbalut saus secara merata.",
+      "Parut keju cheddar secukupnya, kemudian taburkan secara merata dan melimpah di bagian paling atas salad buah tersebut.",
+      "Tutup mangkuk rapat-rapat atau simpan di dalam kulkas selama kurang lebih satu jam. Salad buah ini paling nikmat disantap dalam kondisi dingin yang menyegarkan."
+    ],
+    "cooking_time": 15,
+    "difficulty": "Mudah",
+    "category": "Penutup",
+    "tags": ["Penutup", "Sehat", "Cepat", "Mudah"],
+    "source_url": "https://cooksnap.com/recipes/salad-buah",
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  {
+    "recipe_name": "Nasi Uduk Betawi",
+    "description": "Nasi uduk gurih dengan lauk tempe orek, telur dadar iris, dan sambal kacang.",
+    "image_url": "https://images.unsplash.com/photo-1610450537232-a5e2270921fb?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {"name": "Beras", "quantity": 500, "unit": "gram"},
+      {"name": "Santan", "quantity": 600, "unit": "ml"},
+      {"name": "Daun Salam", "quantity": 3, "unit": "lembar"},
+      {"name": "Serai", "quantity": 2, "unit": "batang"},
+      {"name": "Garam", "quantity": 1, "unit": "sdt"},
+      {"name": "Telur Ayam", "quantity": 2, "unit": "butir"},
+      {"name": "Bawang Goreng", "quantity": 2, "unit": "sdm"}
+    ],
+    "steps": [
+      "Takarkan beras dan cuci di bawah air mengalir berulang kali hingga air cuciannya terlihat bening, lalu tiriskan beras hingga kesat.",
+      "Siapkan panci, masukkan santan kelapa pekat bersama dengan daun salam, serai yang sudah dimemarkan, serta garam secukupnya. Panaskan hingga santan mulai mendidih sambil diaduk perlahan.",
+      "Masukkan beras yang sudah ditiriskan ke dalam rebusan santan. Aduk perlahan secara konsisten agar santan tidak pecah dan beras tidak menempel di dasar panci.",
+      "Lanjutkan proses memasak hingga santan terserap habis oleh beras sehingga membentuk adonan nasi setengah matang yang disebut nasi aron.",
+      "Pindahkan nasi aron ke dalam panci kukusan yang airnya sudah dipanaskan terlebih dahulu. Kukus selama sekitar 30 sampai 40 menit sampai nasi benar-benar matang sempurna.",
+      "Sambil menunggu, kocok telur dan buat dadar tipis lalu iris memanjang. Setelah nasi uduk matang, sajikan di atas piring, taburi dengan bawang goreng, letakkan telur dadar, dan lengkapi dengan lauk pendamping lainnya."
+    ],
+    "cooking_time": 60,
+    "difficulty": "Sedang",
+    "category": "Indonesia",
+    "tags": ["Indonesia"],
+    "source_url": "https://cooksnap.com/recipes/nasi-uduk",
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  }
+]

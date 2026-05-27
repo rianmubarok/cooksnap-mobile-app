@@ -1,4 +1,3 @@
-import '../data/repositories/recipe_repository.dart';
 import '../models/recipe_model.dart';
 import '../utils/string_utils.dart';
 
@@ -19,27 +18,37 @@ class RecommendationViewData {
   });
 }
 
-/// Buckets recommendations and computes ingredient suggestions.
+/// Buckets pre-computed recommendations into display groups.
+///
+/// The heavy ingredient *matching* is handled inside [RecipeRepository]
+/// (off the UI thread via `compute()`). This service only does lightweight
+/// bucketing and suggestion computation — safe to run synchronously.
 class RecipeRecommendationService {
   RecipeRecommendationService._();
 
-  static RecommendationViewData compute({
-    required RecipeRepository repo,
+  /// Groups a sorted [allRecommendations] list into "Siap Dibuat" (specific)
+  /// and "Butuh Tambahan Bahan" (combined) sections, then computes ingredient
+  /// suggestions.
+  ///
+  /// [currentIngredients] — what the user has (detected, excluding pantry).
+  /// [pantryItems] — always-available pantry essentials.
+  static RecommendationViewData bucket({
+    required List<RecipeRecommendation> allRecommendations,
     required List<String> currentIngredients,
     required List<String> pantryItems,
   }) {
+    // Ingredients shown in the UI chip row (exclude pantry items)
     final displayedIngredients = currentIngredients
         .where((i) => !StringUtils.listContainsIngredient(pantryItems, i))
         .toList();
-
-    final allRecommendations =
-        repo.getRecommendationsForIngredients(currentIngredients);
 
     final specific = <RecipeRecommendation>[];
     final combined = <RecipeRecommendation>[];
     var validTotal = 0;
 
     for (final rec in allRecommendations) {
+      // A recommendation is "valid" only if it uses at least one
+      // manually-detected ingredient (not just pantry basics).
       final usesManual = displayedIngredients.isEmpty ||
           rec.recipe.ingredients.any(
             (ing) => displayedIngredients.any(
@@ -50,8 +59,6 @@ class RecipeRecommendationService {
       if (!usesManual) continue;
       validTotal++;
 
-      // Specific = 100% match (Ready to cook)
-      // Combined = < 100% match (Needs additional ingredients)
       if (rec.isFullMatch) {
         specific.add(rec);
       } else {
@@ -63,8 +70,6 @@ class RecipeRecommendationService {
       allRecommendations: allRecommendations,
       currentIngredients: currentIngredients,
       pantryItems: pantryItems,
-      validTotal: validTotal,
-      displayedCount: displayedIngredients.length,
     );
 
     return RecommendationViewData(
@@ -80,8 +85,6 @@ class RecipeRecommendationService {
     required List<RecipeRecommendation> allRecommendations,
     required List<String> currentIngredients,
     required List<String> pantryItems,
-    required int validTotal,
-    required int displayedCount,
   }) {
     final missingCounts = <String, int>{};
 

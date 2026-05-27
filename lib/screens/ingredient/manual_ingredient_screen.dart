@@ -18,6 +18,7 @@ import '../../widgets/ingredient/suggestion_chip.dart';
 import '../../widgets/navigation/circular_header_button.dart';
 import '../../widgets/navigation/tab_page_scaffold.dart';
 import 'pantry_essentials_sheet.dart';
+import '../../utils/app_snackbar.dart';
 
 class ManualIngredientScreen extends StatefulWidget {
   const ManualIngredientScreen({super.key});
@@ -56,27 +57,19 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
   }
 
   void _showInvalidIngredientMessage(String raw) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Bahan "$raw" tidak dikenali. Pilih dari daftar saran atau perbaiki ejaan.',
-        ),
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 3),
-      ),
+    showAppSnackBar(
+      context,
+      'Bahan "$raw" tidak dikenali. Pilih dari daftar saran atau perbaiki ejaan.',
+      variant: AppSnackBarVariant.error,
+      duration: const Duration(seconds: 3),
     );
   }
 
   void _showDuplicateMessage(String canonical, String existing) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Bahan "$canonical" sudah ada atau mirip dengan "$existing".',
-        ),
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
-      ),
+    showAppSnackBar(
+      context,
+      'Bahan "$canonical" sudah ada atau mirip dengan "$existing".',
+      variant: AppSnackBarVariant.error,
     );
   }
 
@@ -113,12 +106,7 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
 
   Future<void> _findRecipes() async {
     if (_ingredients.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Pilih minimal satu bahan terlebih dahulu'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      showAppSnackBar(context, 'Pilih minimal satu bahan terlebih dahulu');
       return;
     }
 

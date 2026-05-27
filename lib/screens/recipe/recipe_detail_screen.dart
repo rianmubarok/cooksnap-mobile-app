@@ -1,6 +1,7 @@
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_text_styles.dart';
@@ -14,7 +15,7 @@ import '../../widgets/recipe/recipe_info_chip.dart';
 import '../../widgets/recipe/recipe_ingredients_section.dart';
 import '../../widgets/recipe/recipe_steps_section.dart';
 
-class RecipeDetailScreen extends StatelessWidget {
+class RecipeDetailScreen extends StatefulWidget {
   const RecipeDetailScreen({super.key});
 
   static ({String id, List<String> ingredients}) _parseArgs(Object? args) {
@@ -29,50 +30,93 @@ class RecipeDetailScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final parsed = _parseArgs(ModalRoute.of(context)?.settings.arguments);
-    final recipe =
-        context.read<RecipeRepository>().getRecipeById(parsed.id);
+  State<RecipeDetailScreen> createState() => _RecipeDetailScreenState();
+}
 
-    if (recipe == null) {
-      return Scaffold(
-        backgroundColor: AppColors.background,
-        appBar: AppBar(
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.textOnPrimary,
-        ),
-        body: const Center(child: Text('Resep tidak ditemukan')),
-      );
+class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
+  /// Stored once so the Future isn't recreated on every rebuild.
+  Future<Recipe?>? _recipeFuture;
+  List<String> _availableIngredients = [];
+  String? _recipeId;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Parse route args exactly once.
+    if (_recipeId == null) {
+      final parsed =
+          RecipeDetailScreen._parseArgs(ModalRoute.of(context)?.settings.arguments);
+      _recipeId = parsed.id;
+      _availableIngredients = parsed.ingredients;
+      _recipeFuture =
+          context.read<RecipeRepository>().getRecipeById(parsed.id);
     }
+  }
 
-    final isFavorite =
-        context.watch<FavoritesProvider>().isFavorite(parsed.id);
-
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: CustomScrollView(
-        slivers: [
-          RecipeDetailSliverAppBar(
-            recipe: recipe,
-            isFavorite: isFavorite,
-            onBack: () => Navigator.pop(context),
-            onToggleFavorite: () =>
-                context.read<FavoritesProvider>().toggleFavorite(parsed.id),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(AppConstants.paddingScreen),
-              child: _RecipeDetailBody(
-                recipe: recipe,
-                availableIngredients: parsed.ingredients,
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Recipe?>(
+      future: _recipeFuture,
+      builder: (context, snapshot) {
+        // ── Loading ──────────────────────────────────────────────────────
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            backgroundColor: AppColors.background,
+            body: Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 2.5,
+                color: AppColors.primary,
               ),
             ),
+          );
+        }
+
+        // ── Not found ────────────────────────────────────────────────────
+        final recipe = snapshot.data;
+        if (recipe == null) {
+          return Scaffold(
+            backgroundColor: AppColors.background,
+            appBar: AppBar(
+              backgroundColor: AppColors.primary,
+              foregroundColor: AppColors.textOnPrimary,
+            ),
+            body: const Center(child: Text('Resep tidak ditemukan')),
+          );
+        }
+
+        // ── Found ────────────────────────────────────────────────────────
+        final isFavorite =
+            context.watch<FavoritesProvider>().isFavorite(recipe.id);
+
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          body: CustomScrollView(
+            slivers: [
+              RecipeDetailSliverAppBar(
+                recipe: recipe,
+                isFavorite: isFavorite,
+                onBack: () => Navigator.pop(context),
+                onToggleFavorite: () =>
+                    context.read<FavoritesProvider>().toggleFavorite(recipe.id),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(AppConstants.paddingScreen),
+                  child: _RecipeDetailBody(
+                    recipe: recipe,
+                    availableIngredients: _availableIngredients,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
+
+// ── Detail body ─────────────────────────────────────────────────────────────
 
 class _RecipeDetailBody extends StatelessWidget {
   final Recipe recipe;
@@ -165,7 +209,8 @@ class _SourceLink extends StatelessWidget {
     return Align(
       alignment: Alignment.centerLeft,
       child: InkWell(
-        onTap: () => showPlaceholderSnackBar(context, 'Membuka sumber segera hadir'),
+        onTap: () =>
+            showPlaceholderSnackBar(context, 'Membuka sumber segera hadir'),
         borderRadius: BorderRadius.circular(AppConstants.radiusLg),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_text_styles.dart';
+import '../common/app_text.dart';
 
 /// Title + subtitle block for auth screens.
 class AuthHeader extends StatelessWidget {
@@ -20,9 +20,9 @@ class AuthHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: AppTextStyles.headlineAuth),
+          AppText(title, variant: AppTextVariant.headlineAuth),
           const SizedBox(height: AppConstants.spacingSm),
-          Text(subtitle, style: AppTextStyles.subtitleMuted),
+          AppText(subtitle, variant: AppTextVariant.subtitleMuted),
         ],
       ),
     );

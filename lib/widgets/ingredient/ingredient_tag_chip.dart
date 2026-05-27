@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_text_styles.dart';
 import '../../utils/string_utils.dart';
+import '../common/app_text.dart';
 
 /// Read-only ingredient tag (e.g. recommendation panel).
 class IngredientTagChip extends StatelessWidget {
@@ -22,9 +22,10 @@ class IngredientTagChip extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
+          AppText(
             StringUtils.capitalizeWords(label),
-            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.white),
+            variant: AppTextVariant.bodyMedium,
+            color: AppColors.white,
           ),
         ],
       ),
