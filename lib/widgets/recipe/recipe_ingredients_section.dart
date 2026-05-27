@@ -5,6 +5,7 @@ import '../../core/app_constants.dart';
 import '../../models/recipe_model.dart';
 import '../../utils/string_utils.dart';
 import '../common/app_text.dart';
+import '../ingredient/ingredient_wiki_sheet.dart';
 
 /// Ingredients list with availability indicators.
 class RecipeIngredientsSection extends StatelessWidget {
@@ -35,51 +36,62 @@ class RecipeIngredientsSection extends StatelessWidget {
           final isAvailable = _isAvailable(ing);
           return Container(
             margin: const EdgeInsets.only(bottom: AppConstants.spacingSm),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
               color: AppColors.cardBackground,
               borderRadius: BorderRadius.circular(AppConstants.radiusLg),
               border: Border.all(color: AppColors.border),
             ),
-            child: Row(
-              children: [
-                Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color: isAvailable
-                        ? AppColors.chipBackground
-                        : const Color(0xFFD9D9D9),
-                    shape: BoxShape.circle,
-                  ),
-                  child: isAvailable
-                      ? const Icon(LucideIcons.check, size: 16, color: AppColors.primary)
-                      : Center(
-                          child: Container(
-                            width: 8,
-                            height: 8,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF666666),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+                onTap: () {
+                  showIngredientWikiSheet(context, ing.name);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          color: isAvailable
+                              ? AppColors.chipBackground
+                              : const Color(0xFFD9D9D9),
+                          shape: BoxShape.circle,
                         ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: AppText(
-                    ing.name,
-                    variant: AppTextVariant.bodyMedium,
-                    decoration: TextDecoration.underline,
-                    color: AppColors.textPrimary,
+                        child: isAvailable
+                            ? const Icon(LucideIcons.check, size: 16, color: AppColors.primary)
+                            : Center(
+                                child: Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFF666666),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: AppText(
+                          ing.name,
+                          variant: AppTextVariant.bodyMedium,
+                          decoration: TextDecoration.underline,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      AppText(
+                        '${ing.quantity} ${ing.unit}',
+                        variant: AppTextVariant.bodyMedium,
+                        color: AppColors.grey666,
+                      ),
+                    ],
                   ),
                 ),
-                AppText(
-                  '${ing.quantity} ${ing.unit}',
-                  variant: AppTextVariant.bodyMedium,
-                  color: AppColors.grey666,
-                ),
-              ],
+              ),
             ),
           );
         }),

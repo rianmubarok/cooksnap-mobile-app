@@ -1,10 +1,13 @@
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/app_constants.dart';
 import '../../core/app_routes.dart';
 import '../../core/app_text_styles.dart';
 import '../../providers/pantry_provider.dart';
+import '../../providers/recommendation_provider.dart';
 import '../../utils/ingredient_category_emoji.dart';
 import '../../utils/ingredient_resolver.dart';
 import '../../utils/string_utils.dart';
@@ -43,6 +46,27 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
   final TextEditingController _ingredientController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   final List<String> _ingredients = [];
+
+  List<String> _lastSyncedIngredients = const [];
+  List<String> _lastSyncedPantry = const [];
+
+  void _scheduleRecommendationSync(List<String> pantryItems) {
+    if (listEquals(_lastSyncedIngredients, _ingredients) &&
+        listEquals(_lastSyncedPantry, pantryItems)) {
+      return;
+    }
+
+    _lastSyncedIngredients = List.unmodifiable(_ingredients);
+    _lastSyncedPantry = List.unmodifiable(pantryItems);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      await context.read<RecommendationProvider>().setInputs(
+            currentIngredients: _ingredients,
+            pantryItems: pantryItems,
+          );
+    });
+  }
 
   @override
   void dispose() {
@@ -152,7 +176,17 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
   @override
   Widget build(BuildContext context) {
     final pantryItems = context.watch<PantryProvider>().items;
-    final suggestions = _filterSuggestions(pantryItems);
+    _scheduleRecommendationSync(pantryItems);
+
+    final recommendationProvider = context.watch<RecommendationProvider>();
+    final data = recommendationProvider.data;
+
+    List<String> suggestions;
+    if (data != null && data.suggestions.isNotEmpty) {
+      suggestions = data.suggestions;
+    } else {
+      suggestions = _filterSuggestions(pantryItems);
+    }
 
     return Stack(
       children: [

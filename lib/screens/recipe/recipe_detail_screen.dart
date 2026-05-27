@@ -226,8 +226,9 @@ class _SourceLink extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 _displayLabel,
-                style: AppTextStyles.labelMedium.copyWith(
+                style: AppTextStyles.bodyMedium.copyWith(
                   color: AppColors.textPrimary,
+                  decoration: TextDecoration.underline,
                 ),
               ),
             ],

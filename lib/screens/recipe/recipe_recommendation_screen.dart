@@ -107,16 +107,19 @@ class _RecipeRecommendationScreenState
         floatingActionButton: _selectedSuggestions.isNotEmpty
             ? FloatingActionButton.extended(
                 onPressed: _applySuggestions,
-                backgroundColor: AppColors.chipBackground,
+                backgroundColor: AppColors.primary,
                 elevation: 0,
                 highlightElevation: 0,
                 focusElevation: 0,
                 hoverElevation: 0,
-                icon: const Icon(LucideIcons.check, color: AppColors.primary),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+                ),
+                icon: const Icon(LucideIcons.check, color: AppColors.white),
                 label: Text(
                   'Simpan Perubahan',
-                  style: AppTextStyles.labelMedium.copyWith(
-                    color: AppColors.primary,
+                  style: AppTextStyles.buttonLarge.copyWith(
+                    color: AppColors.white,
                   ),
                 ),
               )

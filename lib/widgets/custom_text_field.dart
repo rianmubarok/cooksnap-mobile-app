@@ -182,7 +182,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
           onChanged: widget.onChanged,
           validator: widget.validator,
           style: (widget.large ? AppTextStyles.h3 : AppTextStyles.bodyMedium)
-              .copyWith(color: AppColors.textPrimary),
+              .copyWith(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w400,
+          ),
           decoration: InputDecoration(
             label: widget.animatedHints != null
                 ? AnimatedSwitcher(
@@ -216,6 +219,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                           ? AppTextVariant.h3
                           : AppTextVariant.bodyMedium,
                       color: AppColors.textHint,
+                      fontWeight: FontWeight.w400,
                     ),
                   )
                 : null,
@@ -226,6 +230,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             hintStyle: (widget.large ? AppTextStyles.h3 : AppTextStyles.bodyMedium)
                 .copyWith(
               color: AppColors.textHint,
+              fontWeight: FontWeight.w400,
             ),
             contentPadding: EdgeInsets.symmetric(
               horizontal: _horizontalPadding,

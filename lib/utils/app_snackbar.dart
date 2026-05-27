@@ -38,6 +38,7 @@ void showAppSnackBar(
           style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textOnPrimary),
         ),
         behavior: SnackBarBehavior.floating,
+        elevation: 0,
         duration: duration,
         backgroundColor: _backgroundFor(variant),
         shape: RoundedRectangleBorder(

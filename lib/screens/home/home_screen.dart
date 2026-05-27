@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -44,10 +45,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Recipe> _allRecipes = [];
   bool _isLoading = true;
+  late int _seed;
 
   @override
   void initState() {
     super.initState();
+    _seed = DateTime.now().millisecondsSinceEpoch;
     _displayTags = List.from(kHomeRecipeTags);
     _loadRecipes();
   }
@@ -78,6 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _displayTags = [_displayTags.first, ...rest];
       _selectedTagIndex = 0;
+      _seed = DateTime.now().millisecondsSinceEpoch;
     });
     await _loadRecipes();
   }
@@ -85,6 +89,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final filteredRecipes = _applyTagFilter(_allRecipes);
+    final popularRecipes = filteredRecipes.take(_kPopularLimit).toList();
+    
+    // Create a deterministically shuffled list for the "Untuk Kamu" section
+    final random = Random(_seed);
+    final forYouRecipes = List<Recipe>.from(filteredRecipes)..shuffle(random);
 
     return Column(
       children: [
@@ -160,15 +169,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             // Limit to [_kPopularLimit] — avoids rendering
                             // all recipes in one horizontal ListView.
                             _PopularRecipesRow(
-                              recipes:
-                                  filteredRecipes.take(_kPopularLimit).toList(),
+                              recipes: popularRecipes,
                             ),
                             const _SectionHeader(
                               title: 'Untuk Kamu',
                               topPadding: 20,
                             ),
                             _RecentRecipesGrid(
-                              recipes: filteredRecipes
+                              recipes: forYouRecipes
                                   .take(_kRecentGridLimit)
                                   .toList(),
                             ),
