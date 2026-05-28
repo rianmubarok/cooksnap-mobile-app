@@ -8,7 +8,7 @@ import '../common/app_text.dart';
 import '../ingredient/ingredient_wiki_sheet.dart';
 
 /// Ingredients list with availability indicators.
-class RecipeIngredientsSection extends StatelessWidget {
+class RecipeIngredientsSection extends StatefulWidget {
   final List<RecipeIngredient> ingredients;
   final List<String> availableIngredients;
 
@@ -18,11 +18,35 @@ class RecipeIngredientsSection extends StatelessWidget {
     this.availableIngredients = const [],
   });
 
-  bool _isAvailable(RecipeIngredient ing) {
-    if (availableIngredients.isEmpty) return false;
-    return availableIngredients.any(
-      (ai) => StringUtils.ingredientMatches(ing.name, ai),
-    );
+  @override
+  State<RecipeIngredientsSection> createState() =>
+      _RecipeIngredientsSectionState();
+}
+
+class _RecipeIngredientsSectionState extends State<RecipeIngredientsSection> {
+  final Set<String> _checkedIngredients = {};
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.availableIngredients.isNotEmpty) {
+      for (final ing in widget.ingredients) {
+        if (widget.availableIngredients.any(
+            (ai) => StringUtils.ingredientMatches(ing.name, ai))) {
+          _checkedIngredients.add(ing.name);
+        }
+      }
+    }
+  }
+
+  void _toggleIngredient(String name) {
+    setState(() {
+      if (_checkedIngredients.contains(name)) {
+        _checkedIngredients.remove(name);
+      } else {
+        _checkedIngredients.add(name);
+      }
+    });
   }
 
   @override
@@ -32,8 +56,8 @@ class RecipeIngredientsSection extends StatelessWidget {
       children: [
         const AppText('Bahan-bahan', variant: AppTextVariant.sectionTitle),
         const SizedBox(height: AppConstants.spacingMd),
-        ...ingredients.map((ing) {
-          final isAvailable = _isAvailable(ing);
+        ...widget.ingredients.map((ing) {
+          final isChecked = _checkedIngredients.contains(ing.name);
           return Container(
             margin: const EdgeInsets.only(bottom: AppConstants.spacingSm),
             decoration: BoxDecoration(
@@ -41,41 +65,41 @@ class RecipeIngredientsSection extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppConstants.radiusLg),
               border: Border.all(color: AppColors.border),
             ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(AppConstants.radiusLg),
-                onTap: () {
-                  showIngredientWikiSheet(context, ing.name);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 24,
-                        height: 24,
-                        decoration: BoxDecoration(
-                          color: isAvailable
-                              ? AppColors.chipBackground
-                              : const Color(0xFFD9D9D9),
-                          shape: BoxShape.circle,
-                        ),
-                        child: isAvailable
-                            ? const Icon(LucideIcons.check, size: 16, color: AppColors.primary)
-                            : Center(
-                                child: Container(
-                                  width: 8,
-                                  height: 8,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFF666666),
-                                    shape: BoxShape.circle,
-                                  ),
+            child: GestureDetector(
+              onTap: () => _toggleIngredient(ing.name),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 14),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 24,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        color: isChecked
+                            ? AppColors.chipBackground
+                            : const Color(0xFFD9D9D9),
+                        shape: BoxShape.circle,
+                      ),
+                      child: isChecked
+                          ? const Icon(LucideIcons.check,
+                              size: 16, color: AppColors.primary)
+                          : Center(
+                              child: Container(
+                                width: 8,
+                                height: 8,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF666666),
+                                  shape: BoxShape.circle,
                                 ),
                               ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
+                            ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () =>
+                            showIngredientWikiSheet(context, ing.name),
                         child: AppText(
                           ing.name,
                           variant: AppTextVariant.bodyMedium,
@@ -83,13 +107,13 @@ class RecipeIngredientsSection extends StatelessWidget {
                           color: AppColors.textPrimary,
                         ),
                       ),
-                      AppText(
-                        '${ing.quantity} ${ing.unit}',
-                        variant: AppTextVariant.bodyMedium,
-                        color: AppColors.grey666,
-                      ),
-                    ],
-                  ),
+                    ),
+                    AppText(
+                      '${ing.quantity} ${ing.unit}',
+                      variant: AppTextVariant.bodyMedium,
+                      color: AppColors.grey666,
+                    ),
+                  ],
                 ),
               ),
             ),

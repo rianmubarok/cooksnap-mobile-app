@@ -41,18 +41,9 @@ class _IngredientWikiSheetState extends State<IngredientWikiSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Center(child: BottomSheetHandle()),
-            const SizedBox(height: AppConstants.spacingLg),
-            Row(
-              children: [
-                const Icon(LucideIcons.bookOpen, color: AppColors.primary),
-                const SizedBox(width: AppConstants.spacingSm),
-                Expanded(
-                  child: Text(
-                    widget.ingredientName,
-                    style: AppTextStyles.h3,
-                  ),
-                ),
-              ],
+            Text(
+              widget.ingredientName,
+              style: AppTextStyles.h3,
             ),
             const SizedBox(height: AppConstants.spacingMd),
             FutureBuilder<({String summary, String? imageUrl})?>(

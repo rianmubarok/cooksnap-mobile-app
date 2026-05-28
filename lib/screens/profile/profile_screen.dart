@@ -9,6 +9,7 @@ import '../../providers/user_provider.dart';
 import '../../utils/placeholder_snackbar.dart';
 import '../../widgets/navigation/tab_page_scaffold.dart';
 import '../../widgets/common/app_confirm_dialog.dart';
+import '../../widgets/common/paywall_sheet.dart';
 import '../../widgets/profile/profile_menu_tile.dart';
 import '../../widgets/common/app_text.dart';
 
@@ -57,13 +58,38 @@ class ProfileScreen extends StatelessWidget {
                       children: [
                         AppText(
                           userName,
-                          variant: AppTextVariant.h3Semibold,
+                          variant: AppTextVariant.greeting,
                         ),
                         const SizedBox(height: 4),
                         AppText(
                           userEmail,
                           variant: AppTextVariant.bodyMedium,
                           color: AppColors.textSecondary,
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: user.isPremium ? const Color(0xFFF59E0B).withOpacity(0.1) : AppColors.divider,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: user.isPremium ? const Color(0xFFF59E0B).withOpacity(0.3) : AppColors.border,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (user.isPremium) ...[
+                                const Icon(LucideIcons.crown, size: 14, color: Color(0xFFD97706)),
+                                const SizedBox(width: 4),
+                              ],
+                              AppText(
+                                user.isPremium ? 'CookSnap PRO' : 'Free User',
+                                variant: AppTextVariant.bodySmall,
+                                color: user.isPremium ? const Color(0xFFD97706) : AppColors.textSecondary,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -85,6 +111,20 @@ class ProfileScreen extends StatelessWidget {
               title: 'Informasi Profil',
               onTap: () => Navigator.pushNamed(context, AppRoutes.editProfile),
             ),
+            if (!user.isPremium)
+              ProfileMenuTile(
+                icon: LucideIcons.crown,
+                title: 'Upgrade ke PRO',
+                iconColor: const Color(0xFFD97706),
+                onTap: () => showPaywallSheet(context),
+              )
+            else
+              ProfileMenuTile(
+                icon: LucideIcons.crown,
+                title: 'Langganan Aktif',
+                iconColor: const Color(0xFFD97706),
+                onTap: () {},
+              ),
             ProfileMenuTile(
               icon: LucideIcons.bell,
               title: AppStrings.notificationSettings,

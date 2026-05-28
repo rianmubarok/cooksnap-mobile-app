@@ -113,6 +113,15 @@ void showScanResultBottomSheet(
                       ),
                       const SizedBox(height: AppConstants.spacingMd),
                       SecondaryButton(
+                        text: 'Simpan ke Daftar Bahan',
+                        onPressed: () {
+                          Navigator.pop(sheetContext);
+                          Navigator.pop(context, provider.detectedIngredients);
+                        },
+                        icon: LucideIcons.download,
+                      ),
+                      const SizedBox(height: AppConstants.spacingMd),
+                      SecondaryButton(
                         text: AppStrings.rescan,
                         onPressed: () {
                           Navigator.pop(sheetContext);

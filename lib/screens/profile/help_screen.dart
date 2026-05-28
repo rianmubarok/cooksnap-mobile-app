@@ -42,24 +42,29 @@ class HelpScreen extends StatelessWidget {
           ),
           const SizedBox(height: AppConstants.spacingLg),
           _FaqAccordion(
+            question: 'Bagaimana cara mencari resep dengan bahan yang saya punya?',
+            answer:
+                'Buka tab "Bahan" (ikon panci di bawah). Anda bisa mengetik bahan manual, memilih dari kategori, atau menggunakan tombol "Scan AI" untuk mengenali bahan melalui kamera.',
+          ),
+          _FaqAccordion(
+            question: 'Apa itu CookSnap PRO?',
+            answer:
+                'CookSnap PRO adalah langganan premium kami! Anda akan mendapatkan akses ke resep tanpa batas, akurasi Scanner AI tingkat lanjut, dan tentunya pengalaman memasak tanpa iklan.',
+          ),
+          _FaqAccordion(
             question: 'Bagaimana cara menambahkan resep ke favorit?',
             answer:
-                'Anda dapat menekan ikon hati (♡) pada halaman detail resep atau di sudut kanan atas kartu resep.',
+                'Cukup tekan ikon hati (♡) pada kartu resep di beranda, atau ketika Anda sedang membaca detail resepnya.',
           ),
           _FaqAccordion(
-            question: 'Bagaimana cara mencari resep menggunakan bahan?',
+            question: 'Bagaimana cara mengedit Profil saya?',
             answer:
-                'Buka fitur pemindai (Scanner) untuk memindai bahan makanan Anda, atau gunakan fitur pencarian dan ketikkan bahan yang Anda miliki.',
+                'Masuk ke tab "Profil" di pojok kanan bawah, lalu pilih menu "Informasi Profil" untuk memperbarui nama dan data akun Anda.',
           ),
           _FaqAccordion(
-            question: 'Apakah aplikasi ini gratis?',
+            question: 'Kenapa Scanner AI kurang akurat mengenali bahan saya?',
             answer:
-                'Ya, aplikasi Cooksnap dapat diunduh dan digunakan secara gratis. Namun, mungkin ada fitur premium di masa mendatang.',
-          ),
-          _FaqAccordion(
-            question: 'Bagaimana cara mengubah profil saya?',
-            answer:
-                'Anda dapat pergi ke halaman Profil, lalu pilih menu "Informasi Profil" untuk mengubah nama atau kata sandi Anda.',
+                'Pastikan pencahayaan cukup terang dan bahan tidak saling tumpang tindih. Semakin jelas fotonya, semakin pintar AI kami mengenalinya!',
           ),
           const SizedBox(height: 32),
           const AppText(

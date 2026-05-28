@@ -14,6 +14,8 @@ import '../screens/recipe/recipe_detail_screen.dart';
 import '../screens/recipe/recipe_recommendation_screen.dart';
 import '../screens/search/search_screen.dart';
 import '../screens/search/search_result_screen.dart';
+import '../screens/recipe/popular_recipes_screen.dart';
+import '../models/recipe_model.dart';
 
 /// App route names and MaterialApp route map.
 class AppRoutes {
@@ -34,6 +36,7 @@ class AppRoutes {
   static const String recipeRecommendation = '/recipe-recommendation';
   static const String search = '/search';
   static const String searchResult = '/search-result';
+  static const String popularRecipes = '/popular-recipes';
 
   static Map<String, WidgetBuilder> get routes => {
         splash: (context) => const SplashScreen(),
@@ -66,6 +69,11 @@ class AppRoutes {
           final args = ModalRoute.of(context)?.settings.arguments;
           final query = args is String ? args : '';
           return SearchResultScreen(query: query);
+        },
+        popularRecipes: (context) {
+          final args = ModalRoute.of(context)?.settings.arguments;
+          final recipes = args is List<Recipe> ? args : <Recipe>[];
+          return PopularRecipesScreen(recipes: recipes);
         },
       };
 }

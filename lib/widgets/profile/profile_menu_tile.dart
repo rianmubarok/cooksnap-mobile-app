@@ -9,6 +9,7 @@ class ProfileMenuTile extends StatelessWidget {
   final String title;
   final VoidCallback onTap;
   final bool isDestructive;
+  final Color? iconColor;
 
   const ProfileMenuTile({
     super.key,
@@ -16,6 +17,7 @@ class ProfileMenuTile extends StatelessWidget {
     required this.title,
     required this.onTap,
     this.isDestructive = false,
+    this.iconColor,
   });
 
   @override
@@ -35,7 +37,7 @@ class ProfileMenuTile extends StatelessWidget {
             Icon(
               icon,
               size: 20,
-              color: isDestructive ? AppColors.error : AppColors.textHint,
+              color: iconColor ?? (isDestructive ? AppColors.error : AppColors.textHint),
             ),
             const SizedBox(width: AppConstants.spacingMd),
             Expanded(

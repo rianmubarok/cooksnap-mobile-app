@@ -8,6 +8,7 @@ import '../../core/app_text_styles.dart';
 import '../../data/repositories/recipe_repository.dart';
 import '../../models/recipe_model.dart';
 import '../../providers/favorites_provider.dart';
+import '../../providers/pantry_provider.dart';
 import '../../utils/placeholder_snackbar.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/recipe/recipe_detail_sliver_app_bar.dart';
@@ -87,6 +88,11 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
         // ── Found ────────────────────────────────────────────────────────
         final isFavorite =
             context.watch<FavoritesProvider>().isFavorite(recipe.id);
+        
+        final pantryItems = context.watch<PantryProvider>().items;
+        final allAvailableIngredients = _availableIngredients.isNotEmpty
+            ? [..._availableIngredients, ...pantryItems]
+            : <String>[];
 
         return Scaffold(
           backgroundColor: AppColors.background,
@@ -104,7 +110,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   padding: const EdgeInsets.all(AppConstants.paddingScreen),
                   child: _RecipeDetailBody(
                     recipe: recipe,
-                    availableIngredients: _availableIngredients,
+                    availableIngredients: allAvailableIngredients,
                   ),
                 ),
               ),

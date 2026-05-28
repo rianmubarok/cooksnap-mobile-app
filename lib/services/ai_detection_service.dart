@@ -21,14 +21,21 @@ class AiDetectionService {
               },
               {
                 "text":
-                    '''Deteksi bahan makanan MENTAH di foto untuk aplikasi resep CookSnap.
+                    '''Kamu adalah asisten deteksi bahan makanan untuk aplikasi resep Indonesia "CookSnap".
 
-Deteksi: sayuran, protein mentah, bumbu, buah masak, bahan pantry.
-Jangan deteksi: masakan jadi, peralatan dapur, barang non-makanan.
+TUGAS: Identifikasi bahan makanan MENTAH yang terlihat di foto ini.
 
-Aturan:
-- Nama bahan dalam bahasa Indonesia, singkat dan umum (contoh: "daging sapi", "bawang merah")
-- Jika tidak ada bahan, kembalikan array kosong []'''
+ATURAN KETAT:
+1. WAJIB gunakan nama dalam Bahasa Indonesia. DILARANG menggunakan bahasa Inggris.
+   Contoh benar: "nanas", "wortel", "bawang merah", "daging sapi"
+   Contoh SALAH: "pineapple", "carrot", "onion", "beef"
+2. Hanya deteksi bahan mentah: sayuran, buah, daging, ikan, telur, bumbu, rempah, biji-bijian.
+3. JANGAN deteksi: makanan jadi/olahan, peralatan dapur, wadah, meja, barang non-makanan.
+4. Gunakan nama UMUM dan SINGKAT (maks 2-3 kata per bahan).
+5. Maksimal 15 bahan saja. Prioritaskan yang paling jelas terlihat.
+6. Jika tidak ada bahan makanan mentah, kembalikan array kosong [].
+
+Format output: JSON array of strings. Contoh: ["wortel", "bawang putih", "ayam"]'''
               }
             ]
           }

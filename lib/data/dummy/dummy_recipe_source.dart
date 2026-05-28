@@ -10,8 +10,8 @@ class DummyRecipeSource {
           'Nasi goreng dengan bumbu rahasia, telur, dan ayam suwir. Cocok untuk sarapan dan makan malam.',
       'image_url': 'https://images.unsplash.com/photo-1645696301019-35adcc18fc21?q=80&w=800&auto=format&fit=crop',
       'ingredients': [
-        {'name': 'Nasi Putih', 'quantity': 2, 'unit': 'piring'},
-        {'name': 'Telur Ayam', 'quantity': 2, 'unit': 'butir'},
+        {'name': 'Nasi', 'quantity': 2, 'unit': 'piring'},
+        {'name': 'Telur', 'quantity': 2, 'unit': 'butir'},
         {'name': 'Bawang Putih', 'quantity': 3, 'unit': 'siung'},
         {'name': 'Bawang Merah', 'quantity': 5, 'unit': 'siung'},
         {'name': 'Kecap Manis', 'quantity': 2, 'unit': 'sdm'},
@@ -40,13 +40,13 @@ class DummyRecipeSource {
           'Ayam goreng tepung crispy dengan sambal bawang pedas. Favorit mahasiswa!',
       'image_url': 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=800&auto=format&fit=crop',
       'ingredients': [
-        {'name': 'Dada Ayam', 'quantity': 2, 'unit': 'potong'},
+        {'name': 'Ayam', 'quantity': 2, 'unit': 'potong'},
         {'name': 'Tepung Terigu', 'quantity': 100, 'unit': 'gram'},
         {'name': 'Tepung Maizena', 'quantity': 50, 'unit': 'gram'},
         {'name': 'Cabai Rawit', 'quantity': 10, 'unit': 'buah'},
         {'name': 'Bawang Putih', 'quantity': 5, 'unit': 'siung'},
         {'name': 'Garam', 'quantity': 1, 'unit': 'sdt'},
-        {'name': 'Merica Bubuk', 'quantity': 1, 'unit': 'sdt'},
+        {'name': 'Merica', 'quantity': 1, 'unit': 'sdt'},
         {'name': 'Minyak Goreng', 'quantity': 500, 'unit': 'ml'},
       ],
       'steps': [
@@ -72,7 +72,7 @@ class DummyRecipeSource {
       'image_url': 'https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?q=80&w=800&auto=format&fit=crop',
       'ingredients': [
         {'name': 'Mie Telur', 'quantity': 2, 'unit': 'bungkus'},
-        {'name': 'Telur Ayam', 'quantity': 1, 'unit': 'butir'},
+        {'name': 'Telur', 'quantity': 1, 'unit': 'butir'},
         {'name': 'Daun Bawang', 'quantity': 1, 'unit': 'batang'},
         {'name': 'Sawi Hijau', 'quantity': 2, 'unit': 'lembar'},
         {'name': 'Kecap Manis', 'quantity': 3, 'unit': 'sdm'},
@@ -131,10 +131,10 @@ class DummyRecipeSource {
           'Minuman segar teh manis dengan perasan lemon. Perfect untuk cuaca panas.',
       'image_url': 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?q=80&w=800&auto=format&fit=crop',
       'ingredients': [
-        {'name': 'Teh celup', 'quantity': 2, 'unit': 'kantong'},
-        {'name': 'Gula pasir', 'quantity': 3, 'unit': 'sdm'},
+        {'name': 'Teh', 'quantity': 2, 'unit': 'kantong'},
+        {'name': 'Gula', 'quantity': 3, 'unit': 'sdm'},
         {'name': 'Lemon', 'quantity': 1, 'unit': 'buah'},
-        {'name': 'Es batu', 'quantity': 5, 'unit': 'buah'},
+        {'name': 'Es Batu', 'quantity': 5, 'unit': 'buah'},
         {'name': 'Air', 'quantity': 300, 'unit': 'ml'},
       ],
       'steps': [
@@ -161,12 +161,12 @@ class DummyRecipeSource {
       'ingredients': [
         {'name': 'Tepung Terigu', 'quantity': 150, 'unit': 'gram'},
         {'name': 'Susu Cair', 'quantity': 200, 'unit': 'ml'},
-        {'name': 'Telur Ayam', 'quantity': 1, 'unit': 'butir'},
+        {'name': 'Telur', 'quantity': 1, 'unit': 'butir'},
         {'name': 'Mentega', 'quantity': 2, 'unit': 'sdm'},
-        {'name': 'Gula Pasir', 'quantity': 2, 'unit': 'sdm'},
+        {'name': 'Gula', 'quantity': 2, 'unit': 'sdm'},
         {'name': 'Baking Powder', 'quantity': 1, 'unit': 'sdt'},
         {'name': 'Mesis Coklat', 'quantity': 3, 'unit': 'sdm'},
-        {'name': 'Keju Cheddar', 'quantity': 50, 'unit': 'gram'},
+        {'name': 'Keju', 'quantity': 50, 'unit': 'gram'},
       ],
       'steps': [
         'Ayak terlebih dahulu tepung terigu dan baking powder ke dalam sebuah mangkuk besar agar tidak ada gumpalan, lalu campurkan dengan gula pasir.',
@@ -190,16 +190,15 @@ class DummyRecipeSource {
           'Sate ayam empuk dengan bumbu kacang khas Madura yang manis gurih.',
       'image_url': 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=800&auto=format&fit=crop',
       'ingredients': [
-        {'name': 'Dada Ayam', 'quantity': 500, 'unit': 'gram'},
+        {'name': 'Ayam', 'quantity': 500, 'unit': 'gram'},
         {'name': 'Kacang Tanah', 'quantity': 200, 'unit': 'gram'},
         {'name': 'Bawang Putih', 'quantity': 4, 'unit': 'siung'},
         {'name': 'Bawang Merah', 'quantity': 5, 'unit': 'siung'},
         {'name': 'Kecap Manis', 'quantity': 5, 'unit': 'sdm'},
         {'name': 'Jeruk Limau', 'quantity': 2, 'unit': 'buah'},
-        {'name': 'Tusuk Sate', 'quantity': 20, 'unit': 'buah'},
       ],
       'steps': [
-        'Cuci bersih fillet dada ayam, lalu potong-potong membentuk dadu kecil dengan ukuran yang seragam agar matangnya bisa merata saat dibakar.',
+        'Siapkan 20 buah tusuk sate bambu. Cuci bersih fillet dada ayam, lalu potong-potong membentuk dadu kecil dengan ukuran yang seragam agar matangnya bisa merata saat dibakar.',
         'Tusuk potongan daging ayam menggunakan tusukan sate bambu. Isi masing-masing tusukan dengan 4 hingga 5 potong daging, lalu sisihkan.',
         'Untuk membuat bumbu, goreng kacang tanah, bawang putih, dan bawang merah hingga matang, lalu haluskan menggunakan blender atau ulekan.',
         'Tumis bumbu kacang halus di atas wajan dengan api sedang, tambahkan sedikit air, garam, dan kecap manis. Masak hingga mengeluarkan minyak dan teksturnya mengental.',
@@ -222,7 +221,7 @@ class DummyRecipeSource {
       'ingredients': [
         {'name': 'Alpukat', 'quantity': 2, 'unit': 'buah'},
         {'name': 'Susu Kental Manis', 'quantity': 3, 'unit': 'sdm'},
-        {'name': 'Gula Pasir', 'quantity': 2, 'unit': 'sdm'},
+        {'name': 'Gula', 'quantity': 2, 'unit': 'sdm'},
         {'name': 'Air', 'quantity': 200, 'unit': 'ml'},
         {'name': 'Es Batu', 'quantity': 1, 'unit': 'gelas'},
       ],
@@ -255,7 +254,7 @@ class DummyRecipeSource {
         {'name': 'Mayonaise', 'quantity': 4, 'unit': 'sdm'},
         {'name': 'Susu Kental Manis', 'quantity': 2, 'unit': 'sdm'},
         {'name': 'Yogurt Plain', 'quantity': 2, 'unit': 'sdm'},
-        {'name': 'Keju Cheddar', 'quantity': 50, 'unit': 'gram'},
+        {'name': 'Keju', 'quantity': 50, 'unit': 'gram'},
       ],
       'steps': [
         'Cuci bersih apel dan anggur dengan air mengalir. Kupas melon dan potong-potong seluruh buah menjadi dadu kecil yang ukurannya cukup untuk satu kali gigitan.',
@@ -284,7 +283,7 @@ class DummyRecipeSource {
         {'name': 'Daun Salam', 'quantity': 3, 'unit': 'lembar'},
         {'name': 'Serai', 'quantity': 2, 'unit': 'batang'},
         {'name': 'Garam', 'quantity': 1, 'unit': 'sdt'},
-        {'name': 'Telur Ayam', 'quantity': 2, 'unit': 'butir'},
+        {'name': 'Telur', 'quantity': 2, 'unit': 'butir'},
         {'name': 'Bawang Goreng', 'quantity': 2, 'unit': 'sdm'},
       ],
       'steps': [

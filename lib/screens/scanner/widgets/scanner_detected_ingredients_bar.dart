@@ -37,10 +37,14 @@ class ScannerDetectedIngredientsBar extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Icon(
-                    LucideIcons.checkCircle,
-                    size: 20,
-                    color: AppColors.success,
+                  Container(
+                    width: 20,
+                    height: 20,
+                    decoration: const BoxDecoration(
+                      color: AppColors.chipBackground,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(LucideIcons.check, size: 14, color: AppColors.primary),
                   ),
                   const SizedBox(width: 8),
                   Text(

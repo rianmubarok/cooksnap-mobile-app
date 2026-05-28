@@ -84,33 +84,25 @@ class _IngredientCategoryAccordionState
                   ],
                 ),
                 const SizedBox(height: 12),
-                AnimatedCrossFade(
+                AnimatedSize(
                   duration: const Duration(milliseconds: 250),
-                  crossFadeState: _isExpanded
-                      ? CrossFadeState.showSecond
-                      : CrossFadeState.showFirst,
-                  sizeCurve: Curves.easeInOut,
-                  firstChild: SizedBox(
+                  curve: Curves.easeInOut,
+                  alignment: Alignment.topCenter,
+                  child: SizedBox(
                     width: double.infinity,
                     child: Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: [
-                        ...preview.map(_chip),
-                        if (remaining > 0)
-                          SuggestionChip(
-                            label: '$remaining lainnya',
-                            onTap: () => setState(() => _isExpanded = true),
-                          ),
-                      ],
-                    ),
-                  ),
-                  secondChild: SizedBox(
-                    width: double.infinity,
-                    child: Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: widget.ingredients.map(_chip).toList(),
+                      children: _isExpanded
+                          ? widget.ingredients.map(_chip).toList()
+                          : [
+                              ...preview.map(_chip),
+                              if (remaining > 0)
+                                SuggestionChip(
+                                  label: '$remaining lainnya',
+                                  onTap: () => setState(() => _isExpanded = true),
+                                ),
+                            ],
                     ),
                   ),
                 ),

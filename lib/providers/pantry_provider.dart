@@ -8,8 +8,8 @@ class PantryProvider extends ChangeNotifier {
   static const List<String> _defaultEssentials = [
     'Air',
     'Garam',
-    'Gula Pasir',
-    'Merica Bubuk',
+    'Gula',
+    'Merica',
     'Minyak Goreng',
     'Bawang Putih',
     'Bawang Merah',

@@ -80,5 +80,11 @@
   {"ingredient_name": "Air", "category": "Lainnya"},
   {"ingredient_name": "Es Batu", "category": "Lainnya"},
   {"ingredient_name": "Kacang Tanah", "category": "Lainnya"},
-  {"ingredient_name": "Santan", "category": "Lainnya"}
+  {"ingredient_name": "Santan", "category": "Lainnya"},
+  {"ingredient_name": "Teh Celup", "category": "Lainnya"},
+  {"ingredient_name": "Mesis Coklat", "category": "Lainnya"},
+  {"ingredient_name": "Baking Powder", "category": "Bumbu Dasar"},
+  {"ingredient_name": "Jeruk Limau", "category": "Bumbu"},
+  {"ingredient_name": "Nata De Coco", "category": "Lainnya"},
+  {"ingredient_name": "Yogurt Plain", "category": "Susu & Olahan Susu"}
 ]

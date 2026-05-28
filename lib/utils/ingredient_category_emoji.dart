@@ -4,10 +4,13 @@ class IngredientCategoryEmoji {
 
   static const Map<String, String> _map = {
     'Sumber Protein': '🍗',
+    'Seafood': '🍤',
     'Sayuran': '🥬',
+    'Jamur': '🍄',
     'Bumbu': '🧄',
     'Bumbu Dasar': '🧂',
     'Karbohidrat': '🍚',
+    'Kacang & Biji': '🥜',
     'Susu & Olahan Susu': '🥛',
     'Buah': '🍎',
     'Tepung': '🌾',

@@ -77,10 +77,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _onRefresh() async {
+    final selectedTag = _displayTags[_selectedTagIndex];
     final rest = _displayTags.sublist(1)..shuffle();
+    final newTags = [_displayTags.first, ...rest];
+    final newSelectedIndex = newTags.indexOf(selectedTag);
+
     setState(() {
-      _displayTags = [_displayTags.first, ...rest];
-      _selectedTagIndex = 0;
+      _displayTags = newTags;
+      _selectedTagIndex = newSelectedIndex;
       _seed = DateTime.now().millisecondsSinceEpoch;
     });
     await _loadRecipes();
@@ -162,8 +166,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               topPadding: 16,
                               onSeeAll: () => Navigator.pushNamed(
                                 context,
-                                AppRoutes.search,
-                                arguments: '',
+                                AppRoutes.popularRecipes,
+                                arguments: filteredRecipes,
                               ),
                             ),
                             // Limit to [_kPopularLimit] — avoids rendering

@@ -9,6 +9,8 @@ import '../../core/app_strings.dart';
 import '../../core/app_text_styles.dart';
 import '../../providers/ai_detection_provider.dart';
 import '../../utils/app_snackbar.dart';
+import '../../providers/user_provider.dart';
+import '../../widgets/common/paywall_sheet.dart';
 import 'widgets/scan_result_bottom_sheet.dart';
 import 'widgets/scanner_controls_bar.dart';
 import 'widgets/scanner_detected_ingredients_bar.dart';
@@ -141,17 +143,23 @@ class _ScannerScreenState extends State<ScannerScreen> {
   }
 
   void _startScanning({bool forceRescan = false}) {
-    final provider = context.read<AiDetectionProvider>();
+    final aiProvider = context.read<AiDetectionProvider>();
+    final userProvider = context.read<UserProvider>();
 
-    // Hasil scan tetap di provider; buka sheet tanpa reset jika sudah ada hasil.
-    if (!forceRescan && provider.hasResult) {
+    if (!forceRescan && aiProvider.hasResult) {
       _openScanResultsSheet();
       return;
     }
 
-    provider.reset();
+    if (!userProvider.canScan) {
+      showPaywallSheet(context, isLimitReached: true);
+      return;
+    }
+
+    aiProvider.reset();
     _openScanResultsSheet();
-    provider.scanIngredients(_selectedImage!);
+    userProvider.recordScan();
+    aiProvider.scanIngredients(_selectedImage!);
   }
 
   @override

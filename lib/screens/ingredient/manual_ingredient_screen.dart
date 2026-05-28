@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_routes.dart';
 import '../../core/app_text_styles.dart';
@@ -12,6 +13,7 @@ import '../../utils/ingredient_category_emoji.dart';
 import '../../utils/ingredient_resolver.dart';
 import '../../utils/string_utils.dart';
 import '../../data/dummy/dummy_ingredients.dart';
+import '../../widgets/common/app_confirm_dialog.dart';
 import '../../widgets/common/square_icon_button.dart';
 import '../../widgets/ingredient/ingredient_autocomplete_field.dart';
 import '../../widgets/ingredient/ingredient_category_accordion.dart';
@@ -126,7 +128,21 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
     setState(() => _ingredients.remove(ingredient));
   }
 
-  void _clearAll() => setState(_ingredients.clear);
+  Future<void> _clearAll() async {
+    final confirmed = await AppConfirmDialog.show(
+      context,
+      title: 'Hapus Semua Bahan',
+      message: 'Apakah Anda yakin ingin menghapus semua bahan yang sudah dipilih?',
+      confirmText: 'Hapus',
+      cancelText: 'Batal',
+      icon: LucideIcons.trash2,
+      iconColor: AppColors.error,
+    );
+
+    if (confirmed == true && mounted) {
+      setState(_ingredients.clear);
+    }
+  }
 
   Future<void> _findRecipes() async {
     if (_ingredients.isEmpty) {
@@ -288,7 +304,26 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
           right: 0,
           bottom: 0,
           child: ManualIngredientActionBar(
-            onScan: () => Navigator.pushNamed(context, AppRoutes.scanner),
+            onScan: () async {
+              final result = await Navigator.pushNamed(context, AppRoutes.scanner);
+              if (result is List<String> && mounted) {
+                final newIngredients = <String>[];
+                for (final item in result) {
+                  final canonical = IngredientResolver.resolve(item) ?? item;
+                  final duplicate = newIngredients.any(
+                    (e) => StringUtils.ingredientMatches(e, canonical),
+                  ) || _ingredients.any(
+                    (e) => StringUtils.ingredientMatches(e, canonical),
+                  );
+                  if (!duplicate) newIngredients.add(canonical);
+                }
+                if (newIngredients.isNotEmpty) {
+                  setState(() {
+                    _ingredients.addAll(newIngredients);
+                  });
+                }
+              }
+            },
             onFindRecipes: _findRecipes,
           ),
         ),
