@@ -9,11 +9,18 @@ import 'core/app_constants.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
-  await dotenv.load(fileName: '.env');
+  
+  try {
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    await dotenv.load(fileName: '.env');
+  } catch (e) {
+    debugPrint('Error loading .env or initializing: $e');
+    // Lanjutkan aplikasi meskipun .env gagal dimuat (fallback akan digunakan)
+  }
+  
   runApp(const CookSnapApp());
 }
 
