@@ -31,8 +31,26 @@ class UserModel {
       isPremium: map['is_premium'] ?? false,
       dailyScanCount: map['daily_scan_count'] ?? 0,
       lastScanDate: map['last_scan_date'] ?? '',
-      pantry: List<String>.from(map['pantry'] ?? []),
+      pantry: _parsePantryIds(map['pantry']),
     );
+  }
+
+  /// PocketBase `pantry` is a relation — usually IDs, sometimes expanded records.
+  static List<String> _parsePantryIds(dynamic raw) {
+    if (raw == null) return const [];
+    if (raw is String) return raw.isEmpty ? const [] : [raw];
+    if (raw is! List) return const [];
+    return raw
+        .map((e) {
+          if (e is String) return e;
+          if (e is Map) {
+            final id = e['id'];
+            if (id is String) return id;
+          }
+          return null;
+        })
+        .whereType<String>()
+        .toList();
   }
 
   Map<String, dynamic> toMap() {
