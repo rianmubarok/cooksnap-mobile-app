@@ -264,5 +264,101 @@
       "CREATE UNIQUE INDEX idx_favorites_user_recipe ON favorites (user_id, recipe_id)",
       "CREATE INDEX idx_favorites_user_id ON favorites (user_id)"
     ]
+  },
+  {
+    "id": "appconfig12345",
+    "name": "app_config",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "id": "cfg_latest",
+        "name": "latest_version",
+        "type": "text",
+        "system": false,
+        "required": true,
+        "presentable": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "cfg_minimum",
+        "name": "minimum_version",
+        "type": "text",
+        "system": false,
+        "required": true,
+        "presentable": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "cfg_force",
+        "name": "force_update",
+        "type": "bool",
+        "system": false,
+        "required": false,
+        "presentable": false,
+        "options": {}
+      },
+      {
+        "id": "cfg_updmsg",
+        "name": "update_message",
+        "type": "text",
+        "system": false,
+        "required": false,
+        "presentable": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "cfg_apkurl",
+        "name": "apk_url",
+        "type": "url",
+        "system": false,
+        "required": false,
+        "presentable": false,
+        "options": {
+          "exceptDomains": null,
+          "onlyDomains": null
+        }
+      },
+      {
+        "id": "cfg_maint",
+        "name": "is_maintenance",
+        "type": "bool",
+        "system": false,
+        "required": false,
+        "presentable": false,
+        "options": {}
+      },
+      {
+        "id": "cfg_maintmsg",
+        "name": "maintenance_message",
+        "type": "text",
+        "system": false,
+        "required": false,
+        "presentable": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
+      }
+    ],
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "indexes": []
   }
 ]

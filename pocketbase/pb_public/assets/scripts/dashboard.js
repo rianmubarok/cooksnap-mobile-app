@@ -23,6 +23,7 @@ const recipesGridContainer = document.getElementById('recipes-grid-container');
 const recipesGrid = document.getElementById('recipes-grid');
 const ingredientsCategoryContainer = document.getElementById('ingredients-category-container');
 const ingredientsCategories = document.getElementById('ingredients-categories');
+const settingsContainer = document.getElementById('settings-container');
 const pagination = document.getElementById('pagination');
 const pageInfo = document.getElementById('page-info');
 const btnPrev = document.getElementById('btn-prev');
@@ -126,10 +127,18 @@ window.switchTab = (collection) => {
     // Update active styles
     document.getElementById('tab-recipes').classList.remove('bg-cookgreen-100', 'text-cookgreen-900');
     document.getElementById('tab-ingredients').classList.remove('bg-cookgreen-100', 'text-cookgreen-900');
+    document.getElementById('tab-settings').classList.remove('bg-cookgreen-100', 'text-cookgreen-900');
     document.getElementById(`tab-${collection}`).classList.add('bg-cookgreen-100', 'text-cookgreen-900');
 
     // Update Header
-    headerTitle.textContent = collection === 'recipes' ? 'Manajemen Resep' : 'Manajemen Bahan';
+    if (collection === 'settings') {
+        headerTitle.textContent = 'Pengaturan Aplikasi';
+        document.getElementById('action-bar').classList.add('hidden');
+    } else {
+        headerTitle.textContent = collection === 'recipes' ? 'Manajemen Resep' : 'Manajemen Bahan';
+        document.getElementById('action-bar').classList.remove('hidden');
+    }
+    
     setupFilterOptions();
 
     loadData();
@@ -161,6 +170,8 @@ async function loadData() {
                 filter: filters.join(' && '),
             });
             renderRecipesGrid(resultList);
+        } else if (currentCollection === 'settings') {
+            await loadSettingsView();
         } else {
             const allItems = await pb.collection(currentCollection).getFullList({
                 sort: 'category,name',
@@ -187,6 +198,7 @@ function showLoading() {
     tableContainer.classList.add('hidden');
     recipesGridContainer.classList.add('hidden');
     ingredientsCategoryContainer.classList.add('hidden');
+    settingsContainer.classList.add('hidden');
     pagination.classList.add('hidden');
 }
 
@@ -196,6 +208,7 @@ function showEmpty() {
     tableContainer.classList.add('hidden');
     recipesGridContainer.classList.add('hidden');
     ingredientsCategoryContainer.classList.add('hidden');
+    settingsContainer.classList.add('hidden');
     pagination.classList.add('hidden');
 }
 
@@ -204,6 +217,7 @@ function showRecipesView() {
     emptyState.classList.add('hidden');
     tableContainer.classList.add('hidden');
     ingredientsCategoryContainer.classList.add('hidden');
+    settingsContainer.classList.add('hidden');
     recipesGridContainer.classList.remove('hidden');
     pagination.classList.remove('hidden');
 }
@@ -213,9 +227,90 @@ function showIngredientsView() {
     emptyState.classList.add('hidden');
     tableContainer.classList.add('hidden');
     recipesGridContainer.classList.add('hidden');
+    settingsContainer.classList.add('hidden');
     ingredientsCategoryContainer.classList.remove('hidden');
     pagination.classList.add('hidden');
 }
+
+function showSettingsContainer() {
+    loadingState.classList.add('hidden');
+    emptyState.classList.add('hidden');
+    tableContainer.classList.add('hidden');
+    recipesGridContainer.classList.add('hidden');
+    ingredientsCategoryContainer.classList.add('hidden');
+    settingsContainer.classList.remove('hidden');
+    pagination.classList.add('hidden');
+}
+
+let appConfigId = null;
+
+async function loadSettingsView() {
+    try {
+        const records = await pb.collection('app_config').getList(1, 1);
+        let config;
+        
+        if (records.items.length === 0) {
+            config = await pb.collection('app_config').create({
+                latest_version: "1.0.0",
+                minimum_version: "1.0.0",
+                force_update: false,
+                update_message: "Versi baru CookSnap tersedia untuk pengalaman yang lebih baik.",
+                apk_url: "",
+                is_maintenance: false,
+                maintenance_message: "Server sedang dalam perbaikan. Silakan coba lagi nanti."
+            });
+        } else {
+            config = records.items[0];
+        }
+
+        appConfigId = config.id;
+        
+        document.getElementById('cfg-latest').value = config.latest_version || '';
+        document.getElementById('cfg-minimum').value = config.minimum_version || '';
+        document.getElementById('cfg-force').checked = config.force_update || false;
+        document.getElementById('cfg-updmsg').value = config.update_message || '';
+        document.getElementById('cfg-apkurl').value = config.apk_url || '';
+        document.getElementById('cfg-maint').checked = config.is_maintenance || false;
+        document.getElementById('cfg-maintmsg').value = config.maintenance_message || '';
+
+        showSettingsContainer();
+    } catch (err) {
+        console.error(err);
+        showToast('Gagal memuat pengaturan app', 'error');
+        showEmpty();
+    }
+}
+
+window.saveSettings = async () => {
+    if (!appConfigId) return;
+
+    const btn = document.getElementById('btn-save-settings');
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = `<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div> Menyimpan...`;
+
+    const payload = {
+        latest_version: document.getElementById('cfg-latest').value,
+        minimum_version: document.getElementById('cfg-minimum').value,
+        force_update: document.getElementById('cfg-force').checked,
+        update_message: document.getElementById('cfg-updmsg').value,
+        apk_url: document.getElementById('cfg-apkurl').value,
+        is_maintenance: document.getElementById('cfg-maint').checked,
+        maintenance_message: document.getElementById('cfg-maintmsg').value,
+    };
+
+    try {
+        await pb.collection('app_config').update(appConfigId, payload);
+        showToast('Pengaturan berhasil disimpan', 'success');
+    } catch (err) {
+        console.error(err);
+        showToast('Gagal menyimpan pengaturan', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        feather.replace();
+    }
+};
 
 function renderRecipesGrid(resultList) {
     if (resultList.totalItems === 0) {
