@@ -31,30 +31,30 @@ class AboutScreen extends StatelessWidget {
         backgroundColor: AppColors.background,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppConstants.paddingScreen),
+      body: const SingleChildScrollView(
+        padding: EdgeInsets.all(AppConstants.paddingScreen),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 24),
-            const AppText(
+            SizedBox(height: 24),
+            AppText(
               AppConstants.appName,
               variant: AppTextVariant.headlineDisplay,
             ),
-            const SizedBox(height: 8),
-            const AppText(
+            SizedBox(height: 8),
+            AppText(
               'Versi 1.0.0',
               variant: AppTextVariant.bodyMedium,
               color: AppColors.textSecondary,
             ),
-            const SizedBox(height: 32),
-            const AppText(
+            SizedBox(height: 32),
+            AppText(
               'Cooksnap adalah aplikasi resep masakan yang memudahkan Anda menemukan inspirasi memasak berdasarkan bahan-bahan yang Anda miliki di dapur. Dengan fitur pemindai cerdas, Anda dapat dengan mudah mengetahui resep apa saja yang bisa dibuat dari bahan-bahan tersebut.',
               variant: AppTextVariant.bodyMedium,
               height: 1.6,
             ),
-            const SizedBox(height: 48),
-            const AppText(
+            SizedBox(height: 48),
+            AppText(
               '© 2026 Cooksnap Team.\nHak Cipta Dilindungi.',
               variant: AppTextVariant.caption,
               color: AppColors.textHint,

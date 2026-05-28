@@ -64,7 +64,9 @@ class Recipe {
       tags: List<String>.from(map['tags'] as List),
       sourceUrl: map['source_url'] as String?,
       videoUrl: map['video_url'] as String?,
-      createdAt: map['created_at'] != null ? DateTime.tryParse(map['created_at'] as String) : null,
+      createdAt: (map['created_at'] ?? map['created']) != null 
+          ? DateTime.tryParse((map['created_at'] ?? map['created']).toString()) 
+          : null,
     );
   }
 }

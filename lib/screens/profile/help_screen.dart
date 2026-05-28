@@ -41,27 +41,27 @@ class HelpScreen extends StatelessWidget {
             variant: AppTextVariant.h3,
           ),
           const SizedBox(height: AppConstants.spacingLg),
-          _FaqAccordion(
+          const _FaqAccordion(
             question: 'Bagaimana cara mencari resep dengan bahan yang saya punya?',
             answer:
                 'Buka tab "Bahan" (ikon panci di bawah). Anda bisa mengetik bahan manual, memilih dari kategori, atau menggunakan tombol "Scan AI" untuk mengenali bahan melalui kamera.',
           ),
-          _FaqAccordion(
+          const _FaqAccordion(
             question: 'Apa itu CookSnap PRO?',
             answer:
                 'CookSnap PRO adalah langganan premium kami! Anda akan mendapatkan akses ke resep tanpa batas, akurasi Scanner AI tingkat lanjut, dan tentunya pengalaman memasak tanpa iklan.',
           ),
-          _FaqAccordion(
+          const _FaqAccordion(
             question: 'Bagaimana cara menambahkan resep ke favorit?',
             answer:
                 'Cukup tekan ikon hati (♡) pada kartu resep di beranda, atau ketika Anda sedang membaca detail resepnya.',
           ),
-          _FaqAccordion(
+          const _FaqAccordion(
             question: 'Bagaimana cara mengedit Profil saya?',
             answer:
                 'Masuk ke tab "Profil" di pojok kanan bawah, lalu pilih menu "Informasi Profil" untuk memperbarui nama dan data akun Anda.',
           ),
-          _FaqAccordion(
+          const _FaqAccordion(
             question: 'Kenapa Scanner AI kurang akurat mengenali bahan saya?',
             answer:
                 'Pastikan pencahayaan cukup terang dan bahan tidak saling tumpang tindih. Semakin jelas fotonya, semakin pintar AI kami mengenalinya!',

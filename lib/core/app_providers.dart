@@ -1,7 +1,7 @@
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
-import '../data/repositories/dummy_recipe_repository.dart';
+import '../data/repositories/pocketbase_recipe_repository.dart';
 import '../data/repositories/recipe_repository.dart';
 import '../providers/ai_detection_provider.dart';
 import '../providers/favorites_provider.dart';
@@ -26,10 +26,8 @@ class AppProviders {
   static List<SingleChildWidget> build() {
     return [
       // ── Data layer ────────────────────────────────────────────────────────
-      // 🔄 SWAP THIS when PocketBase is ready:
-      //   Provider<RecipeRepository>(create: (_) => PocketBaseRecipeRepository()),
       Provider<RecipeRepository>(
-        create: (_) => DummyRecipeRepository(),
+        create: (_) => PocketBaseRecipeRepository(),
       ),
 
       // ── Service layer ─────────────────────────────────────────────────────

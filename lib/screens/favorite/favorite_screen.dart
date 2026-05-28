@@ -8,7 +8,6 @@ import '../../widgets/navigation/tab_page_scaffold.dart';
 import '../../widgets/recipe/recipe_card_grid.dart';
 
 import '../../widgets/search/recipe_search_field.dart';
-import '../../core/app_routes.dart';
 
 class FavoriteScreen extends StatefulWidget {
   const FavoriteScreen({super.key});

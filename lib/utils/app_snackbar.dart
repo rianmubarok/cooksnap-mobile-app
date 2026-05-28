@@ -7,18 +7,7 @@ import '../widgets/common/app_text.dart';
 
 enum AppSnackBarVariant { info, success, warning, error }
 
-Color _backgroundFor(AppSnackBarVariant variant) {
-  switch (variant) {
-    case AppSnackBarVariant.success:
-      return AppColors.success;
-    case AppSnackBarVariant.warning:
-      return AppColors.warning;
-    case AppSnackBarVariant.error:
-      return AppColors.error;
-    case AppSnackBarVariant.info:
-      return AppColors.info;
-  }
-}
+
 
 void showAppSnackBar(
   BuildContext context,

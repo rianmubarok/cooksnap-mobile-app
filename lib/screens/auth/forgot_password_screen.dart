@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_routes.dart';
-import '../../utils/auth_mock.dart';
+import '../../core/pocketbase_client.dart';
 import '../../utils/app_snackbar.dart';
 import '../../widgets/auth/auth_footer_link.dart';
 import '../../widgets/auth/auth_header.dart';
@@ -43,15 +42,27 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
-    await runMockAuth(context, onComplete: () {
-      setState(() => _isLoading = false);
+    try {
+      final email = _emailController.text.trim();
+      await PocketBaseClient.instance.collection('users').requestPasswordReset(email);
+      
+      if (!mounted) return;
       showAppSnackBar(
         context,
         'Tautan reset kata sandi telah dikirim ke email Anda',
         variant: AppSnackBarVariant.success,
       );
       Navigator.pop(context); // Kembali ke halaman login
-    });
+    } catch (e) {
+      if (!mounted) return;
+      showAppSnackBar(
+        context,
+        'Gagal mengirim tautan reset: $e',
+        variant: AppSnackBarVariant.error,
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override

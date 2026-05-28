@@ -97,10 +97,10 @@ class _IngredientWikiSheetState extends State<IngredientWikiSheet> {
                           style: AppTextStyles.bodyMedium.copyWith(height: 1.6),
                         ),
                         const SizedBox(height: AppConstants.spacingLg),
-                        Row(
+                        const Row(
                           children: [
-                            const Icon(LucideIcons.globe, size: 14, color: AppColors.textHint),
-                            const SizedBox(width: 4),
+                            Icon(LucideIcons.globe, size: 14, color: AppColors.textHint),
+                            SizedBox(width: 4),
                             Text(
                               'Sumber: id.wikipedia.org',
                               style: AppTextStyles.caption,

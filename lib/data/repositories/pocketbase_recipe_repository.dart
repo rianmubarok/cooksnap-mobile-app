@@ -1,19 +1,15 @@
-import 'dart:math';
-
 import 'package:flutter/foundation.dart';
+import 'package:pocketbase/pocketbase.dart';
 
+import '../../core/pocketbase_client.dart';
 import '../../models/recipe_model.dart';
 import '../../utils/string_utils.dart';
-import '../dummy/dummy_recipe_source.dart';
 import 'recipe_repository.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Top-level helpers for compute() — must be top-level (not closures/methods)
-// so Flutter can spawn them in a background isolate.
+// Top-level helpers for compute() 
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// Argument bundle passed to the background isolate for recommendation matching.
-/// All fields are plain Dart objects (no native handles) — safely sendable.
 class _MatchArgs {
   final List<Recipe> recipes;
   final List<String> detectedIngredients;
@@ -24,7 +20,6 @@ class _MatchArgs {
   });
 }
 
-/// Runs inside a background isolate — heavy O(recipes × ingredients) matching.
 List<RecipeRecommendation> _matchRecipesToIngredients(_MatchArgs args) {
   final detected = args.detectedIngredients
       .map((i) => i.trim().toLowerCase())
@@ -49,7 +44,6 @@ List<RecipeRecommendation> _matchRecipesToIngredients(_MatchArgs args) {
       } else {
         firstMissing ??= required.name;
 
-        // Partial: shares a significant word (length > 3)
         final reqWords =
             reqNameLower.split(RegExp(r'\s+')).where((w) => w.length > 3);
         final isPartial = detected.any((item) {
@@ -94,7 +88,6 @@ List<RecipeRecommendation> _matchRecipesToIngredients(_MatchArgs args) {
         b.partialMatchedCount.compareTo(a.partialMatchedCount);
     if (partialCompare != 0) return partialCompare;
 
-    // Tie-break: prefer simpler (fewer-ingredient) recipes
     return a.recipe.ingredients.length.compareTo(b.recipe.ingredients.length);
   });
 
@@ -102,25 +95,22 @@ List<RecipeRecommendation> _matchRecipesToIngredients(_MatchArgs args) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// DummyRecipeRepository
+// PocketBaseRecipeRepository
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// In-memory implementation backed by [DummyRecipeSource].
-///
-/// All methods return instant [Future]s so the API is identical to what a real
-/// [PocketBaseRecipeRepository] will expose. Swap this in [AppProviders] when
-/// the backend is ready — zero changes needed in UI code.
-class DummyRecipeRepository implements RecipeRepository {
-  /// Parse once at construction — O(n) upfront, O(1) everywhere else.
-  late final List<Recipe> _recipes =
-      DummyRecipeSource.recipes.map(Recipe.fromMap).toList();
+class PocketBaseRecipeRepository implements RecipeRepository {
+  final pb = PocketBaseClient.instance;
+  
+  // Cache all recipes in memory to speed up recommendations
+  List<Recipe>? _allRecipesCache;
 
-  /// O(1) lookup index.
-  late final Map<String, Recipe> _recipesById = {
-    for (final r in _recipes) r.id: r,
-  };
-
-  // ── RecipeRepository interface ───────────────────────────────────────────
+  // Convert a RecordModel to our Recipe model
+  Recipe _recordToRecipe(RecordModel record) {
+    final map = record.toJson();
+    // PocketBase json fields are already parsed into List/Map when calling toJson()
+    // if they were stored correctly as JSON fields.
+    return Recipe.fromMap(map);
+  }
 
   @override
   Future<List<Recipe>> getRecipes({
@@ -129,19 +119,29 @@ class DummyRecipeRepository implements RecipeRepository {
     String? tag,
     String? difficulty,
   }) async {
-    var result = _recipes.where((r) {
-      if (tag != null && tag.isNotEmpty && !r.tags.contains(tag)) return false;
-      if (difficulty != null &&
-          difficulty.isNotEmpty &&
-          r.difficulty != difficulty) {
-        return false;
-      }
-      return true;
-    }).toList();
+    final filters = <String>[];
+    if (tag != null && tag.isNotEmpty) {
+      filters.add('tags ~ "$tag"');
+    }
+    if (difficulty != null && difficulty.isNotEmpty) {
+      filters.add('difficulty = "$difficulty"');
+    }
 
-    final start = (page - 1) * perPage;
-    if (start >= result.length) return [];
-    return result.sublist(start, min(start + perPage, result.length));
+    final filterString = filters.isEmpty ? '' : filters.join(' && ');
+
+    try {
+      final records = await pb.collection('recipes').getList(
+        page: page,
+        perPage: perPage,
+        filter: filterString,
+        sort: '-created', // Newest first
+      );
+      
+      return records.items.map(_recordToRecipe).toList();
+    } catch (e) {
+      debugPrint('Error getting recipes: $e');
+      return [];
+    }
   }
 
   @override
@@ -149,43 +149,66 @@ class DummyRecipeRepository implements RecipeRepository {
     final q = query.trim().toLowerCase();
     if (q.isEmpty) return [];
 
-    final words = q.split(' ').where((w) => w.isNotEmpty).toList();
-    final scoredResults = <MapEntry<Recipe, int>>[];
+    try {
+      // In PocketBase, we can search multiple fields
+      // For a better fuzzy search, we'll download all and filter locally, 
+      // OR we can do a simple filter query.
+      // Let's use PocketBase filter to query recipe_name, tags, or ingredients
+      // NOTE: 'ingredients' is a JSON field, searching inside JSON requires ~ operator.
+      final filterString = 'recipe_name ~ "$q" || tags ~ "$q" || ingredients ~ "$q"';
+      
+      final records = await pb.collection('recipes').getList(
+        page: 1,
+        perPage: perPage,
+        filter: filterString,
+      );
 
-    for (final r in _recipes) {
-      final nameLower = r.recipeName.toLowerCase();
-      int score = 0;
-
-      if (nameLower == q) {
-        score += 100;
-      } else if (nameLower.contains(q)) {
-        score += 50;
-      }
-
-      for (final w in words) {
-        if (nameLower.contains(w)) score += 10;
-        if (r.tags.any((t) => t.toLowerCase().contains(w))) score += 5;
-        if (r.ingredients.any((i) => i.name.toLowerCase().contains(w))) {
-          score += 2;
-        }
-      }
-
-      if (score > 0) scoredResults.add(MapEntry(r, score));
+      return records.items.map(_recordToRecipe).toList();
+    } catch (e) {
+      debugPrint('Error searching recipes: $e');
+      return [];
     }
-
-    scoredResults.sort((a, b) => b.value.compareTo(a.value));
-    return scoredResults.take(perPage).map((e) => e.key).toList();
   }
 
   @override
-  Future<Recipe?> getRecipeById(String id) async => _recipesById[id];
+  Future<Recipe?> getRecipeById(String id) async {
+    try {
+      final record = await pb.collection('recipes').getOne(id);
+      return _recordToRecipe(record);
+    } catch (e) {
+      debugPrint('Error getting recipe by id: $e');
+      return null;
+    }
+  }
 
   @override
-  Future<List<Recipe>> getAllRecipes() async => List.unmodifiable(_recipes);
+  Future<List<Recipe>> getAllRecipes() async {
+    if (_allRecipesCache != null) return _allRecipesCache!;
+    
+    try {
+      final records = await pb.collection('recipes').getFullList();
+      _allRecipesCache = records.map(_recordToRecipe).toList();
+      return _allRecipesCache!;
+    } catch (e) {
+      debugPrint('Error getting all recipes: $e');
+      return [];
+    }
+  }
 
   @override
   Future<List<Recipe>> getRecipesByIds(List<String> ids) async {
-    return ids.map((id) => _recipesById[id]).whereType<Recipe>().toList();
+    if (ids.isEmpty) return [];
+    
+    try {
+      final filterString = ids.map((id) => 'id = "$id"').join(' || ');
+      final records = await pb.collection('recipes').getFullList(
+        filter: filterString,
+      );
+      return records.map(_recordToRecipe).toList();
+    } catch (e) {
+      debugPrint('Error getting recipes by ids: $e');
+      return [];
+    }
   }
 
   @override
@@ -194,12 +217,12 @@ class DummyRecipeRepository implements RecipeRepository {
   ) async {
     if (detectedIngredients.isEmpty) return [];
 
-    // Run matching in a background isolate — keeps UI thread responsive
-    // even when dataset grows to hundreds of recipes.
+    final recipes = await getAllRecipes();
+
     return compute(
       _matchRecipesToIngredients,
       _MatchArgs(
-        recipes: _recipes,
+        recipes: recipes,
         detectedIngredients: detectedIngredients,
       ),
     );

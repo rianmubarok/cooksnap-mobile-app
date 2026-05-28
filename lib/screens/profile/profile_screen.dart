@@ -70,10 +70,10 @@ class ProfileScreen extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: user.isPremium ? const Color(0xFFF59E0B).withOpacity(0.1) : AppColors.divider,
+                            color: user.isPremium ? const Color(0xFFF59E0B).withValues(alpha: 0.1) : AppColors.divider,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: user.isPremium ? const Color(0xFFF59E0B).withOpacity(0.3) : AppColors.border,
+                              color: user.isPremium ? const Color(0xFFF59E0B).withValues(alpha: 0.3) : AppColors.border,
                             ),
                           ),
                           child: Row(
@@ -154,8 +154,6 @@ class ProfileScreen extends StatelessWidget {
                   message: 'Apakah Anda yakin ingin keluar dari akun Anda?',
                   confirmText: 'Keluar',
                   cancelText: 'Batal',
-                  icon: LucideIcons.logOut,
-                  iconColor: AppColors.error,
                 );
 
                 if (confirmed == true && context.mounted) {

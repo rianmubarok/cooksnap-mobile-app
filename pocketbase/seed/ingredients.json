@@ -1,90 +1,322 @@
 [
-  {"ingredient_name": "Ayam", "category": "Sumber Protein"},
-  {"ingredient_name": "Dada Ayam", "category": "Sumber Protein"},
-  {"ingredient_name": "Ayam Kampung", "category": "Sumber Protein"},
-  {"ingredient_name": "Daging Sapi", "category": "Sumber Protein"},
-  {"ingredient_name": "Daging Kambing", "category": "Sumber Protein"},
-  {"ingredient_name": "Ikan Gurame", "category": "Sumber Protein"},
-  {"ingredient_name": "Ikan Lele", "category": "Sumber Protein"},
-  {"ingredient_name": "Ikan Nila", "category": "Sumber Protein"},
-  {"ingredient_name": "Ikan Tongkol", "category": "Sumber Protein"},
-  {"ingredient_name": "Telur Ayam", "category": "Sumber Protein"},
-  {"ingredient_name": "Telur Bebek", "category": "Sumber Protein"},
-  {"ingredient_name": "Telur Puyuh", "category": "Sumber Protein"},
-  {"ingredient_name": "Tahu", "category": "Sumber Protein"},
-  {"ingredient_name": "Tempe", "category": "Sumber Protein"},
-
-  {"ingredient_name": "Bayam", "category": "Sayuran"},
-  {"ingredient_name": "Brokoli", "category": "Sayuran"},
-  {"ingredient_name": "Buncis", "category": "Sayuran"},
-  {"ingredient_name": "Daun Bawang", "category": "Sayuran"},
-  {"ingredient_name": "Daun Jeruk", "category": "Sayuran"},
-  {"ingredient_name": "Daun Salam", "category": "Sayuran"},
-  {"ingredient_name": "Kangkung", "category": "Sayuran"},
-  {"ingredient_name": "Kacang Panjang", "category": "Sayuran"},
-  {"ingredient_name": "Kol", "category": "Sayuran"},
-  {"ingredient_name": "Sawi Hijau", "category": "Sayuran"},
-  {"ingredient_name": "Sawi Putih", "category": "Sayuran"},
-  {"ingredient_name": "Seledri", "category": "Sayuran"},
-  {"ingredient_name": "Tomat", "category": "Sayuran"},
-  {"ingredient_name": "Wortel", "category": "Sayuran"},
-
-  {"ingredient_name": "Bawang Bombay", "category": "Bumbu"},
-  {"ingredient_name": "Bawang Goreng", "category": "Bumbu"},
-  {"ingredient_name": "Bawang Merah", "category": "Bumbu"},
-  {"ingredient_name": "Bawang Putih", "category": "Bumbu"},
-  {"ingredient_name": "Cabai Merah", "category": "Bumbu"},
-  {"ingredient_name": "Cabai Rawit", "category": "Bumbu"},
-  {"ingredient_name": "Jahe", "category": "Bumbu"},
-  {"ingredient_name": "Kencur", "category": "Bumbu"},
-  {"ingredient_name": "Ketumbar", "category": "Bumbu"},
-  {"ingredient_name": "Kunyit", "category": "Bumbu"},
-  {"ingredient_name": "Lengkuas", "category": "Bumbu"},
-  {"ingredient_name": "Merica Bubuk", "category": "Bumbu"},
-  {"ingredient_name": "Serai", "category": "Bumbu"},
-
-  {"ingredient_name": "Garam", "category": "Bumbu Dasar"},
-  {"ingredient_name": "Gula Merah", "category": "Bumbu Dasar"},
-  {"ingredient_name": "Gula Pasir", "category": "Bumbu Dasar"},
-  {"ingredient_name": "Kecap Asin", "category": "Bumbu Dasar"},
-  {"ingredient_name": "Kecap Manis", "category": "Bumbu Dasar"},
-  {"ingredient_name": "Minyak Goreng", "category": "Bumbu Dasar"},
-  {"ingredient_name": "Penyedap Rasa", "category": "Bumbu Dasar"},
-  {"ingredient_name": "Saus Sambal", "category": "Bumbu Dasar"},
-  {"ingredient_name": "Saus Tiram", "category": "Bumbu Dasar"},
-  {"ingredient_name": "Saus Tomat", "category": "Bumbu Dasar"},
-
-  {"ingredient_name": "Beras", "category": "Karbohidrat"},
-  {"ingredient_name": "Bihun", "category": "Karbohidrat"},
-  {"ingredient_name": "Kentang", "category": "Karbohidrat"},
-  {"ingredient_name": "Mie Telur", "category": "Karbohidrat"},
-  {"ingredient_name": "Nasi Putih", "category": "Karbohidrat"},
-
-  {"ingredient_name": "Keju Cheddar", "category": "Susu & Olahan Susu"},
-  {"ingredient_name": "Mayonaise", "category": "Susu & Olahan Susu"},
-  {"ingredient_name": "Mentega", "category": "Susu & Olahan Susu"},
-  {"ingredient_name": "Susu Cair", "category": "Susu & Olahan Susu"},
-  {"ingredient_name": "Susu Kental Manis", "category": "Susu & Olahan Susu"},
-
-  {"ingredient_name": "Alpukat", "category": "Buah"},
-  {"ingredient_name": "Anggur", "category": "Buah"},
-  {"ingredient_name": "Apel", "category": "Buah"},
-  {"ingredient_name": "Lemon", "category": "Buah"},
-  {"ingredient_name": "Melon", "category": "Buah"},
-
-  {"ingredient_name": "Tepung Beras", "category": "Tepung"},
-  {"ingredient_name": "Tepung Maizena", "category": "Tepung"},
-  {"ingredient_name": "Tepung Tapioka", "category": "Tepung"},
-  {"ingredient_name": "Tepung Terigu", "category": "Tepung"},
-
-  {"ingredient_name": "Air", "category": "Lainnya"},
-  {"ingredient_name": "Es Batu", "category": "Lainnya"},
-  {"ingredient_name": "Kacang Tanah", "category": "Lainnya"},
-  {"ingredient_name": "Santan", "category": "Lainnya"},
-  {"ingredient_name": "Teh Celup", "category": "Lainnya"},
-  {"ingredient_name": "Mesis Coklat", "category": "Lainnya"},
-  {"ingredient_name": "Baking Powder", "category": "Bumbu Dasar"},
-  {"ingredient_name": "Jeruk Limau", "category": "Bumbu"},
-  {"ingredient_name": "Nata De Coco", "category": "Lainnya"},
-  {"ingredient_name": "Yogurt Plain", "category": "Susu & Olahan Susu"}
+  {
+    "name": "Ayam",
+    "category": "Sumber Protein"
+  },
+  {
+    "name": "Dada Ayam",
+    "category": "Sumber Protein"
+  },
+  {
+    "name": "Ayam Kampung",
+    "category": "Sumber Protein"
+  },
+  {
+    "name": "Daging Sapi",
+    "category": "Sumber Protein"
+  },
+  {
+    "name": "Daging Kambing",
+    "category": "Sumber Protein"
+  },
+  {
+    "name": "Ikan Gurame",
+    "category": "Sumber Protein"
+  },
+  {
+    "name": "Ikan Lele",
+    "category": "Sumber Protein"
+  },
+  {
+    "name": "Ikan Nila",
+    "category": "Sumber Protein"
+  },
+  {
+    "name": "Ikan Tongkol",
+    "category": "Sumber Protein"
+  },
+  {
+    "name": "Telur Ayam",
+    "category": "Sumber Protein"
+  },
+  {
+    "name": "Telur Bebek",
+    "category": "Sumber Protein"
+  },
+  {
+    "name": "Telur Puyuh",
+    "category": "Sumber Protein"
+  },
+  {
+    "name": "Tahu",
+    "category": "Sumber Protein"
+  },
+  {
+    "name": "Tempe",
+    "category": "Sumber Protein"
+  },
+  {
+    "name": "Bayam",
+    "category": "Sayuran"
+  },
+  {
+    "name": "Brokoli",
+    "category": "Sayuran"
+  },
+  {
+    "name": "Buncis",
+    "category": "Sayuran"
+  },
+  {
+    "name": "Daun Bawang",
+    "category": "Sayuran"
+  },
+  {
+    "name": "Daun Jeruk",
+    "category": "Sayuran"
+  },
+  {
+    "name": "Daun Salam",
+    "category": "Sayuran"
+  },
+  {
+    "name": "Kangkung",
+    "category": "Sayuran"
+  },
+  {
+    "name": "Kacang Panjang",
+    "category": "Sayuran"
+  },
+  {
+    "name": "Kol",
+    "category": "Sayuran"
+  },
+  {
+    "name": "Sawi Hijau",
+    "category": "Sayuran"
+  },
+  {
+    "name": "Sawi Putih",
+    "category": "Sayuran"
+  },
+  {
+    "name": "Seledri",
+    "category": "Sayuran"
+  },
+  {
+    "name": "Tomat",
+    "category": "Sayuran"
+  },
+  {
+    "name": "Wortel",
+    "category": "Sayuran"
+  },
+  {
+    "name": "Bawang Bombay",
+    "category": "Bumbu"
+  },
+  {
+    "name": "Bawang Goreng",
+    "category": "Bumbu"
+  },
+  {
+    "name": "Bawang Merah",
+    "category": "Bumbu"
+  },
+  {
+    "name": "Bawang Putih",
+    "category": "Bumbu"
+  },
+  {
+    "name": "Cabai Merah",
+    "category": "Bumbu"
+  },
+  {
+    "name": "Cabai Rawit",
+    "category": "Bumbu"
+  },
+  {
+    "name": "Jahe",
+    "category": "Bumbu"
+  },
+  {
+    "name": "Kencur",
+    "category": "Bumbu"
+  },
+  {
+    "name": "Ketumbar",
+    "category": "Bumbu"
+  },
+  {
+    "name": "Kunyit",
+    "category": "Bumbu"
+  },
+  {
+    "name": "Lengkuas",
+    "category": "Bumbu"
+  },
+  {
+    "name": "Merica Bubuk",
+    "category": "Bumbu"
+  },
+  {
+    "name": "Serai",
+    "category": "Bumbu"
+  },
+  {
+    "name": "Garam",
+    "category": "Bumbu Dasar"
+  },
+  {
+    "name": "Gula Merah",
+    "category": "Bumbu Dasar"
+  },
+  {
+    "name": "Gula Pasir",
+    "category": "Bumbu Dasar"
+  },
+  {
+    "name": "Kecap Asin",
+    "category": "Bumbu Dasar"
+  },
+  {
+    "name": "Kecap Manis",
+    "category": "Bumbu Dasar"
+  },
+  {
+    "name": "Minyak Goreng",
+    "category": "Bumbu Dasar"
+  },
+  {
+    "name": "Penyedap Rasa",
+    "category": "Bumbu Dasar"
+  },
+  {
+    "name": "Saus Sambal",
+    "category": "Bumbu Dasar"
+  },
+  {
+    "name": "Saus Tiram",
+    "category": "Bumbu Dasar"
+  },
+  {
+    "name": "Saus Tomat",
+    "category": "Bumbu Dasar"
+  },
+  {
+    "name": "Beras",
+    "category": "Karbohidrat"
+  },
+  {
+    "name": "Bihun",
+    "category": "Karbohidrat"
+  },
+  {
+    "name": "Kentang",
+    "category": "Karbohidrat"
+  },
+  {
+    "name": "Mie Telur",
+    "category": "Karbohidrat"
+  },
+  {
+    "name": "Nasi Putih",
+    "category": "Karbohidrat"
+  },
+  {
+    "name": "Keju Cheddar",
+    "category": "Susu & Olahan Susu"
+  },
+  {
+    "name": "Mayonaise",
+    "category": "Susu & Olahan Susu"
+  },
+  {
+    "name": "Mentega",
+    "category": "Susu & Olahan Susu"
+  },
+  {
+    "name": "Susu Cair",
+    "category": "Susu & Olahan Susu"
+  },
+  {
+    "name": "Susu Kental Manis",
+    "category": "Susu & Olahan Susu"
+  },
+  {
+    "name": "Alpukat",
+    "category": "Buah"
+  },
+  {
+    "name": "Anggur",
+    "category": "Buah"
+  },
+  {
+    "name": "Apel",
+    "category": "Buah"
+  },
+  {
+    "name": "Lemon",
+    "category": "Buah"
+  },
+  {
+    "name": "Melon",
+    "category": "Buah"
+  },
+  {
+    "name": "Tepung Beras",
+    "category": "Tepung"
+  },
+  {
+    "name": "Tepung Maizena",
+    "category": "Tepung"
+  },
+  {
+    "name": "Tepung Tapioka",
+    "category": "Tepung"
+  },
+  {
+    "name": "Tepung Terigu",
+    "category": "Tepung"
+  },
+  {
+    "name": "Air",
+    "category": "Lainnya"
+  },
+  {
+    "name": "Es Batu",
+    "category": "Lainnya"
+  },
+  {
+    "name": "Kacang Tanah",
+    "category": "Lainnya"
+  },
+  {
+    "name": "Santan",
+    "category": "Lainnya"
+  },
+  {
+    "name": "Teh Celup",
+    "category": "Lainnya"
+  },
+  {
+    "name": "Mesis Coklat",
+    "category": "Lainnya"
+  },
+  {
+    "name": "Baking Powder",
+    "category": "Bumbu Dasar"
+  },
+  {
+    "name": "Jeruk Limau",
+    "category": "Bumbu"
+  },
+  {
+    "name": "Nata De Coco",
+    "category": "Lainnya"
+  },
+  {
+    "name": "Yogurt Plain",
+    "category": "Susu & Olahan Susu"
+  }
 ]

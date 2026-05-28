@@ -11,8 +11,6 @@ class AppConfirmDialog extends StatelessWidget {
   final String confirmText;
   final String cancelText;
   final VoidCallback onConfirm;
-  final IconData? icon;
-  final Color? iconColor;
 
   const AppConfirmDialog({
     super.key,
@@ -21,8 +19,6 @@ class AppConfirmDialog extends StatelessWidget {
     required this.onConfirm,
     this.confirmText = 'Ya',
     this.cancelText = 'Batal',
-    this.icon,
-    this.iconColor,
   });
 
   /// Shows the confirmation dialog and returns true if confirmed.
@@ -32,8 +28,6 @@ class AppConfirmDialog extends StatelessWidget {
     required String message,
     String confirmText = 'Ya',
     String cancelText = 'Batal',
-    IconData? icon,
-    Color? iconColor,
   }) {
     return showDialog<bool>(
       context: context,
@@ -42,8 +36,6 @@ class AppConfirmDialog extends StatelessWidget {
         message: message,
         confirmText: confirmText,
         cancelText: cancelText,
-        icon: icon,
-        iconColor: iconColor,
         onConfirm: () => Navigator.of(context).pop(true),
       ),
     );
@@ -51,8 +43,6 @@ class AppConfirmDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveIconColor = iconColor ?? AppColors.primary;
-
     return Dialog(
       backgroundColor: AppColors.cardBackground,
       shape: RoundedRectangleBorder(
@@ -64,7 +54,6 @@ class AppConfirmDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-
             AppText(
               title,
               variant: AppTextVariant.h3,

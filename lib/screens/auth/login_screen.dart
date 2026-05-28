@@ -1,13 +1,11 @@
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pocketbase/pocketbase.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_strings.dart';
 import '../../core/app_routes.dart';
 import '../../core/app_text_styles.dart';
 import '../../providers/user_provider.dart';
-import '../../utils/auth_mock.dart';
-import '../../utils/placeholder_snackbar.dart';
 import '../../widgets/auth/auth_footer_link.dart';
 import '../../widgets/auth/auth_header.dart';
 import '../../widgets/auth/auth_screen_layout.dart';
@@ -53,16 +51,36 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
-    await runMockAuth(context, onComplete: () {
-      setState(() => _isLoading = false);
+    
+    try {
       final email = _emailController.text.trim();
-      final displayName = email.contains('@') ? email.split('@').first : email;
-      context.read<UserProvider>().setUser(
-            displayName.isEmpty ? AppStrings.defaultUserName : displayName,
-            email,
-          );
+      final password = _passwordController.text;
+      
+      await context.read<UserProvider>().login(email, password);
+      
+      if (!mounted) return;
       Navigator.pushReplacementNamed(context, AppRoutes.home);
-    });
+    } catch (e) {
+      if (!mounted) return;
+      
+      String errorMessage = 'Login gagal. Periksa kembali email dan kata sandi Anda.';
+      if (e is ClientException && e.statusCode == 0) {
+        errorMessage = 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.';
+      } else if (e.toString().contains('unverified_email')) {
+        errorMessage = 'Email Anda belum diverifikasi. Silakan periksa kotak masuk email Anda terlebih dahulu.';
+      }
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   @override
@@ -89,6 +107,11 @@ class _LoginScreenState extends State<LoginScreen> {
               keyboardType: TextInputType.emailAddress,
               controller: _emailController,
               large: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) return 'Email wajib diisi';
+                if (!value.contains('@')) return 'Format email tidak valid';
+                return null;
+              },
             ),
             const SizedBox(height: AppConstants.spacingMd),
             CustomTextField(
@@ -98,6 +121,10 @@ class _LoginScreenState extends State<LoginScreen> {
               controller: _passwordController,
               textInputAction: TextInputAction.done,
               large: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) return 'Kata sandi wajib diisi';
+                return null;
+              },
             ),
             const SizedBox(height: 24),
             Align(

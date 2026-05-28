@@ -1,47 +1,58 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import '../core/app_strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// User profile state — connect to PocketBase auth later.
-class UserProvider extends ChangeNotifier {
-  static const String _keyLoggedIn = 'user_logged_in';
-  static const String _keyName = 'user_name';
-  static const String _keyEmail = 'user_email';
-  static const String _keyOnboarding = 'onboarding_completed';
-  static const String _keyIsPremium = 'user_is_premium';
-  static const String _keyDailyScanCount = 'daily_scan_count';
-  static const String _keyLastScanDate = 'last_scan_date';
+import '../core/app_strings.dart';
+import '../core/pocketbase_client.dart';
+import '../models/user_model.dart';
 
-  String _name = '';
-  String _email = '';
-  bool _isLoggedIn = false;
+/// User profile state — connected to PocketBase auth.
+class UserProvider extends ChangeNotifier {
+  static const String _keyOnboarding = 'onboarding_completed';
+
   bool _hasCompletedOnboarding = false;
   bool _initialized = false;
-  bool _isPremium = false;
-  int _dailyScanCount = 0;
-  String _lastScanDate = '';
   Completer<void>? _initCompleter;
 
-  String get name => _name;
-  String get email => _email;
-  bool get isLoggedIn => _isLoggedIn;
+  // PocketBase client
+  final pb = PocketBaseClient.instance;
+
+  UserModel? _userModel;
+
+  bool get isLoggedIn => pb.authStore.isValid;
   bool get hasCompletedOnboarding => _hasCompletedOnboarding;
   bool get isInitialized => _initialized;
-  bool get isPremium => _isPremium;
-  int get dailyScanCount => _dailyScanCount;
+  
+  // Expose fields from UserModel safely
+  String get name => _userModel?.name ?? '';
+  String get email => _userModel?.email ?? '';
+  bool get isPremium => _userModel?.isPremium ?? false;
+  int get dailyScanCount => _userModel?.dailyScanCount ?? 0;
   
   static const int freeScanLimit = 3;
-  bool get canScan => _isPremium || _dailyScanCount < freeScanLimit;
+  bool get canScan => isPremium || dailyScanCount < freeScanLimit;
 
   String get firstName {
-    if (_name.isEmpty) return AppStrings.defaultUserName;
-    return _name.split(' ').first;
+    if (name.isEmpty) return AppStrings.defaultUserName;
+    return name.split(' ').first;
   }
 
   UserProvider() {
     _load();
+    // Listen to PocketBase auth state changes automatically
+    pb.authStore.onChange.listen((e) {
+      _syncUserModel();
+      notifyListeners();
+    });
+  }
+
+  void _syncUserModel() {
+    if (pb.authStore.isValid && pb.authStore.record != null) {
+      _userModel = UserModel.fromMap(pb.authStore.record!.toJson());
+    } else {
+      _userModel = null;
+    }
   }
 
   Future<void> waitForInitialization() {
@@ -52,22 +63,24 @@ class UserProvider extends ChangeNotifier {
 
   Future<void> _load() async {
     final prefs = await SharedPreferences.getInstance();
-    _isLoggedIn = prefs.getBool(_keyLoggedIn) ?? false;
-    _name = prefs.getString(_keyName) ?? '';
-    _email = prefs.getString(_keyEmail) ?? '';
     _hasCompletedOnboarding = prefs.getBool(_keyOnboarding) ?? false;
     
-    _isPremium = prefs.getBool(_keyIsPremium) ?? false;
-    _dailyScanCount = prefs.getInt(_keyDailyScanCount) ?? 0;
-    _lastScanDate = prefs.getString(_keyLastScanDate) ?? '';
+    _syncUserModel(); // Sync initial state from AuthStore
 
-    // Reset daily count if it's a new day
-    final today = DateTime.now().toIso8601String().split('T').first;
-    if (_lastScanDate != today) {
-      _dailyScanCount = 0;
-      _lastScanDate = today;
-      await prefs.setInt(_keyDailyScanCount, 0);
-      await prefs.setString(_keyLastScanDate, today);
+    // If logged in, check if dailyScanCount needs reset for a new day
+    if (_userModel != null) {
+      final today = DateTime.now().toIso8601String().split('T').first;
+      if (_userModel!.lastScanDate != today) {
+        try {
+          final updatedRecord = await pb.collection('users').update(_userModel!.id, body: {
+            'daily_scan_count': 0,
+            'last_scan_date': today,
+          });
+          pb.authStore.save(pb.authStore.token, updatedRecord);
+        } catch (_) {
+          // Ignore network errors on init
+        }
+      }
     }
 
     _initialized = true;
@@ -76,26 +89,37 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setUser(String name, String email) async {
-    _name = name;
-    _email = email;
-    _isLoggedIn = true;
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_keyLoggedIn, true);
-    await prefs.setString(_keyName, name);
-    await prefs.setString(_keyEmail, email);
-    notifyListeners();
+  /// Perform login against PocketBase API
+  Future<void> login(String email, String password) async {
+    final recordAuth = await pb.collection('users').authWithPassword(email, password).timeout(const Duration(seconds: 10));
+    
+    // Periksa apakah email sudah diverifikasi
+    final isVerified = recordAuth.record?.getBoolValue('verified') ?? false;
+    if (!isVerified) {
+      pb.authStore.clear(); // Hapus sesi jika belum verifikasi
+      throw Exception('unverified_email');
+    }
+  }
+  
+  /// Perform registration against PocketBase API
+  Future<void> register(String name, String email, String password) async {
+    await pb.collection('users').create(body: {
+      'name': name,
+      'email': email,
+      'password': password,
+      'passwordConfirm': password,
+    }).timeout(const Duration(seconds: 10));
+    // Request verification email (dijalankan di background agar tidak loading lama jika SMTP error)
+    pb.collection('users').requestVerification(email).catchError((_) {});
   }
 
   Future<void> updateProfile(String name, String email) async {
-    _name = name;
-    _email = email;
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_keyName, name);
-    await prefs.setString(_keyEmail, email);
-    notifyListeners();
+    if (!isLoggedIn) return;
+    final updatedRecord = await pb.collection('users').update(_userModel!.id, body: {
+      'name': name,
+      'email': email,
+    });
+    pb.authStore.save(pb.authStore.token, updatedRecord);
   }
 
   Future<void> completeOnboarding() async {
@@ -106,42 +130,34 @@ class UserProvider extends ChangeNotifier {
   }
 
   Future<void> recordScan() async {
+    if (!isLoggedIn) return;
+    
     final today = DateTime.now().toIso8601String().split('T').first;
-    if (_lastScanDate != today) {
-      _dailyScanCount = 1;
-      _lastScanDate = today;
+    int newCount = _userModel!.dailyScanCount;
+    
+    if (_userModel!.lastScanDate != today) {
+      newCount = 1;
     } else {
-      _dailyScanCount++;
+      newCount++;
     }
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_keyDailyScanCount, _dailyScanCount);
-    await prefs.setString(_keyLastScanDate, _lastScanDate);
-    notifyListeners();
+    final updatedRecord = await pb.collection('users').update(_userModel!.id, body: {
+      'daily_scan_count': newCount,
+      'last_scan_date': today,
+    });
+    pb.authStore.save(pb.authStore.token, updatedRecord);
   }
 
   Future<void> upgradeToPremium() async {
-    _isPremium = true;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_keyIsPremium, true);
-    notifyListeners();
+    if (!isLoggedIn) return;
+    final updatedRecord = await pb.collection('users').update(_userModel!.id, body: {
+      'is_premium': true,
+    });
+    pb.authStore.save(pb.authStore.token, updatedRecord);
   }
 
   Future<void> logout() async {
-    _name = '';
-    _email = '';
-    _isLoggedIn = false;
-    _isPremium = false;
-    _dailyScanCount = 0;
-    _lastScanDate = '';
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_keyLoggedIn, false);
-    await prefs.remove(_keyName);
-    await prefs.remove(_keyEmail);
-    await prefs.remove(_keyIsPremium);
-    await prefs.remove(_keyDailyScanCount);
-    await prefs.remove(_keyLastScanDate);
-    notifyListeners();
+    pb.authStore.clear();
+    // authStore.onChange will fire automatically and update the UI
   }
 }

@@ -1,14 +1,13 @@
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:pocketbase/pocketbase.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_routes.dart';
 import '../../core/app_text_styles.dart';
+import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
-import '../../utils/auth_mock.dart';
-
 import '../../widgets/auth/auth_footer_link.dart';
 import '../../widgets/auth/auth_header.dart';
 import '../../widgets/auth/auth_screen_layout.dart';
@@ -68,16 +67,49 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
-    await runMockAuth(context, onComplete: () {
-      setState(() => _isLoading = false);
-      // Removed context.read<UserProvider>().setUser(...) because the user needs to verify their email first
+    
+    try {
+      final name = _nameController.text.trim();
       final email = _emailController.text.trim();
+      final password = _passwordController.text;
+      
+      await context.read<UserProvider>().register(name, email, password);
+      
+      if (!mounted) return;
       Navigator.pushReplacementNamed(
         context,
         AppRoutes.verifyEmail,
         arguments: email,
       );
-    });
+    } catch (e) {
+      if (!mounted) return;
+      
+      String errorMessage = 'Gagal mendaftar. Silakan coba lagi.';
+      if (e is ClientException) {
+        if (e.statusCode == 0) {
+          errorMessage = 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.';
+        } else {
+          final data = e.response['data'] as Map<String, dynamic>?;
+          if (data != null && data['email'] != null) {
+            errorMessage = 'Email ini sudah terdaftar. Silakan gunakan email lain atau Masuk.';
+          } else {
+            errorMessage = e.response['message']?.toString() ?? 'Pendaftaran gagal';
+          }
+        }
+      }
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 5),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   @override
@@ -139,7 +171,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 if (value == null || value.isEmpty) {
                   return 'Kata sandi wajib diisi';
                 }
-                if (value.length < 6) return 'Kata sandi minimal 6 karakter';
+                if (value.length < 8) return 'Kata sandi minimal 8 karakter';
                 return null;
               },
             ),

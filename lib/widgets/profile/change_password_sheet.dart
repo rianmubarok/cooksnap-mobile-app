@@ -39,8 +39,7 @@ class _ChangePasswordSheetState extends State<ChangePasswordSheet> {
       context,
       title: 'Simpan Kata Sandi',
       message: 'Apakah Anda yakin ingin mengubah kata sandi Anda?',
-      confirmText: 'Simpan',
-      icon: LucideIcons.lock,
+      confirmText: 'Ubah',
     );
 
     if (confirmed != true || !mounted) return;

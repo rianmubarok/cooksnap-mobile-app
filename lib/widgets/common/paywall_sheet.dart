@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import '../../core/app_text_styles.dart';
 import '../../providers/user_provider.dart';
 import 'bottom_sheet_handle.dart';
 import '../custom_button.dart';
@@ -35,8 +34,8 @@ void showPaywallSheet(BuildContext context, {bool isLimitReached = false}) {
             const SizedBox(height: AppConstants.spacingMd),
             Container(
               padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFF7E6), // Light gold/orange background
+              decoration: const BoxDecoration(
+                color: Color(0xFFFFF7E6), // Light gold/orange background
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -65,23 +64,23 @@ void showPaywallSheet(BuildContext context, {bool isLimitReached = false}) {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xFFF59E0B).withOpacity(0.3)),
+                border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.3)),
                 borderRadius: BorderRadius.circular(AppConstants.radiusLg),
                 color: const Color(0xFFFFFBEB),
               ),
-              child: Row(
+              child: const Row(
                 children: [
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         AppText('CookSnap PRO', variant: AppTextVariant.h4),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4),
                         AppText('Akses AI Scanner sepuasnya', variant: AppTextVariant.bodySmall, color: AppColors.textSecondary),
                       ],
                     ),
                   ),
-                  AppText('Rp 15.000', variant: AppTextVariant.h3, color: const Color(0xFFD97706)),
+                  AppText('Rp 15.000', variant: AppTextVariant.h3, color: Color(0xFFD97706)),
                   AppText('/bln', variant: AppTextVariant.bodySmall, color: AppColors.textSecondary),
                 ],
               ),

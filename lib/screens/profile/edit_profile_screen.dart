@@ -74,6 +74,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           _emailController.text.trim(),
         );
 
+    if (!mounted) return;
+
     setState(() => _isLoading = false);
 
     showAppSnackBar(
@@ -189,7 +191,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           title: 'Simpan Perubahan',
                           message: 'Apakah Anda yakin ingin menyimpan perubahan pada profil Anda?',
                           confirmText: 'Simpan',
-                          icon: LucideIcons.save,
                         );
                         if (confirmed == true && context.mounted) {
                           _handleSave();

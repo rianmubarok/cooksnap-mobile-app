@@ -17,8 +17,8 @@
 // KONFIGURASI — EDIT BAGIAN INI
 // =============================================
 const BASE_URL = 'http://127.0.0.1:8090';
-const ADMIN_EMAIL = 'admin@cooksnap.app';   // email admin PocketBase
-const ADMIN_PASSWORD = 'admin123456';       // password admin PocketBase
+const ADMIN_EMAIL = 'rupacode0@gmail.com';   // email admin PocketBase
+const ADMIN_PASSWORD = 'fitrianmubarok13';       // password admin PocketBase
 // =============================================
 
 const recipes = require('./recipes.json');
@@ -27,7 +27,7 @@ const ingredients = require('./ingredients.json');
 // ── Helpers ──────────────────────────────────────────────
 
 async function getAdminToken() {
-  const res = await fetch(`${BASE_URL}/api/admins/auth-with-password`, {
+  const res = await fetch(`${BASE_URL}/api/collections/_superusers/auth-with-password`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ identity: ADMIN_EMAIL, password: ADMIN_PASSWORD }),
@@ -123,7 +123,7 @@ async function seedIngredients(token) {
       await createRecord(token, 'ingredients', item);
       ok++;
     } catch (e) {
-      // Likely duplicate — ignore
+      console.error(`  ❌ Gagal bahan: ${e.message}`);
       fail++;
     }
   }

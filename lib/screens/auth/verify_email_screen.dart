@@ -4,7 +4,6 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_routes.dart';
-import '../../core/app_text_styles.dart';
 import '../../widgets/auth/auth_screen_layout.dart';
 import '../../widgets/common/app_text.dart';
 import '../../widgets/custom_button.dart';

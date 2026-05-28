@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_routes.dart';
 import '../../core/app_text_styles.dart';
@@ -135,8 +134,6 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
       message: 'Apakah Anda yakin ingin menghapus semua bahan yang sudah dipilih?',
       confirmText: 'Hapus',
       cancelText: 'Batal',
-      icon: LucideIcons.trash2,
-      iconColor: AppColors.error,
     );
 
     if (confirmed == true && mounted) {
