@@ -1,0 +1,6 @@
+pb_data/
+*.exe
+*.zip
+*.tar.gz
+README.md
+.gitignore

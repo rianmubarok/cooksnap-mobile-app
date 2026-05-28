@@ -50,18 +50,52 @@ class Recipe {
   String get cookingTimeLabel => '$cookingTime min';
 
   factory Recipe.fromMap(Map<String, dynamic> map) {
+    final rawIngredients = map['ingredients'];
+    final parsedIngredients = <RecipeIngredient>[];
+    if (rawIngredients is List) {
+      for (final item in rawIngredients) {
+        if (item is Map<String, dynamic>) {
+          parsedIngredients.add(
+            RecipeIngredient(
+              name: (item['name'] ?? '').toString(),
+              quantity: (item['quantity'] is num) ? item['quantity'] as num : 1,
+              unit: (item['unit'] ?? 'pcs').toString(),
+            ),
+          );
+        } else if (item != null) {
+          parsedIngredients.add(
+            RecipeIngredient(
+              name: item.toString(),
+              quantity: 1,
+              unit: 'pcs',
+            ),
+          );
+        }
+      }
+    }
+
+    final rawTags = map['tags'];
+    final parsedTags = rawTags is List
+        ? rawTags.map((e) => e.toString()).toList()
+        : <String>[];
+
+    final rawSteps = map['steps'];
+    final parsedSteps = rawSteps is List
+        ? rawSteps.map((e) => e.toString()).toList()
+        : <String>[];
+
     return Recipe(
       id: map['id'] as String,
       recipeName: map['recipe_name'] as String,
       description: map['description'] as String,
       imageUrl: map['image_url'] as String?,
-      ingredients: (map['ingredients'] as List)
-          .map((e) => RecipeIngredient.fromMap(e as Map<String, dynamic>))
-          .toList(),
-      steps: List<String>.from(map['steps'] as List),
-      cookingTime: map['cooking_time'] as int,
+      ingredients: parsedIngredients,
+      steps: parsedSteps,
+      cookingTime: map['cooking_time'] is int
+          ? map['cooking_time'] as int
+          : int.tryParse('${map['cooking_time']}') ?? 0,
       difficulty: map['difficulty'] as String,
-      tags: List<String>.from(map['tags'] as List),
+      tags: parsedTags,
       sourceUrl: map['source_url'] as String?,
       videoUrl: map['video_url'] as String?,
       createdAt: (map['created_at'] ?? map['created']) != null 

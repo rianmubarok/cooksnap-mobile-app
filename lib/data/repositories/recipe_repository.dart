@@ -46,4 +46,18 @@ abstract class RecipeRepository {
   Future<List<RecipeRecommendation>> getRecommendationsForIngredients(
     List<String> detectedIngredients,
   );
+
+  // ── Favorites CRUD ────────────────────────────────────────────────────────
+
+  /// Load all favorite records for [userId].
+  /// Returns a map of `recipeId → favoriteRecordId` (PocketBase record ID
+  /// needed for deletion).
+  Future<Map<String, String>> getFavoriteRecords(String userId);
+
+  /// Create a favorite record linking [userId] to [recipeId].
+  /// Returns the new PocketBase record ID.
+  Future<String> addFavorite(String userId, String recipeId);
+
+  /// Delete the favorite record identified by [favoriteRecordId].
+  Future<void> removeFavorite(String favoriteRecordId);
 }

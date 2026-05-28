@@ -105,11 +105,14 @@ class PocketBaseRecipeRepository implements RecipeRepository {
   List<Recipe>? _allRecipesCache;
 
   // Convert a RecordModel to our Recipe model
-  Recipe _recordToRecipe(RecordModel record) {
+  Recipe? _recordToRecipeSafe(RecordModel record) {
     final map = record.toJson();
-    // PocketBase json fields are already parsed into List/Map when calling toJson()
-    // if they were stored correctly as JSON fields.
-    return Recipe.fromMap(map);
+    try {
+      return Recipe.fromMap(map);
+    } catch (e) {
+      debugPrint('Skip invalid recipe record ${record.id}: $e');
+      return null;
+    }
   }
 
   @override
@@ -137,7 +140,10 @@ class PocketBaseRecipeRepository implements RecipeRepository {
         sort: '-created', // Newest first
       );
       
-      return records.items.map(_recordToRecipe).toList();
+      return records.items
+          .map(_recordToRecipeSafe)
+          .whereType<Recipe>()
+          .toList();
     } catch (e) {
       debugPrint('Error getting recipes: $e');
       return [];
@@ -163,7 +169,10 @@ class PocketBaseRecipeRepository implements RecipeRepository {
         filter: filterString,
       );
 
-      return records.items.map(_recordToRecipe).toList();
+      return records.items
+          .map(_recordToRecipeSafe)
+          .whereType<Recipe>()
+          .toList();
     } catch (e) {
       debugPrint('Error searching recipes: $e');
       return [];
@@ -174,7 +183,7 @@ class PocketBaseRecipeRepository implements RecipeRepository {
   Future<Recipe?> getRecipeById(String id) async {
     try {
       final record = await pb.collection('recipes').getOne(id);
-      return _recordToRecipe(record);
+      return _recordToRecipeSafe(record);
     } catch (e) {
       debugPrint('Error getting recipe by id: $e');
       return null;
@@ -183,11 +192,14 @@ class PocketBaseRecipeRepository implements RecipeRepository {
 
   @override
   Future<List<Recipe>> getAllRecipes() async {
-    if (_allRecipesCache != null) return _allRecipesCache!;
-    
     try {
+      // Always refetch so data added from dashboard is reflected immediately
+      // when the app triggers a reload (e.g., pull-to-refresh / reopen screen).
       final records = await pb.collection('recipes').getFullList();
-      _allRecipesCache = records.map(_recordToRecipe).toList();
+      _allRecipesCache = records
+          .map(_recordToRecipeSafe)
+          .whereType<Recipe>()
+          .toList();
       return _allRecipesCache!;
     } catch (e) {
       debugPrint('Error getting all recipes: $e');
@@ -204,7 +216,10 @@ class PocketBaseRecipeRepository implements RecipeRepository {
       final records = await pb.collection('recipes').getFullList(
         filter: filterString,
       );
-      return records.map(_recordToRecipe).toList();
+      return records
+          .map(_recordToRecipeSafe)
+          .whereType<Recipe>()
+          .toList();
     } catch (e) {
       debugPrint('Error getting recipes by ids: $e');
       return [];
@@ -226,5 +241,38 @@ class PocketBaseRecipeRepository implements RecipeRepository {
         detectedIngredients: detectedIngredients,
       ),
     );
+  }
+
+  // ── Favorites CRUD ───────────────────────────────────────────────────────
+
+  @override
+  Future<Map<String, String>> getFavoriteRecords(String userId) async {
+    try {
+      final records = await pb.collection('favorites').getFullList(
+        filter: 'user_id = "$userId"',
+      );
+      // Map: recipeId -> favoriteRecordId
+      return {
+        for (final r in records)
+          (r.data['recipe_id'] as String? ?? r.get<String>('recipe_id')): r.id,
+      };
+    } catch (e) {
+      debugPrint('Error getting favorite records: $e');
+      return {};
+    }
+  }
+
+  @override
+  Future<String> addFavorite(String userId, String recipeId) async {
+    final record = await pb.collection('favorites').create(body: {
+      'user_id': userId,
+      'recipe_id': recipeId,
+    });
+    return record.id;
+  }
+
+  @override
+  Future<void> removeFavorite(String favoriteRecordId) async {
+    await pb.collection('favorites').delete(favoriteRecordId);
   }
 }
