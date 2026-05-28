@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifikasi Akun | CookSnap</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- PocketBase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/pocketbase@latest/dist/pocketbase.umd.js"></script>
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Work Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        cookgreen: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            800: '#166534',
+                            900: '#143B16',
+                        },
+                        cooklime: '#A7EE6A',
+                        cookorange: '#F58700',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="font-sans text-gray-800 bg-gray-50 flex flex-col min-h-screen">
+    <div class="flex-1 flex items-center justify-center p-6 relative overflow-hidden">
+        <!-- Floating shapes -->
+        <div class="absolute inset-0 w-full h-full pointer-events-none z-0">
+            <div class="absolute w-96 h-96 bg-cooklime/30 rounded-full blur-[80px] -top-24 -left-24"></div>
+            <div class="absolute w-72 h-72 bg-cookorange/15 rounded-full blur-[80px] -bottom-12 -right-12"></div>
+        </div>
+
+        <div class="bg-white/80 backdrop-blur-md w-full max-w-md p-8 rounded-3xl shadow-xl border border-white relative z-10 text-center">
+            <div class="flex justify-center mb-6">
+                <div id="icon-container" class="bg-blue-100 p-4 rounded-full text-blue-600">
+                    <i id="status-icon" data-feather="loader" class="w-10 h-10 animate-spin"></i>
+                </div>
+            </div>
+            
+            <h1 id="status-title" class="text-3xl font-medium text-gray-900 mb-2">Memverifikasi...</h1>
+            <p id="status-message" class="text-gray-500 mb-8">Harap tunggu sebentar, kami sedang memverifikasi akun Anda.</p>
+
+            <a href="/" class="inline-block bg-gray-100 text-gray-700 font-medium py-3 px-6 rounded-xl hover:bg-gray-200 transition-all">Kembali ke Beranda</a>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            const pb = new PocketBase('/'); // Connects to the same origin
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+
+            const titleEl = document.getElementById('status-title');
+            const msgEl = document.getElementById('status-message');
+            const iconContainer = document.getElementById('icon-container');
+            const iconEl = document.getElementById('status-icon');
+
+            if (!token) {
+                titleEl.textContent = 'Token Tidak Valid';
+                msgEl.textContent = 'Link verifikasi tidak lengkap atau tidak valid.';
+                iconContainer.className = 'bg-red-100 p-4 rounded-full text-red-600';
+                iconEl.setAttribute('data-feather', 'x-circle');
+                iconEl.classList.remove('animate-spin');
+                feather.replace();
+                return;
+            }
+
+            try {
+                // Confirm verification for 'users' collection
+                await pb.collection('users').confirmVerification(token);
+                
+                titleEl.textContent = 'Verifikasi Berhasil!';
+                msgEl.textContent = 'Akun Anda telah berhasil diverifikasi. Silakan buka kembali aplikasi CookSnap dan login.';
+                iconContainer.className = 'bg-cookgreen-100 p-4 rounded-full text-cookgreen-600';
+                iconEl.setAttribute('data-feather', 'check-circle');
+                iconEl.classList.remove('animate-spin');
+                feather.replace();
+            } catch (error) {
+                console.error(error);
+                titleEl.textContent = 'Verifikasi Gagal';
+                msgEl.textContent = 'Link verifikasi mungkin sudah kadaluarsa atau tidak valid lagi.';
+                iconContainer.className = 'bg-red-100 p-4 rounded-full text-red-600';
+                iconEl.setAttribute('data-feather', 'alert-circle');
+                iconEl.classList.remove('animate-spin');
+                feather.replace();
+            }
+        });
+    </script>
+</body>
+
+</html>
