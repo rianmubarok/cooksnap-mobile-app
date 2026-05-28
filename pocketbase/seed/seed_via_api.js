@@ -16,9 +16,9 @@
 // =============================================
 // KONFIGURASI — EDIT BAGIAN INI
 // =============================================
-const BASE_URL = 'http://127.0.0.1:8090';
-const ADMIN_EMAIL = 'rupacode0@gmail.com';   // email admin PocketBase
-const ADMIN_PASSWORD = 'fitrianmubarok13';       // password admin PocketBase
+const BASE_URL = 'https://cooksnap-mobile-app-production.up.railway.app';
+const ADMIN_EMAIL = 'admin@cooksnap.com';   // email admin PocketBase
+const ADMIN_PASSWORD = 'Cooksnap123456';       // password admin PocketBase
 // =============================================
 
 const recipes = require('./recipes.json');

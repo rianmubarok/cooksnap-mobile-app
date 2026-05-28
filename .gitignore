@@ -48,3 +48,8 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 .env
+
+# PocketBase local files
+pocketbase/pb_data/
+pocketbase/*.exe
+pocketbase/pocketbase
