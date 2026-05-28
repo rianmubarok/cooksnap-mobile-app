@@ -6,6 +6,10 @@ CookSnap adalah aplikasi mobile berbasis AI untuk mendeteksi bahan makanan melal
 
 ---
 
+### 📥 [Download APK CookSnap v1.0.0](https://github.com/rianmubarok/cooksnap-mobile-app/releases/download/v1.0.0/cooksnap-v1.0.0.apk)
+
+---
+
 # Tech Stack
 
 - Flutter
