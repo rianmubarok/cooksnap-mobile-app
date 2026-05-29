@@ -99,10 +99,24 @@
                 await pb.collection('users').confirmVerification(token);
                 
                 titleEl.textContent = 'Verifikasi Berhasil!';
-                msgEl.textContent = 'Akun Anda telah berhasil diverifikasi. Silakan buka kembali aplikasi CookSnap dan login.';
+                msgEl.textContent = 'Akun Anda telah berhasil diverifikasi. Silakan klik tombol di bawah ini untuk kembali ke aplikasi.';
                 iconContainer.className = 'bg-cookgreen-100 p-4 rounded-full text-cookgreen-600';
                 iconEl.setAttribute('data-feather', 'check-circle');
                 iconEl.classList.remove('animate-spin');
+                
+                // Ganti tombol "Kembali ke Beranda" dengan "Buka Aplikasi"
+                const actionBtn = document.querySelector('a[href="/"]');
+                if (actionBtn) {
+                    actionBtn.textContent = 'Buka Aplikasi CookSnap';
+                    actionBtn.href = 'cooksnap://login';
+                    actionBtn.className = 'inline-block bg-cookgreen-500 text-white font-medium py-3 px-6 rounded-xl shadow-lg shadow-cookgreen-500/30 hover:bg-cookgreen-600 hover:-translate-y-1 transition-all';
+                    
+                    // Otomatis arahkan ke aplikasi setelah 2 detik
+                    setTimeout(() => {
+                        window.location.href = 'cooksnap://login';
+                    }, 2000);
+                }
+                
                 feather.replace();
             } catch (error) {
                 console.error(error);
