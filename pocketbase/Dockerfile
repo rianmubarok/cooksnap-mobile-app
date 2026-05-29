@@ -21,6 +21,9 @@ COPY ./pb_hooks /pb/pb_hooks
 # (Opsional) Uncomment baris di bawah ini jika Anda ingin mengunggah pb_migrations juga
 # COPY ./pb_migrations /pb/pb_migrations
 
+# Set working directory so PocketBase finds pb_hooks and pb_data correctly
+WORKDIR /pb
+
 # Expose port 8080 (Standar Railway)
 EXPOSE 8080
 
