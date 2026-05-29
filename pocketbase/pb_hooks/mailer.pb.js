@@ -1,5 +1,3 @@
-/// <reference path="../pb_data/types.d.ts" />
-
 function sendViaBrevo(e) {
     const apiKey = $os.getenv("BREVO_API_KEY");
     if (!apiKey) {
