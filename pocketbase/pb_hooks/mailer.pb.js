@@ -1,8 +1,7 @@
 function sendViaBrevo(e) {
     const apiKey = $os.getenv("BREVO_API_KEY");
     if (!apiKey) {
-        $app.logger().warn("BREVO_API_KEY is not set. Falling back to default SMTP.");
-        return; // Lanjutkan menggunakan SMTP standar jika API key tidak ada
+        throw new Error("BREVO_API_KEY_MISSING");
     }
 
     const senderEmail = $os.getenv("BREVO_SENDER_EMAIL") || "noreply@cooksnap.app";
@@ -10,42 +9,36 @@ function sendViaBrevo(e) {
     const subject = e.mail.subject || "CookSnap Notification";
     const htmlContent = e.mail.html || `<p>Please check your account.</p>`;
 
-    try {
-        const res = $http.send({
-            url: "https://api.brevo.com/v3/smtp/email",
-            method: "POST",
-            headers: {
-                "api-key": apiKey,
-                "Content-Type": "application/json",
-                "Accept": "application/json"
+    const res = $http.send({
+        url: "https://api.brevo.com/v3/smtp/email",
+        method: "POST",
+        headers: {
+            "api-key": apiKey,
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify({
+            sender: {
+                name: "CookSnap",
+                email: senderEmail
             },
-            body: JSON.stringify({
-                sender: {
-                    name: "CookSnap",
-                    email: senderEmail
-                },
-                to: [
-                    {
-                        email: userEmail
-                    }
-                ],
-                subject: subject,
-                htmlContent: htmlContent
-            }),
-            timeout: 10 // 10 seconds timeout
-        });
+            to: [
+                {
+                    email: userEmail
+                }
+            ],
+            subject: subject,
+            htmlContent: htmlContent
+        }),
+        timeout: 10
+    });
 
-        if (res.statusCode >= 400) {
-            $app.logger().error("Failed to send email via Brevo API", "status", res.statusCode, "response", res.raw);
-        } else {
-            $app.logger().info("Email sent successfully via Brevo API to " + userEmail);
-        }
-
-        // Tidak perlu membatalkan e.cancel() agar tidak memicu error.
-        // Cukup biarkan PocketBase melanjutkan tugasnya (pastikan SMTP di Dashboard dimatikan).
-    } catch (err) {
-        $app.logger().error("Error executing Brevo HTTP request: " + err);
-        // Jangan batalkan jika gagal HTTP, biarkan SMTP mencoba (meskipun mungkin timeout)
+    if (res.statusCode >= 400) {
+        throw new Error("BREVO_FAILED: " + res.raw);
+    } else {
+        // Jika sukses, kita lempar error khusus untuk MENCEGAH sendmail berjalan
+        // dan agar kita bisa melihat buktinya di log.
+        throw new Error("BREVO_SUCCESS_EMAIL_SENT_TO_" + userEmail);
     }
 }
 
