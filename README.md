@@ -1,66 +1,62 @@
-# CookSnap
+<div align="center">
+  <img src="pocketbase/pb_public/Home.jpg" alt="CookSnap Home" width="300"/>
 
-CookSnap adalah aplikasi mobile berbasis AI untuk mendeteksi bahan makanan melalui kamera dan memberikan rekomendasi resep berdasarkan bahan yang tersedia.
+  # 🍳 CookSnap
 
-> “Masak dari apa yang kamu punya sekarang.”
+  **Aplikasi Mobile Berbasis AI untuk Mendeteksi Bahan Makanan & Rekomendasi Resep**
 
----
+  *“Masak dari apa yang kamu punya sekarang.”*
 
-### 📥 [Download APK CookSnap v1.0.0](https://github.com/rianmubarok/cooksnap-mobile-app/releases/download/v1.0.0/cooksnap-v1.0.0.apk)
+  [![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev/)
+  [![PocketBase](https://img.shields.io/badge/PocketBase-B8DBE4?style=for-the-badge&logo=pocketbase&logoColor=black)](https://pocketbase.io/)
+  [![Gemini API](https://img.shields.io/badge/Gemini_API-8E75B2?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
 
----
-
-# Tech Stack
-
-- Flutter
-- PocketBase
-- Gemini Vision API
-- Provider
-- Cloudinary
-- Figma
+  ### 📥 [Download APK CookSnap v1.0.0](https://github.com/rianmubarok/cooksnap-mobile-app/releases/download/v1.0.0/cooksnap-v1.0.0.apk)
+</div>
 
 ---
 
-# MVP Features
+## ✨ Fitur Utama (MVP)
 
-- Splash Screen
-- Onboarding
-- Login & Register
-- Home
-- Camera Scanner
-- Scan Result
-- Recipe Recommendation
-- Recipe Detail
-- Favorite
-- Profile
+- 📸 **Camera Scanner**: Deteksi bahan makanan secara instan menggunakan AI (Gemini Vision).
+- 🥘 **Recipe Recommendation**: Dapatkan rekomendasi resep cerdas berdasarkan bahan yang berhasil dipindai.
+- 🔐 **Authentication**: Login, Register, dan manajemen sesi pengguna yang aman.
+- 💖 **Favorite Recipes**: Simpan resep favorit Anda untuk dimasak nanti.
+- 👤 **User Profile**: Kelola profil pengguna dengan mudah.
+- 📱 **Sleek UI/UX**: Antarmuka modern dan responsif dengan navigasi yang mulus.
 
 ---
 
-# Project Setup
+## 🛠️ Tech Stack
 
-## 1. Clone Repository
+- **Frontend**: Flutter (Dart)
+- **Backend/BaaS**: PocketBase
+- **AI Engine**: Gemini Vision API
+- **State Management**: Provider
+- **Storage/Image Hosting**: Cloudinary
+- **Design**: Figma
+
+---
+
+## 🚀 Instalasi & Setup
+
+### 1. Clone Repository
 
 ```bash
 git clone https://github.com/rianmubarok/cooksnap-mobile-app.git
-```
-
-Masuk ke folder project:
-
-```bash
 cd cooksnap-mobile-app
 ```
 
----
-
-## 2. Install Dependencies
+### 2. Install Dependencies
 
 ```bash
 flutter pub get
 ```
 
----
+### 3. Konfigurasi Environment (Jika ada)
+Pastikan Anda sudah menyiapkan file `.env` yang berisi URL PocketBase dan API Key yang dibutuhkan.
 
-## 3. Run Project
+### 4. Jalankan Proyek
 
 ```bash
 flutter run
@@ -68,107 +64,56 @@ flutter run
 
 ---
 
-# Main Development Flow
-
-1. Setup project
-2. Static UI
-3. Navigation
-4. Dummy data
-5. Database integration
-6. AI integration
-7. Testing
-
----
-
-# Git Workflow
-
-## Main Branch
-
-| Branch      | Fungsi            |
-| ----------- | ----------------- |
-| main        | versi stabil/demo |
-| development | development utama |
-
----
-
-## Pull Latest Changes
-
-Sebelum mulai kerja:
-
-```bash
-git pull origin development
-```
-
----
-
-## Push Changes
-
-```bash
-git add .
-git commit -m "your commit message"
-git push origin development
-```
-
----
-
-# Commit Rules
-
-Gunakan commit yang jelas.
-
-Contoh:
-
-```bash
-git commit -m "setup flutter structure"
-```
-
-```bash
-git commit -m "implement login ui"
-```
-
-Hindari:
-
-```bash
-git commit -m "fix"
-```
-
-atau:
-
-```bash
-git commit -m "update"
-```
-
----
-
-# Folder Structure
+## 📂 Struktur Folder
 
 ```text
 lib/
-│
-├── core/
-├── models/
-├── providers/
-├── screens/
-├── services/
-├── widgets/
-└── main.dart
+├── core/         # Konfigurasi, routing, tema, dan konstanta
+├── data/         # Repositori dan pemrosesan data (API/Database)
+├── models/       # Struktur data (Model)
+├── providers/    # State management
+├── screens/      # Halaman antarmuka pengguna (UI)
+├── services/     # Layanan eksternal (API calls)
+├── widgets/      # Komponen UI yang dapat digunakan kembali
+└── main.dart     # Entry point aplikasi
 ```
 
 ---
 
-# Documentation
+## 👥 Git Workflow
 
-Dokumentasi lengkap tersedia pada folder:
+Kami menggunakan branching model sederhana untuk menjaga stabilitas kode.
 
-```text
-docs/
-```
+| Branch      | Fungsi            |
+| ----------- | ----------------- |
+| `main`        | Versi stabil / Demo siap rilis |
+| `development` | Development utama |
+
+### Alur Kerja
+
+1. **Tarik perubahan terbaru** sebelum mulai menulis kode:
+   ```bash
+   git pull origin development
+   ```
+2. **Commit perubahan** menggunakan standar format:
+   ```bash
+   git add .
+   git commit -m "feat: implement scanner UI"
+   git push origin development
+   ```
+
+### 📝 Aturan Commit
+Gunakan pesan commit yang jelas dan deskriptif.
+✅ **Disarankan:** `git commit -m "setup flutter structure"` atau `"feat: implement login ui"`
+❌ **Hindari:** `git commit -m "fix"` atau `"update"`
 
 ---
 
-# Project Rules
+## 📜 Peraturan Proyek
+- **Fokus ke MVP**: Jangan menambah fitur besar di tengah development yang belum direncanakan.
+- **Gunakan Dummy Data**: Jika backend belum siap, gunakan dummy data terlebih dahulu.
+- **Diskusi Database**: Semua perubahan struktur database (PocketBase) harus didiskusikan.
+- **Stabilitas Utama**: Prioritaskan aplikasi tetap stabil untuk keperluan demo.
 
-- Fokus ke MVP
-- Jangan menambah fitur besar di tengah development
-- Gunakan dummy data jika backend belum siap
-- Semua perubahan database harus diskusi terlebih dahulu
-- Prioritaskan aplikasi stabil untuk demo
+---
+*Dokumentasi lebih lanjut dapat dilihat pada folder `docs/`.*
