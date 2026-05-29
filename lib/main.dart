@@ -6,6 +6,7 @@ import 'core/app_providers.dart';
 import 'core/app_theme.dart';
 import 'core/app_routes.dart';
 import 'core/app_constants.dart';
+import 'core/pocketbase_client.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +21,8 @@ Future<void> main() async {
     debugPrint('Error loading .env or initializing: $e');
     // Lanjutkan aplikasi meskipun .env gagal dimuat (fallback akan digunakan)
   }
+  
+  await PocketBaseClient.init();
   
   runApp(const CookSnapApp());
 }
