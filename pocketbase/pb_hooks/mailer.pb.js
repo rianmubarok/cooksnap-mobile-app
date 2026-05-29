@@ -1,13 +1,14 @@
 function sendViaBrevo(e) {
     const apiKey = $os.getenv("BREVO_API_KEY");
     if (!apiKey) {
-        throw new Error("BREVO_API_KEY_MISSING");
+        $app.logger().warn("BREVO_API_KEY is not set. Falling back to default SMTP.");
+        return e.next();
     }
 
     const senderEmail = $os.getenv("BREVO_SENDER_EMAIL") || "noreply@cooksnap.app";
     const userEmail = e.record.get("email");
-    const subject = e.mail.subject || "CookSnap Notification";
-    const htmlContent = e.mail.html || `<p>Please check your account.</p>`;
+    const subject = e.message.subject || "CookSnap Notification";
+    const htmlContent = e.message.html || `<p>Please check your account.</p>`;
 
     const res = $http.send({
         url: "https://api.brevo.com/v3/smtp/email",
@@ -36,23 +37,24 @@ function sendViaBrevo(e) {
     if (res.statusCode >= 400) {
         throw new Error("BREVO_FAILED: " + res.raw);
     } else {
-        // Jika sukses, kita lempar error khusus untuk MENCEGAH sendmail berjalan
-        // dan agar kita bisa melihat buktinya di log.
-        throw new Error("BREVO_SUCCESS_EMAIL_SENT_TO_" + userEmail);
+        $app.logger().info("Email sent successfully via Brevo API to " + userEmail);
+        // By NOT calling e.next(), we stop PocketBase from using sendmail
+        // and return a clean success (204 No Content) to the client!
+        return; 
     }
 }
 
-// Intersep email Verifikasi Akun
-onMailerBeforeRecordVerificationSend((e) => {
-    return sendViaBrevo(e);
+// Hook v0.23+ untuk email verifikasi
+onMailerRecordVerificationSend((e) => {
+    sendViaBrevo(e);
 });
 
-// Intersep email Lupa Password (Password Reset)
-onMailerBeforeRecordPasswordResetSend((e) => {
-    return sendViaBrevo(e);
+// Hook v0.23+ untuk email lupa password
+onMailerRecordPasswordResetSend((e) => {
+    sendViaBrevo(e);
 });
 
-// Intersep email Perubahan Alamat Email
-onMailerBeforeRecordChangeEmailSend((e) => {
-    return sendViaBrevo(e);
+// Hook v0.23+ untuk ubah email
+onMailerRecordChangeEmailSend((e) => {
+    sendViaBrevo(e);
 });
