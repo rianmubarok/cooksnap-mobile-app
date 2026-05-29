@@ -101,6 +101,8 @@ class UserProvider extends ChangeNotifier {
     }
   }
   
+  static const String _keyLastRegisteredEmail = 'last_registered_email';
+
   /// Perform registration against PocketBase API
   Future<void> register(String name, String email, String password) async {
     await pb.collection('users').create(body: {
@@ -109,8 +111,25 @@ class UserProvider extends ChangeNotifier {
       'password': password,
       'passwordConfirm': password,
     }).timeout(const Duration(seconds: 10));
+    
+    // Simpan email sementara untuk autofill saat login nanti
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyLastRegisteredEmail, email);
+    
     // Request verification email (dijalankan di background agar tidak loading lama jika SMTP error)
     pb.collection('users').requestVerification(email).catchError((_) {});
+  }
+  
+  /// Get last registered email for autofill
+  Future<String?> getLastRegisteredEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_keyLastRegisteredEmail);
+  }
+  
+  /// Clear last registered email
+  Future<void> clearLastRegisteredEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_keyLastRegisteredEmail);
   }
 
   Future<void> updateProfile(String name, String email) async {

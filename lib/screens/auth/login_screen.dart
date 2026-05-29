@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'package:app_links/app_links.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -25,15 +27,49 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
 
+  final _appLinks = AppLinks();
+  StreamSubscription<Uri>? _linkSubscription;
+
   @override
   void initState() {
     super.initState();
     _emailController.addListener(_onFormChanged);
     _passwordController.addListener(_onFormChanged);
+    
+    // Check for autofill email from recent registration
+    _checkAutofillEmail();
+    
+    // Listen for incoming app links (e.g., from email verification)
+    _initDeepLinks();
+  }
+
+  Future<void> _checkAutofillEmail() async {
+    final email = await context.read<UserProvider>().getLastRegisteredEmail();
+    if (email != null && email.isNotEmpty && mounted) {
+      setState(() {
+        _emailController.text = email;
+      });
+    }
+  }
+
+  void _initDeepLinks() {
+    _linkSubscription = _appLinks.uriLinkStream.listen((uri) {
+      if (uri.scheme == 'cooksnap' && uri.host == 'login') {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Verifikasi Berhasil! Silakan masukkan kata sandi Anda.'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
+    _linkSubscription?.cancel();
     _emailController.removeListener(_onFormChanged);
     _passwordController.removeListener(_onFormChanged);
     _emailController.dispose();
