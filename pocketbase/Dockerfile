@@ -15,6 +15,9 @@ RUN unzip /tmp/pb.zip -d /pb/
 # Copy your local static website files into pb_public
 COPY ./pb_public /pb/pb_public
 
+# Copy your javascript hooks
+COPY ./pb_hooks /pb/pb_hooks
+
 # (Opsional) Uncomment baris di bawah ini jika Anda ingin mengunggah pb_migrations juga
 # COPY ./pb_migrations /pb/pb_migrations
 
