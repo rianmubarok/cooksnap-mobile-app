@@ -41,8 +41,8 @@ function sendViaBrevo(e) {
             $app.logger().info("Email sent successfully via Brevo API to " + userEmail);
         }
 
-        // Membatalkan (cancel) pengiriman email bawaan (SMTP) agar tidak bentrok
-        return e.cancel();
+        // Tidak perlu membatalkan e.cancel() agar tidak memicu error.
+        // Cukup biarkan PocketBase melanjutkan tugasnya (pastikan SMTP di Dashboard dimatikan).
     } catch (err) {
         $app.logger().error("Error executing Brevo HTTP request: " + err);
         // Jangan batalkan jika gagal HTTP, biarkan SMTP mencoba (meskipun mungkin timeout)
