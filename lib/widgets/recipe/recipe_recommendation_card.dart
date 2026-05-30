@@ -27,55 +27,17 @@ class RecipeRecommendationCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => context.openRecipeDetail(recipe.id, userIngredients),
       child: Container(
-        height: 170,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: AppColors.cardBackground,
           borderRadius: BorderRadius.circular(AppConstants.radiusLg),
         ),
-        child: Row(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    AppText(
-                      recipe.recipeName,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      variant: AppTextVariant.bodyMediumSemibold,
-                      color: AppColors.textPrimary,
-                      height: 1.3,
-                    ),
-                    const SizedBox(height: 6),
-                    AppText(
-                      recipe.description,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      variant: AppTextVariant.bodyMedium,
-                    ),
-                    if (!recommendation.isFullMatch) ...[
-                      const SizedBox(height: 12),
-                      _MatchInfo(
-                        recommendation: recommendation,
-                        color: progressColor,
-                      ),
-                      const SizedBox(height: 4),
-                      _MatchProgressBar(
-                        recommendation: recommendation,
-                        color: progressColor,
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ),
             SizedBox(
-              width: 150,
+              height: 160,
               child: recipe.imageUrl != null && recipe.imageUrl!.trim().isNotEmpty
                   ? Image.network(
                       recipe.imageUrl!,
@@ -102,6 +64,41 @@ class RecipeRecommendationCard extends StatelessWidget {
                       color: AppColors.primary.withValues(alpha: 0.08),
                       child: const RecipeThumbnail(iconSize: 48),
                     ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppText(
+                    recipe.recipeName,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    variant: AppTextVariant.bodyMediumSemibold,
+                    color: AppColors.textPrimary,
+                    height: 1.3,
+                  ),
+                  const SizedBox(height: 6),
+                  AppText(
+                    recipe.description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    variant: AppTextVariant.bodyMedium,
+                  ),
+                  if (!recommendation.isFullMatch) ...[
+                    const SizedBox(height: 12),
+                    _MatchInfo(
+                      recommendation: recommendation,
+                      color: progressColor,
+                    ),
+                    const SizedBox(height: 4),
+                    _MatchProgressBar(
+                      recommendation: recommendation,
+                      color: progressColor,
+                    ),
+                  ],
+                ],
+              ),
             ),
           ],
         ),

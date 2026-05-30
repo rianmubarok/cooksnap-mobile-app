@@ -9,6 +9,7 @@ import '../../data/repositories/recipe_repository.dart';
 import '../../models/recipe_model.dart';
 import '../../providers/favorites_provider.dart';
 import '../../providers/pantry_provider.dart';
+import '../../utils/app_snackbar.dart';
 import '../../utils/placeholder_snackbar.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/recipe/recipe_detail_sliver_app_bar.dart';
@@ -39,6 +40,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   Future<Recipe?>? _recipeFuture;
   List<String> _availableIngredients = [];
   String? _recipeId;
+  bool _isTogglingFavorite = false;
 
   @override
   void didChangeDependencies() {
@@ -102,8 +104,42 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                 recipe: recipe,
                 isFavorite: isFavorite,
                 onBack: () => Navigator.pop(context),
-                onToggleFavorite: () =>
-                    context.read<FavoritesProvider>().toggleFavorite(recipe.id),
+                onToggleFavorite: () async {
+                  if (_isTogglingFavorite) return;
+                  setState(() {
+                    _isTogglingFavorite = true;
+                  });
+
+                  final favoritesProvider = context.read<FavoritesProvider>();
+                  final willBeFavorite = !favoritesProvider.isFavorite(recipe.id);
+                  try {
+                    await favoritesProvider.toggleFavorite(recipe.id);
+                    if (context.mounted) {
+                      showAppSnackBar(
+                        context,
+                        willBeFavorite
+                            ? 'Resep ditambahkan ke favorit'
+                            : 'Resep dihapus dari favorit',
+                        variant: AppSnackBarVariant.success,
+                      );
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      showAppSnackBar(
+                        context,
+                        'Gagal memperbarui favorit: ${e.toString()}',
+                        variant: AppSnackBarVariant.error,
+                        duration: const Duration(seconds: 4),
+                      );
+                    }
+                  } finally {
+                    if (context.mounted) {
+                      setState(() {
+                        _isTogglingFavorite = false;
+                      });
+                    }
+                  }
+                },
               ),
               SliverToBoxAdapter(
                 child: Padding(

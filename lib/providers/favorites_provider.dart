@@ -112,7 +112,8 @@ class FavoritesProvider extends ChangeNotifier {
 
       // Optimistic update
       _favoriteRecordMap.remove(recipeId);
-      _favoriteRecipes.removeWhere((r) => r.id == recipeId);
+      // Removed: _favoriteRecipes.removeWhere((r) => r.id == recipeId);
+      // to keep it in the list until a manual refresh is triggered.
       notifyListeners();
 
       try {

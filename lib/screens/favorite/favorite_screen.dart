@@ -69,30 +69,40 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
             ),
           ),
           Expanded(
-            child: favorites.isEmpty
-                ? const EmptyStateView(
-                    icon: LucideIcons.heart,
-                    title: 'Belum ada resep favorit',
-                    subtitle:
-                        'Simpan resep kesukaanmu di sini\nagar mudah ditemukan kembali',
-                    showIconCircle: true,
-                  )
-                : GridView.builder(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppConstants.paddingScreen,
-                      vertical: 8,
+            child: RefreshIndicator(
+              onRefresh: () => context.read<FavoritesProvider>().refresh(),
+              child: favorites.isEmpty
+                  ? ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: const [
+                        SizedBox(height: 100),
+                        EmptyStateView(
+                          icon: LucideIcons.heart,
+                          title: 'Belum ada resep favorit',
+                          subtitle:
+                              'Simpan resep kesukaanmu di sini\nagar mudah ditemukan kembali',
+                          showIconCircle: true,
+                        ),
+                      ],
+                    )
+                  : GridView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppConstants.paddingScreen,
+                        vertical: 8,
+                      ),
+                      itemCount: favorites.length,
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 16,
+                        childAspectRatio: 0.72,
+                      ),
+                      itemBuilder: (context, index) {
+                        return RecipeCardGrid(recipe: favorites[index]);
+                      },
                     ),
-                    itemCount: favorites.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: 0.72,
-                    ),
-                    itemBuilder: (context, index) {
-                      return RecipeCardGrid(recipe: favorites[index]);
-                    },
-                  ),
+            ),
           ),
         ],
       ),
