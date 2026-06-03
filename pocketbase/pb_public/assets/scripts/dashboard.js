@@ -40,9 +40,9 @@ function setView(activeKey) {
 // ─── Domain Constants ─────────────────────────────────────────────────────────
 const DIFFICULTY_OPTIONS = ['Mudah', 'Sedang', 'Sulit'];
 
-let INGREDIENT_CATEGORIES = [];
-let CATEGORY_EMOJI_MAP = {};
-let INGREDIENT_CATEGORIES_RECORDS = [];
+window.INGREDIENT_CATEGORIES = [];
+window.CATEGORY_EMOJI_MAP = {};
+window.INGREDIENT_CATEGORIES_RECORDS = [];
 
 async function loadIngredientCategories() {
   try {
@@ -69,11 +69,11 @@ async function loadIngredientCategories() {
       return await loadIngredientCategories(); // retry after seed
     }
 
-    INGREDIENT_CATEGORIES_RECORDS = records;
-    INGREDIENT_CATEGORIES = records.map(r => r.name);
-    CATEGORY_EMOJI_MAP = {};
+    window.INGREDIENT_CATEGORIES_RECORDS = records;
+    window.INGREDIENT_CATEGORIES = records.map(r => r.name);
+    window.CATEGORY_EMOJI_MAP = {};
     records.forEach(r => {
-      CATEGORY_EMOJI_MAP[r.name] = r.icon || '📦';
+      window.CATEGORY_EMOJI_MAP[r.name] = r.icon || '📦';
     });
   } catch (err) {
     console.error('Error loading ingredient categories:', err);
@@ -409,7 +409,7 @@ function setupFilterOptions() {
   } else {
     filterPrimary.innerHTML = `
       <option value="">Semua kategori bahan</option>
-      ${INGREDIENT_CATEGORIES.map((c) => `<option value="${c}">${c}</option>`).join('')}
+      ${window.INGREDIENT_CATEGORIES.map((c) => `<option value="${c}">${c}</option>`).join('')}
     `;
   }
   filterSecondary.innerHTML = '';
@@ -433,8 +433,8 @@ function renderIngredientCategories(items) {
   });
 
   const sortedCategories = Object.keys(grouped).sort((a, b) => {
-    const idxA = INGREDIENT_CATEGORIES.indexOf(a);
-    const idxB = INGREDIENT_CATEGORIES.indexOf(b);
+    const idxA = window.INGREDIENT_CATEGORIES.indexOf(a);
+    const idxB = window.INGREDIENT_CATEGORIES.indexOf(b);
     const orderA = idxA === -1 ? 9999 : idxA;
     const orderB = idxB === -1 ? 9999 : idxB;
     return orderA - orderB;
@@ -444,7 +444,7 @@ function renderIngredientCategories(items) {
     const section        = document.createElement('div');
     section.className    = 'border border-gray-100 rounded-2xl bg-white overflow-hidden';
 
-    const catRecord = INGREDIENT_CATEGORIES_RECORDS.find(r => r.name === category);
+    const catRecord = window.INGREDIENT_CATEGORIES_RECORDS.find(r => r.name === category);
     const catIdStr = catRecord ? `'${catRecord.id}', 'ingredient_categories'` : `null, null`;
     const editCatBtn = catRecord ? `
       <button onclick="openEditModal(${catIdStr})" class="p-1.5 text-gray-400 hover:text-cookgreen-900 hover:bg-cookgreen-50 rounded-lg transition-colors ml-2" title="Edit Kategori">
@@ -478,7 +478,7 @@ function renderIngredientCategories(items) {
         <summary class="list-none cursor-pointer px-4 py-3 flex items-center justify-between bg-gray-50 border-b border-gray-100">
           <div class="flex items-center">
             <div class="flex items-center gap-2">
-              <span class="text-lg">${CATEGORY_EMOJI_MAP[category] || '📦'}</span>
+              <span class="text-lg">${window.CATEGORY_EMOJI_MAP[category] || '📦'}</span>
               <span class="font-medium text-gray-900">${category}</span>
               <span class="text-xs text-gray-500">(${grouped[category].length})</span>
             </div>
@@ -512,7 +512,7 @@ window.addCategory = async () => {
   if (!icon) return;
 
   try {
-    const order = INGREDIENT_CATEGORIES_RECORDS.length + 1;
+    const order = window.INGREDIENT_CATEGORIES_RECORDS.length + 1;
     await pb.collection('ingredient_categories').create({ 
       name: name.trim(), 
       icon: icon.trim(), 

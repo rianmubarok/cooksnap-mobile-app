@@ -86,7 +86,7 @@ window.scanUnregisteredIngredients = async () => {
 
     // 5. Render list
     listContainer.innerHTML = '';
-    const categoryOptions = INGREDIENT_CATEGORIES.map(c => `<option value="${c}">${c}</option>`).join('');
+    const categoryOptions = (window.INGREDIENT_CATEGORIES || []).map(c => `<option value="${c}">${c}</option>`).join('');
     
     const masterIngredientOptions = masterItems
       .map(m => (m.name || '').trim())
