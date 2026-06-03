@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.19
 
 # Build args
 ARG PB_VERSION=0.24.0
