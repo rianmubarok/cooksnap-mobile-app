@@ -34,15 +34,15 @@
         <div class="flex items-start gap-3">
           <i data-feather="info" class="w-5 h-5 flex-shrink-0 mt-0.5"></i>
           <p class="text-sm">
-            Edit JSON di bawah ini. Anda dapat mengubah <strong>kategori</strong> atau <strong>nama</strong> bahan secara massal.<br/>
-            <strong>Perhatian:</strong> Untuk alasan keamanan, menghapus baris JSON tidak akan menghapus data dari database. Ini hanya untuk Update dan Create.
+            Edit JSON di bawah ini. Anda dapat memindahkan bahan ke <strong>kategori</strong> lain dengan memindahkannya antar array, atau menambah nama bahan baru.<br/>
+            <strong>Perhatian:</strong> Jika Anda mengubah nama bahan di sini, sistem akan menganggapnya sebagai bahan BARU. Untuk mengubah nama (rename), harap gunakan tombol edit (pensil) di daftar bahan. Menghapus baris JSON tidak akan menghapus data.
           </p>
         </div>
       </div>
 
       <textarea
         id="json-editor-textarea"
-        class="flex-1 w-full p-4 border border-gray-200 rounded-xl font-mono text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-cookgreen-500 outline-none resize-none"
+        class="flex-1 w-full min-h-[50vh] p-4 border border-gray-200 rounded-xl font-mono text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-cookgreen-500 outline-none resize-y"
         placeholder="Memuat data..."
       ></textarea>
     </div>

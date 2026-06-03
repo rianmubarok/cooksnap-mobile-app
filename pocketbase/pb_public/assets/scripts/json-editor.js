@@ -29,8 +29,22 @@ window.openJsonEditorModal = async () => {
       const { collectionId, collectionName, created, updated, expand, ...rest } = item;
       return rest;
     });
+    let jsonStr = '';
+    if (state.collection === 'ingredients') {
+      const grouped = {};
+      cleanedItems.forEach(item => {
+        const cat = item.category || 'Lainnya';
+        if (!grouped[cat]) grouped[cat] = [];
+        if (item.name) grouped[cat].push(item.name);
+      });
+      // Urutkan abjad
+      Object.keys(grouped).forEach(k => grouped[k].sort());
+      jsonStr = JSON.stringify(grouped, null, 2);
+    } else {
+      jsonStr = JSON.stringify(cleanedItems, null, 2);
+    }
     
-    jsonEditorTextarea.value = JSON.stringify(cleanedItems, null, 2);
+    jsonEditorTextarea.value = jsonStr;
     jsonEditorTextarea.disabled = false;
   } catch (err) {
     console.error(err);
@@ -47,8 +61,22 @@ window.saveJsonEditor = async () => {
   const rawJson = jsonEditorTextarea.value;
   let parsedData;
   try {
-    parsedData = JSON.parse(rawJson);
-    if (!Array.isArray(parsedData)) throw new Error('Data harus berupa Array []');
+    if (state.collection === 'ingredients') {
+      const rawObj = JSON.parse(rawJson);
+      if (typeof rawObj !== 'object' || Array.isArray(rawObj)) {
+        throw new Error('Untuk bahan, format harus berupa Object (Kategori: [Bahan...])');
+      }
+      parsedData = [];
+      for (const [category, names] of Object.entries(rawObj)) {
+        if (!Array.isArray(names)) throw new Error(`Kategori ${category} harus berisi Array nama bahan.`);
+        names.forEach(name => {
+          parsedData.push({ name: name.trim(), category: category });
+        });
+      }
+    } else {
+      parsedData = JSON.parse(rawJson);
+      if (!Array.isArray(parsedData)) throw new Error('Data harus berupa Array []');
+    }
   } catch (err) {
     showToast('Format JSON tidak valid: ' + err.message, 'error');
     return;
@@ -61,35 +89,57 @@ window.saveJsonEditor = async () => {
 
   try {
     const existingRecords = await pb.collection(state.collection).getFullList();
-    const existingMap = new Map();
-    existingRecords.forEach(r => existingMap.set(r.id, r));
-
     let updatedCount = 0;
     let createdCount = 0;
 
-    for (const item of parsedData) {
-      if (item.id && existingMap.has(item.id)) {
-        // Update
-        const old = existingMap.get(item.id);
-        let hasChanges = false;
-        const payload = {};
-        for (const key of Object.keys(item)) {
-          if (key === 'id') continue;
-          if (JSON.stringify(item[key]) !== JSON.stringify(old[key])) {
-            hasChanges = true;
-            payload[key] = item[key];
+    if (state.collection === 'ingredients') {
+      const existingMapByName = new Map();
+      existingRecords.forEach(r => existingMapByName.set(r.name.toLowerCase().trim(), r));
+
+      for (const item of parsedData) {
+        if (!item.name) continue;
+        const existing = existingMapByName.get(item.name.toLowerCase());
+        if (existing) {
+          // Update jika kategori berubah
+          if (existing.category !== item.category) {
+            await pb.collection(state.collection).update(existing.id, { category: item.category });
+            updatedCount++;
           }
+        } else {
+          // Create baru
+          await pb.collection(state.collection).create(item);
+          createdCount++;
         }
-        if (hasChanges) {
-          await pb.collection(state.collection).update(item.id, payload);
-          updatedCount++;
+      }
+    } else {
+      // Logika normal untuk recipes
+      const existingMap = new Map();
+      existingRecords.forEach(r => existingMap.set(r.id, r));
+
+      for (const item of parsedData) {
+        if (item.id && existingMap.has(item.id)) {
+          // Update
+          const old = existingMap.get(item.id);
+          let hasChanges = false;
+          const payload = {};
+          for (const key of Object.keys(item)) {
+            if (key === 'id') continue;
+            if (JSON.stringify(item[key]) !== JSON.stringify(old[key])) {
+              hasChanges = true;
+              payload[key] = item[key];
+            }
+          }
+          if (hasChanges) {
+            await pb.collection(state.collection).update(item.id, payload);
+            updatedCount++;
+          }
+        } else {
+          // Create
+          const payload = { ...item };
+          delete payload.id;
+          await pb.collection(state.collection).create(payload);
+          createdCount++;
         }
-      } else {
-        // Create (baru ditambahkan manual di JSON tanpa ID valid)
-        const payload = { ...item };
-        delete payload.id; // pocketbase auto-generates ID
-        await pb.collection(state.collection).create(payload);
-        createdCount++;
       }
     }
 
