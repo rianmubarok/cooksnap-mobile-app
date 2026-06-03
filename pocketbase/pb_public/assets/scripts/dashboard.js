@@ -231,15 +231,25 @@ function bindToolbarEvents() {
 // ─── Auth ─────────────────────────────────────────────────────────────────────
 async function checkAuth() {
   if (pb.authStore.isValid && pb.authStore.isSuperuser) {
-    loginView.classList.add('hidden');
-    dashboardView.classList.remove('hidden');
-    adminEmailDisplay.textContent = pb.authStore.model.email;
-    
-    // Load dynamic categories before loading data
-    await loadIngredientCategories();
-    setupFilterOptions();
-    
-    loadData();
+    try {
+      // Verifikasi token ke server (jika server baru direstart, token lama mungkin tidak valid)
+      await pb.collection('_superusers').authRefresh();
+      
+      loginView.classList.add('hidden');
+      dashboardView.classList.remove('hidden');
+      adminEmailDisplay.textContent = pb.authStore.model.email;
+      
+      // Load dynamic categories before loading data
+      await loadIngredientCategories();
+      setupFilterOptions();
+      
+      loadData();
+    } catch (err) {
+      console.warn('Token kadaluarsa atau tidak valid, memaksa logout.', err);
+      pb.authStore.clear();
+      loginView.classList.remove('hidden');
+      dashboardView.classList.add('hidden');
+    }
   } else {
     loginView.classList.remove('hidden');
     dashboardView.classList.add('hidden');
