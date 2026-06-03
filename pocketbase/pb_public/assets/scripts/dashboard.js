@@ -422,7 +422,15 @@ function renderIngredientCategories(items) {
     (grouped[key] = grouped[key] || []).push(item);
   });
 
-  Object.keys(grouped).forEach((category) => {
+  const sortedCategories = Object.keys(grouped).sort((a, b) => {
+    const idxA = INGREDIENT_CATEGORIES.indexOf(a);
+    const idxB = INGREDIENT_CATEGORIES.indexOf(b);
+    const orderA = idxA === -1 ? 9999 : idxA;
+    const orderB = idxB === -1 ? 9999 : idxB;
+    return orderA - orderB;
+  });
+
+  sortedCategories.forEach((category) => {
     const section        = document.createElement('div');
     section.className    = 'border border-gray-100 rounded-2xl bg-white overflow-hidden';
 
