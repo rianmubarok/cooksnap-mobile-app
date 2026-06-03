@@ -25,7 +25,9 @@ window.scanUnregisteredIngredients = async () => {
   const listContainer = document.getElementById('unregistered-list');
   const emptyState = document.getElementById('unregistered-empty');
   const loadingState = document.getElementById('unregistered-loading');
+  const countBadge = document.getElementById('unregistered-count');
 
+  if (countBadge) countBadge.classList.add('hidden');
   listContainer.classList.add('hidden');
   emptyState.classList.add('hidden');
   loadingState.classList.remove('hidden');
@@ -69,8 +71,17 @@ window.scanUnregisteredIngredients = async () => {
     loadingState.classList.add('hidden');
 
     if (unregistered.length === 0) {
+      if (countBadge) {
+        countBadge.textContent = '0';
+        countBadge.classList.remove('hidden');
+      }
       emptyState.classList.remove('hidden');
       return;
+    }
+
+    if (countBadge) {
+      countBadge.textContent = unregistered.length.toString();
+      countBadge.classList.remove('hidden');
     }
 
     // 5. Render list
@@ -123,6 +134,11 @@ window.scanUnregisteredIngredients = async () => {
             </select>
             <button onclick="correctMissingIngredient('${name.replace(/'/g, "\\'")}', '${idSafe}')" class="px-4 py-2 bg-amber-500 text-white rounded-lg text-sm font-medium hover:bg-amber-600 transition-colors whitespace-nowrap">
               Koreksi
+            </button>
+          </div>
+          <div class="flex items-center gap-2 justify-end mt-1">
+            <button onclick="deleteUnregisteredIngredient('${name.replace(/'/g, "\\'")}', '${idSafe}')" class="px-4 py-2 text-red-500 bg-red-50 hover:bg-red-100 rounded-lg text-sm font-medium transition-colors w-full sm:w-auto flex items-center justify-center gap-1.5 whitespace-nowrap border border-red-100">
+              <i data-feather="trash-2" class="w-3.5 h-3.5"></i> Hapus dari Resep
             </button>
           </div>
         </div>
@@ -258,5 +274,60 @@ window.correctMissingIngredient = async (unregisteredName, rowIdSafe) => {
   } catch (err) {
     console.error(err);
     showToast(`Gagal mengkoreksi: ${err.message}`, 'error');
+  }
+};
+
+window.deleteUnregisteredIngredient = async (unregisteredName, rowIdSafe) => {
+  if (!confirm(`Yakin ingin menghapus "${unregisteredName}" dari SEMUA resep yang menggunakannya?\nTindakan ini tidak dapat dibatalkan.`)) {
+    return;
+  }
+
+  try {
+    showToast(`Sedang menghapus ${unregisteredName} dari resep...`, 'info');
+
+    // Fetch all recipes to find usages
+    const recipes = await pb.collection('recipes').getFullList({ fields: 'id,ingredients' });
+    
+    let updatedCount = 0;
+    for (const r of recipes) {
+       if (Array.isArray(r.ingredients)) {
+          const originalLength = r.ingredients.length;
+          // Filter out the ingredient
+          const newIngredients = r.ingredients.filter(ing => !(ing && ing.name && ing.name.trim() === unregisteredName));
+
+          if (newIngredients.length !== originalLength) {
+             await pb.collection('recipes').update(r.id, { ingredients: newIngredients });
+             updatedCount++;
+          }
+       }
+    }
+
+    showToast(`${unregisteredName} berhasil dihapus dari ${updatedCount} resep!`, 'success');
+    
+    // Remove row from UI
+    const row = document.getElementById(rowIdSafe);
+    if (row) {
+      row.remove();
+    }
+    
+    // Update count badge
+    const countBadge = document.getElementById('unregistered-count');
+    if (countBadge) {
+       let current = parseInt(countBadge.textContent || '0');
+       if (current > 0) {
+          countBadge.textContent = (current - 1).toString();
+       }
+    }
+
+    // Check if list is empty now
+    const listContainer = document.getElementById('unregistered-list');
+    if (listContainer.children.length === 0) {
+      listContainer.classList.add('hidden');
+      document.getElementById('unregistered-empty').classList.remove('hidden');
+    }
+
+  } catch (err) {
+    console.error(err);
+    showToast(`Gagal menghapus: ${err.message}`, 'error');
   }
 };
