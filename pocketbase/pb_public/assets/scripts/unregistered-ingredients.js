@@ -85,7 +85,9 @@ window.scanUnregisteredIngredients = async () => {
       row.id = idSafe;
       
       row.innerHTML = `
-        <div class="flex-1 font-medium text-gray-900 break-words mb-2 sm:mb-0">${name}</div>
+        <div class="flex-1 flex flex-col sm:flex-row gap-2 w-full mb-2 sm:mb-0">
+          <input type="text" id="input-name-${idSafe}" value="${name.replace(/"/g, '&quot;')}" class="px-3 py-2 border border-gray-200 rounded-lg bg-white text-sm outline-none focus:ring-2 focus:ring-cookgreen-500 w-full sm:w-auto flex-1 font-medium text-gray-900">
+        </div>
         <div class="flex flex-col gap-2 w-full sm:w-auto">
           <div class="flex items-center gap-2 justify-between sm:justify-end">
             <select id="sel-${idSafe}" class="px-3 py-2 border border-gray-200 rounded-lg bg-white text-sm outline-none focus:ring-2 focus:ring-cookgreen-500 w-full sm:w-40 flex-1">
@@ -119,18 +121,54 @@ window.scanUnregisteredIngredients = async () => {
   }
 };
 
-window.registerMissingIngredient = async (name, rowIdSafe) => {
+window.registerMissingIngredient = async (originalName, rowIdSafe) => {
   const select = document.getElementById(`sel-${rowIdSafe}`);
+  const inputNameElem = document.getElementById(`input-name-${rowIdSafe}`);
   const category = select.value;
+  const correctedName = inputNameElem ? inputNameElem.value.trim() : originalName;
+
   if (!category) {
-    showToast(`Pilih kategori untuk ${name} terlebih dahulu!`, 'error');
+    showToast(`Pilih kategori untuk ${originalName} terlebih dahulu!`, 'error');
+    return;
+  }
+  if (!correctedName) {
+    showToast(`Nama bahan tidak boleh kosong!`, 'error');
     return;
   }
 
   try {
-    const payload = { name, category };
+    showToast(`Mendaftarkan ${correctedName}...`, 'info');
+    
+    // 1. Create the new ingredient
+    const payload = { name: correctedName, category };
     await pb.collection('ingredients').create(payload);
-    showToast(`${name} berhasil didaftarkan!`, 'success');
+    
+    // 2. If name was corrected, update recipes
+    if (correctedName !== originalName) {
+       showToast(`Memperbarui resep dari ${originalName} ke ${correctedName}...`, 'info');
+       const recipes = await pb.collection('recipes').getFullList({ fields: 'id,ingredients' });
+       let updatedCount = 0;
+       for (const r of recipes) {
+          if (Array.isArray(r.ingredients)) {
+             let hasChanged = false;
+             const newIngredients = r.ingredients.map(ing => {
+                if (ing && ing.name && ing.name.trim() === originalName) {
+                   hasChanged = true;
+                   return { ...ing, name: correctedName };
+                }
+                return ing;
+             });
+
+             if (hasChanged) {
+                await pb.collection('recipes').update(r.id, { ingredients: newIngredients });
+                updatedCount++;
+             }
+          }
+       }
+       showToast(`${correctedName} berhasil didaftarkan dan ${updatedCount} resep diperbarui!`, 'success');
+    } else {
+       showToast(`${originalName} berhasil didaftarkan!`, 'success');
+    }
     
     // Remove row from UI
     const row = document.getElementById(rowIdSafe);
@@ -146,7 +184,8 @@ window.registerMissingIngredient = async (name, rowIdSafe) => {
     }
 
   } catch (err) {
-    showToast(`Gagal mendaftarkan ${name}: ${err.message}`, 'error');
+    console.error(err);
+    showToast(`Gagal mendaftarkan ${originalName}: ${err.message}`, 'error');
   }
 };
 
