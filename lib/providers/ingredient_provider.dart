@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../core/pocketbase_client.dart';
 import '../utils/ingredient_resolver.dart';
+import '../data/dummy/dummy_ingredients.dart';
 
 class IngredientProvider extends ChangeNotifier {
   bool _isLoading = true;
@@ -62,6 +63,19 @@ class IngredientProvider extends ChangeNotifier {
       IngredientResolver.updateCatalog(itms);
     } catch (e) {
       debugPrint('Error loading ingredients: $e');
+      
+      // FALLBACK: Jika gagal terhubung ke PocketBase atau ada error API Rules
+      _categories = DummyIngredients.categories;
+      _categoryIcons = {}; // Akan menggunakan default emoji di UI
+      
+      // Flat list dari dummy
+      final dummyItems = <String>[];
+      for (final list in DummyIngredients.categories.values) {
+        dummyItems.addAll(list);
+      }
+      _items = dummyItems;
+      IngredientResolver.updateCatalog(dummyItems);
+      
     } finally {
       _isLoading = false;
       notifyListeners();
