@@ -13,7 +13,7 @@ class HomeRecipeTag {
 }
 
 /// Maximum number of tag chips shown after "Semua" (excludes "Semua").
-const int _kMaxTagChips = 12;
+const int _kMaxTagChips = 10;
 
 /// Builds the chip list from all available recipe tags.
 ///
@@ -22,20 +22,28 @@ const int _kMaxTagChips = 12;
 ///   a random subset is shown each time (e.g., on pull-to-refresh).
 /// - Each label is Title-cased for display.
 List<HomeRecipeTag> buildHomeRecipeTags(List<Recipe> recipes, {int? seed}) {
-  // Collect all unique tags from every recipe
-  final uniqueTags = <String>{};
+  // Count frequency of each tag
+  final tagCounts = <String, int>{};
   for (final recipe in recipes) {
     for (final tag in recipe.tags) {
       final normalized = tag.trim();
-      if (normalized.isNotEmpty) uniqueTags.add(normalized);
+      if (normalized.isNotEmpty) {
+        tagCounts[normalized] = (tagCounts[normalized] ?? 0) + 1;
+      }
     }
   }
 
-  // Shuffle randomly (seed from caller so pull-to-refresh gives a fresh set)
-  final shuffled = uniqueTags.toList()..shuffle(Random(seed));
+  // Sort by frequency (descending). Jika frekuensi sama, acak posisinya (tie-breaker)
+  final rand = Random(seed);
+  final sortedTags = tagCounts.keys.toList()
+    ..sort((a, b) {
+      final diff = tagCounts[b]!.compareTo(tagCounts[a]!);
+      if (diff != 0) return diff;
+      return rand.nextBool() ? 1 : -1;
+    });
 
-  // Pick at most [_kMaxTagChips] tags
-  final selected = shuffled.take(_kMaxTagChips).toList();
+  // Pick at most [_kMaxTagChips] most popular tags
+  final selected = sortedTags.take(_kMaxTagChips).toList();
 
   return [
     const HomeRecipeTag(label: 'Semua', matcher: _matchAll),

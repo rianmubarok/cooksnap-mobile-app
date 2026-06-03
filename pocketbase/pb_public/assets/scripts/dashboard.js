@@ -228,12 +228,21 @@ window.switchTab = (collection) => {
   document.getElementById(`tab-${collection}`).classList.add('bg-cookgreen-100', 'text-cookgreen-900');
 
   // Update header
+  const btnScan = document.getElementById('btn-scan-ingredients');
   if (collection === 'settings') {
     headerTitle.textContent = 'Pengaturan Aplikasi';
     document.getElementById('action-bar').classList.add('hidden');
+    if (btnScan) btnScan.classList.add('hidden');
   } else {
     headerTitle.textContent = collection === 'recipes' ? 'Manajemen Resep' : 'Manajemen Bahan';
     document.getElementById('action-bar').classList.remove('hidden');
+    if (btnScan) {
+      if (collection === 'ingredients') {
+        btnScan.classList.remove('hidden');
+      } else {
+        btnScan.classList.add('hidden');
+      }
+    }
   }
 
   setupFilterOptions();
@@ -298,7 +307,17 @@ function renderRecipesGrid(resultList) {
     const card        = document.createElement('div');
     card.className    = 'bg-white border border-gray-100 rounded-2xl p-4 transition-all';
     const difficulty  = item.difficulty   || '-';
-    const cookingTime = item.cooking_time || '-';
+    let cookingTimeLabel = '-';
+    if (item.cooking_time) {
+      const ct = parseInt(item.cooking_time, 10);
+      if (ct < 60) {
+        cookingTimeLabel = `${ct} mnt`;
+      } else {
+        const h = Math.floor(ct / 60);
+        const m = ct % 60;
+        cookingTimeLabel = m === 0 ? `${h} jam` : `${h} jam ${m} mnt`;
+      }
+    }
     const tagsHtml    = Array.isArray(item.tags) && item.tags.length
       ? item.tags.slice(0, 4).map((t) => `<span class="inline-block px-2 py-1 bg-blue-50 text-blue-600 rounded text-xs font-medium">${t}</span>`).join('')
       : '<span class="text-xs text-gray-400">Tanpa tag</span>';
@@ -317,7 +336,7 @@ function renderRecipesGrid(resultList) {
       </div>
       <p class="text-sm text-gray-500 mb-4 break-words">${item.description || 'Tanpa deskripsi'}</p>
       <div class="flex flex-wrap gap-2 mb-3">
-        <span class="inline-block px-2 py-1 bg-orange-50 text-orange-600 rounded text-xs font-medium">${cookingTime} menit</span>
+        <span class="inline-block px-2 py-1 bg-orange-50 text-orange-600 rounded text-xs font-medium">${cookingTimeLabel}</span>
         <span class="inline-block px-2 py-1 bg-cookgreen-50 text-cookgreen-900 rounded text-xs font-medium">${difficulty}</span>
       </div>
       <div class="flex flex-wrap gap-1.5">${tagsHtml}</div>

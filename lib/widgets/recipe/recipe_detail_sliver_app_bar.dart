@@ -92,13 +92,56 @@ class _RecipeHeroImage extends StatelessWidget {
 
   const _RecipeHeroImage({this.imageUrl});
 
+  void _showFullScreenImage(BuildContext context, String url) {
+    showDialog(
+      context: context,
+      useSafeArea: false,
+      builder: (_) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: EdgeInsets.zero,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                color: Colors.black87,
+                width: double.infinity,
+                height: double.infinity,
+              ),
+            ),
+            InteractiveViewer(
+              clipBehavior: Clip.none,
+              child: Image.network(
+                url,
+                fit: BoxFit.contain,
+                width: double.infinity,
+              ),
+            ),
+            Positioned(
+              top: 40,
+              right: 20,
+              child: IconButton(
+                icon: const Icon(LucideIcons.x, color: Colors.white, size: 30),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (imageUrl != null && imageUrl!.isNotEmpty) {
-      return Image.network(
-        imageUrl!,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => const _PlaceholderHero(),
+      return GestureDetector(
+        onTap: () => _showFullScreenImage(context, imageUrl!),
+        child: Image.network(
+          imageUrl!,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => const _PlaceholderHero(),
+        ),
       );
     }
     return const _PlaceholderHero();

@@ -8,7 +8,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     { id: 'component-login', url: 'assets/components/login-view.html' },
     { id: 'component-sidebar', url: 'assets/components/sidebar.html' },
     { id: 'component-bulk-modal', url: 'assets/components/bulk-modal.html' },
-    { id: 'component-edit-modal', url: 'assets/components/edit-modal.html' }
+    { id: 'component-edit-modal', url: 'assets/components/edit-modal.html' },
+    { id: 'component-unregistered-modal', url: 'assets/components/unregistered-modal.html' }
   ];
 
   try {

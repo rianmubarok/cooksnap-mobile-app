@@ -42,6 +42,9 @@
 
     <!-- VIEW: LOGIN (Injected) -->
     <div id="component-login"></div>
+    <div id="component-bulk-modal"></div>
+    <div id="component-edit-modal"></div>
+    <div id="component-unregistered-modal"></div>
 
     <!-- VIEW: DASHBOARD -->
     <div
@@ -125,6 +128,14 @@
                 class="p-2.5 text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-all shadow-sm"
               >
                 <i data-feather="refresh-cw" class="w-5 h-5"></i>
+              </button>
+              <button
+                id="btn-scan-ingredients"
+                onclick="openUnregisteredModal()"
+                class="hidden flex-1 sm:flex-none flex items-center justify-center gap-2 bg-amber-100 text-amber-800 border border-amber-200 py-2.5 px-4 rounded-xl font-medium hover:bg-amber-200 transition-all shadow-sm"
+              >
+                <i data-feather="alert-circle" class="w-5 h-5"></i>
+                Pindai Bahan Hilang
               </button>
               <button
                 onclick="openBulkModal()"
@@ -303,6 +314,7 @@
     <script src="assets/scripts/settings.js"></script>
     <script src="assets/scripts/edit-modal.js"></script>
     <script src="assets/scripts/bulk-import.js"></script>
+    <script src="assets/scripts/unregistered-ingredients.js"></script>
     <script src="assets/scripts/dashboard.js"></script>
     <script src="assets/scripts/boot.js"></script>
     <script>

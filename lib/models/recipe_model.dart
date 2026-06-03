@@ -84,7 +84,13 @@ class Recipe {
     this.createdAt,
   });
 
-  String get cookingTimeLabel => '$cookingTime min';
+  String get cookingTimeLabel {
+    if (cookingTime < 60) return '$cookingTime mnt';
+    final int hours = cookingTime ~/ 60;
+    final int mins = cookingTime % 60;
+    if (mins == 0) return '$hours jam';
+    return '$hours jam $mins mnt';
+  }
 
   factory Recipe.fromMap(Map<String, dynamic> map) {
     final rawIngredients = map['ingredients'];

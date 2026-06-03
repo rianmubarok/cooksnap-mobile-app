@@ -25,6 +25,46 @@ class _IngredientWikiSheetState extends State<IngredientWikiSheet> {
     _summaryFuture = WikipediaService.getSummary(widget.ingredientName);
   }
 
+  void _showFullScreenImage(BuildContext context, String url) {
+    showDialog(
+      context: context,
+      useSafeArea: false,
+      builder: (_) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: EdgeInsets.zero,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                color: Colors.black87,
+                width: double.infinity,
+                height: double.infinity,
+              ),
+            ),
+            InteractiveViewer(
+              clipBehavior: Clip.none,
+              child: Image.network(
+                url,
+                fit: BoxFit.contain,
+                width: double.infinity,
+              ),
+            ),
+            Positioned(
+              top: 40,
+              right: 20,
+              child: IconButton(
+                icon: const Icon(LucideIcons.x, color: Colors.white, size: 30),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -81,13 +121,16 @@ class _IngredientWikiSheetState extends State<IngredientWikiSheet> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (data.imageUrl != null) ...[
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(AppConstants.radiusLg),
-                            child: Image.network(
-                              data.imageUrl!,
-                              width: double.infinity,
-                              height: 200,
-                              fit: BoxFit.cover,
+                          GestureDetector(
+                            onTap: () => _showFullScreenImage(context, data.imageUrl!),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(AppConstants.radiusLg),
+                              child: Image.network(
+                                data.imageUrl!,
+                                width: double.infinity,
+                                height: 200,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                           const SizedBox(height: AppConstants.spacingLg),

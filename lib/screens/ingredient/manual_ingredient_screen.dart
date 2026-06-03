@@ -196,7 +196,21 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
 
     List<String> suggestions;
     if (data != null && data.suggestions.isNotEmpty) {
-      suggestions = data.suggestions;
+      suggestions = data.suggestions
+          .map((s) => IngredientResolver.resolve(s))
+          .whereType<String>()
+          .where((canonical) {
+            final inIngredients = _ingredients.any(
+              (e) => StringUtils.ingredientMatches(e, canonical),
+            );
+            final inPantry = StringUtils.listContainsIngredient(
+              pantryItems,
+              canonical,
+            );
+            return !inIngredients && !inPantry;
+          })
+          .toSet()
+          .toList();
     } else {
       suggestions = _filterSuggestions(pantryItems);
     }

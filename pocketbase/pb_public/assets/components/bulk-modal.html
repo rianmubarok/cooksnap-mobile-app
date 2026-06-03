@@ -35,25 +35,18 @@
             Format wajib: <strong>Array of Objects</strong> <code>[{}, {}]</code>.
           </p>
           <p>
-            <strong>Recipes</strong> (wajib): <code>recipe_name</code>,
-            <code>description</code>, <code>ingredients</code> (array objek),
-            <code>steps</code> (array string), <code>cooking_time</code> (angka menit),
-            <code>difficulty</code> (<code>Mudah|Sedang|Sulit</code>). Opsional:
-            <code>image_url</code>, <code>tags</code> (array string),
-            <code>source_url</code>, <code>video_url</code>.
+            <strong>A. Jika Import ke Koleksi "recipes":</strong><br/>
+            Wajib: <code>recipe_name</code>, <code>description</code>, <code>ingredients</code> (array objek), <code>steps</code> (array string), <code>cooking_time</code> (angka menit), <code>difficulty</code> (<code>Mudah|Sedang|Sulit</code>).<br/>
+            Opsional: <code>image_url</code>, <code>tags</code> (array string), <code>source_url</code>, <code>video_url</code>.
           </p>
           <p>
-            Format <code>ingredients</code>: setiap item adalah objek dengan
-            <code>name</code> (wajib), <code>quantity</code> (angka, opsional),
-            <code>unit</code> (wajib). Gunakan <code>"unit": "secukupnya"</code>
-            tanpa <code>quantity</code> untuk bahan tanpa takaran pasti.
+            Format untuk field <code>ingredients</code> (di dalam resep):<br/>
+            Setiap item adalah objek dengan <code>name</code> (wajib), <code>quantity</code> (angka, opsional), <code>unit</code> (wajib). Gunakan <code>"unit": "secukupnya"</code> tanpa <code>quantity</code> untuk bahan tanpa takaran pasti.
           </p>
           <p>
-            <strong>Ingredients</strong> (wajib): <code>name</code>,
-            <code>category</code> — nilai valid: <code>Sumber Protein</code>,
-            <code>Sayuran</code>, <code>Bumbu</code>, <code>Bumbu Dasar</code>,
-            <code>Karbohidrat</code>, <code>Susu &amp; Olahan Susu</code>,
-            <code>Buah</code>, <code>Tepung</code>, <code>Lainnya</code>.
+            <strong>B. Jika Import ke Koleksi Master "ingredients":</strong><br/>
+            Wajib: <code>name</code> dan <code>category</code>.<br/>
+            Nilai valid untuk <code>category</code>: <code>Sumber Protein</code>, <code>Sayuran</code>, <code>Bumbu</code>, <code>Bumbu Dasar</code>, <code>Karbohidrat</code>, <code>Susu &amp; Olahan Susu</code>, <code>Buah</code>, <code>Tepung</code>, <code>Lainnya</code>.
           </p>
         </div>
       </div>

@@ -1,0 +1,63 @@
+<div
+  id="unregistered-modal"
+  class="fixed inset-0 z-[110] flex items-center justify-center p-4 hidden animate-fade-in"
+>
+  <div
+    class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"
+    onclick="closeUnregisteredModal()"
+  ></div>
+  <div
+    class="relative bg-white rounded-3xl shadow-2xl w-full max-w-3xl flex flex-col max-h-[90vh] animate-slide-up"
+  >
+    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="bg-amber-100 p-2 rounded-lg text-amber-600">
+          <i data-feather="alert-triangle"></i>
+        </div>
+        <h3 class="text-xl font-medium text-gray-900">
+          Bahan Tak Terdaftar
+        </h3>
+      </div>
+      <button
+        onclick="closeUnregisteredModal()"
+        class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-xl transition-all"
+      >
+        <i data-feather="x"></i>
+      </button>
+    </div>
+
+    <div class="p-6 flex-1 overflow-y-auto">
+      <div class="mb-4 bg-amber-50 text-amber-800 p-4 rounded-xl border border-amber-100">
+        <div class="flex items-start gap-3">
+          <i data-feather="info" class="w-5 h-5 flex-shrink-0 mt-0.5"></i>
+          <p class="text-sm">
+            Bahan-bahan di bawah ini terdeteksi di dalam koleksi <strong>recipes</strong>, namun 
+            belum memiliki entri di master <strong>ingredients</strong> (database bahan baku). 
+            Silakan pilih kategori dan klik "Daftarkan" agar bahan ini masuk ke master data.
+          </p>
+        </div>
+      </div>
+
+      <div id="unregistered-loading" class="flex justify-center py-10 hidden">
+        <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-cookgreen-500"></div>
+      </div>
+
+      <div id="unregistered-empty" class="text-center py-10 hidden">
+        <div class="bg-gray-100 p-4 rounded-full inline-block mb-3">
+          <i data-feather="check-circle" class="w-8 h-8 text-cookgreen-500"></i>
+        </div>
+        <p class="text-gray-600">Hebat! Semua bahan dari resep sudah terdaftar di master data.</p>
+      </div>
+
+      <div id="unregistered-list" class="space-y-3 hidden">
+        <!-- List item format:
+        <div class="flex items-center gap-3 bg-gray-50 border border-gray-200 p-3 rounded-xl">
+          <div class="flex-1 font-medium text-gray-900">Ayam Potong Dadu</div>
+          <select class="...">...</select>
+          <button>Daftarkan</button>
+        </div>
+        -->
+      </div>
+    </div>
+  </div>
+</div>
