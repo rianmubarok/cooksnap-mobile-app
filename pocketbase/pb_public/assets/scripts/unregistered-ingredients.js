@@ -36,15 +36,21 @@ window.scanUnregisteredIngredients = async () => {
     const masterNames = new Set(masterItems.map(m => (m.name || '').trim().toLowerCase()));
 
     // 2. Fetch all recipes
-    const recipes = await pb.collection('recipes').getFullList({ fields: 'ingredients' });
+    const recipes = await pb.collection('recipes').getFullList({ fields: 'id,recipe_name,ingredients' });
     
-    // 3. Extract unique ingredient names from all recipes
-    const recipeIngredientNames = new Set();
+    // 3. Extract unique ingredient names from all recipes and their usages
+    const recipeIngredientMap = new Map();
     recipes.forEach(r => {
       if (Array.isArray(r.ingredients)) {
         r.ingredients.forEach(ing => {
           if (ing && ing.name) {
-            recipeIngredientNames.add(ing.name.trim());
+            const n = ing.name.trim();
+            if (!recipeIngredientMap.has(n)) {
+              recipeIngredientMap.set(n, new Set());
+            }
+            if (r.recipe_name) {
+              recipeIngredientMap.get(n).add(r.recipe_name);
+            }
           }
         });
       }
@@ -52,13 +58,13 @@ window.scanUnregisteredIngredients = async () => {
 
     // 4. Find the difference
     const unregistered = [];
-    recipeIngredientNames.forEach(name => {
+    recipeIngredientMap.forEach((recipesSet, name) => {
       if (!masterNames.has(name.toLowerCase())) {
-        unregistered.push(name);
+        unregistered.push({ name, usages: Array.from(recipesSet) });
       }
     });
 
-    unregistered.sort();
+    unregistered.sort((a, b) => a.name.localeCompare(b.name));
 
     loadingState.classList.add('hidden');
 
@@ -78,15 +84,27 @@ window.scanUnregisteredIngredients = async () => {
       .map(n => `<option value="${n.replace(/"/g, '&quot;')}">${n}</option>`)
       .join('');
 
-    unregistered.forEach(name => {
+    unregistered.forEach(item => {
+      const name = item.name;
+      const usages = item.usages;
+      
+      const usagesHtml = usages.length > 0 
+        ? `<div class="text-[11px] text-gray-500 mt-2 flex flex-wrap items-center gap-1.5 w-full">
+             <i data-feather="book-open" class="w-3 h-3 text-gray-400"></i> 
+             <span class="mr-1">Digunakan di:</span>
+             ${usages.map(u => `<span class="bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded leading-none">${u}</span>`).join('')}
+           </div>` 
+        : '';
+
       const idSafe = 'ing-' + btoa(name).replace(/[^a-zA-Z0-9]/g, '');
       const row = document.createElement('div');
-      row.className = 'flex flex-col sm:flex-row sm:items-center gap-3 bg-gray-50 border border-gray-200 p-3 rounded-xl';
+      row.className = 'flex flex-col sm:flex-row sm:items-start gap-3 bg-gray-50 border border-gray-200 p-3 rounded-xl';
       row.id = idSafe;
       
       row.innerHTML = `
-        <div class="flex-1 flex flex-col sm:flex-row gap-2 w-full mb-2 sm:mb-0">
-          <input type="text" id="input-name-${idSafe}" value="${name.replace(/"/g, '&quot;')}" class="px-3 py-2 border border-gray-200 rounded-lg bg-white text-sm outline-none focus:ring-2 focus:ring-cookgreen-500 w-full sm:w-auto flex-1 font-medium text-gray-900">
+        <div class="flex-1 flex flex-col w-full mb-2 sm:mb-0 min-w-0">
+          <input type="text" id="input-name-${idSafe}" value="${name.replace(/"/g, '&quot;')}" class="px-3 py-2 border border-gray-200 rounded-lg bg-white text-sm outline-none focus:ring-2 focus:ring-cookgreen-500 w-full sm:max-w-xs font-medium text-gray-900">
+          ${usagesHtml}
         </div>
         <div class="flex flex-col gap-2 w-full sm:w-auto">
           <div class="flex items-center gap-2 justify-between sm:justify-end">

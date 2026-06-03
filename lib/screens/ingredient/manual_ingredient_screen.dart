@@ -8,10 +8,10 @@ import '../../core/app_routes.dart';
 import '../../core/app_text_styles.dart';
 import '../../providers/pantry_provider.dart';
 import '../../providers/recommendation_provider.dart';
-import '../../utils/ingredient_category_emoji.dart';
+
 import '../../utils/ingredient_resolver.dart';
 import '../../utils/string_utils.dart';
-import '../../data/dummy/dummy_ingredients.dart';
+import '../../providers/ingredient_provider.dart';
 import '../../widgets/common/app_confirm_dialog.dart';
 import '../../widgets/common/square_icon_button.dart';
 import '../../widgets/ingredient/ingredient_autocomplete_field.dart';
@@ -291,18 +291,31 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                   ),
-                  child: Column(
-                    children: DummyIngredients.categories.keys.map((category) {
-                      return IngredientCategoryAccordion(
-                        category: category,
-                        emoji: IngredientCategoryEmoji.forCategory(category),
-                        ingredients:
-                            DummyIngredients.categories[category] ?? [],
-                        pantryItems: pantryItems,
-                        selectedIngredients: _ingredients,
-                        onIngredientTap: _fillInput,
+                  child: Consumer<IngredientProvider>(
+                    builder: (context, ingredientProvider, child) {
+                      if (ingredientProvider.isLoading) {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 32),
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+                      return Column(
+                        children: ingredientProvider.categories.keys.map((category) {
+                          // Gunakan kategori yang sudah di-fetch beserta iconnya
+                          final icon = ingredientProvider.categoryIcons[category] ?? '📦';
+                          return IngredientCategoryAccordion(
+                            category: category,
+                            emoji: icon,
+                            ingredients: ingredientProvider.categories[category] ?? [],
+                            pantryItems: pantryItems,
+                            selectedIngredients: _ingredients,
+                            onIngredientTap: _fillInput,
+                          );
+                        }).toList(),
                       );
-                    }).toList(),
+                    },
                   ),
                 ),
                 const SizedBox(height: 96),

@@ -9,6 +9,7 @@ import '../providers/recommendation_provider.dart';
 import '../providers/shell_navigation_provider.dart';
 import '../providers/user_provider.dart';
 import '../providers/pantry_provider.dart';
+import '../providers/ingredient_provider.dart';
 import '../services/ai_detection_service.dart';
 
 /// Centralised provider wiring for the app.
@@ -56,6 +57,7 @@ class AppProviders {
       ChangeNotifierProvider(create: (_) => UserProvider()),
       ChangeNotifierProvider(create: (_) => ShellNavigationProvider()),
       ChangeNotifierProvider(create: (_) => PantryProvider()),
+      ChangeNotifierProvider(create: (_) => IngredientProvider()),
     ];
   }
 }

@@ -39,22 +39,45 @@ function setView(activeKey) {
 // ─── Domain Constants ─────────────────────────────────────────────────────────
 const DIFFICULTY_OPTIONS = ['Mudah', 'Sedang', 'Sulit'];
 
-const INGREDIENT_CATEGORIES = [
-  'Sumber Protein', 'Sayuran', 'Bumbu', 'Bumbu Dasar',
-  'Karbohidrat', 'Susu & Olahan Susu', 'Buah', 'Tepung', 'Lainnya',
-];
+let INGREDIENT_CATEGORIES = [];
+let CATEGORY_EMOJI_MAP = {};
+let INGREDIENT_CATEGORIES_RECORDS = [];
 
-const CATEGORY_EMOJI_MAP = {
-  'Sumber Protein':    '🥩',
-  'Sayuran':           '🥬',
-  'Bumbu':             '🧄',
-  'Bumbu Dasar':       '🧂',
-  'Karbohidrat':       '🍚',
-  'Susu & Olahan Susu': '🥛',
-  'Buah':              '🍎',
-  'Tepung':            '🌾',
-  'Lainnya':           '📦',
-};
+async function loadIngredientCategories() {
+  try {
+    const records = await pb.collection('ingredient_categories').getFullList({ sort: 'order,name' });
+    if (records.length === 0) {
+      // Seed initial data
+      const defaultCategories = [
+        { name: 'Sumber Protein', icon: '🥩', order: 1 },
+        { name: 'Seafood', icon: '🦞', order: 2 },
+        { name: 'Sayuran', icon: '🥬', order: 3 },
+        { name: 'Jamur', icon: '🍄', order: 4 },
+        { name: 'Bumbu', icon: '🧄', order: 5 },
+        { name: 'Bumbu Dasar', icon: '🧂', order: 6 },
+        { name: 'Karbohidrat', icon: '🍚', order: 7 },
+        { name: 'Kacang & Biji', icon: '🥜', order: 8 },
+        { name: 'Susu & Olahan Susu', icon: '🥛', order: 9 },
+        { name: 'Buah', icon: '🍎', order: 10 },
+        { name: 'Tepung', icon: '🌾', order: 11 },
+        { name: 'Lainnya', icon: '📦', order: 12 }
+      ];
+      for (const cat of defaultCategories) {
+        await pb.collection('ingredient_categories').create(cat);
+      }
+      return await loadIngredientCategories(); // retry after seed
+    }
+
+    INGREDIENT_CATEGORIES_RECORDS = records;
+    INGREDIENT_CATEGORIES = records.map(r => r.name);
+    CATEGORY_EMOJI_MAP = {};
+    records.forEach(r => {
+      CATEGORY_EMOJI_MAP[r.name] = r.icon || '📦';
+    });
+  } catch (err) {
+    console.error('Error loading ingredient categories:', err);
+  }
+}
 
 // ─── Example JSON Templates ───────────────────────────────────────────────────
 const RECIPE_EXAMPLE_JSON = `[
@@ -203,11 +226,16 @@ function bindToolbarEvents() {
 }
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
-function checkAuth() {
+async function checkAuth() {
   if (pb.authStore.isValid && pb.authStore.isSuperuser) {
     loginView.classList.add('hidden');
     dashboardView.classList.remove('hidden');
     adminEmailDisplay.textContent = pb.authStore.model.email;
+    
+    // Load dynamic categories before loading data
+    await loadIngredientCategories();
+    setupFilterOptions();
+    
     loadData();
   } else {
     loginView.classList.remove('hidden');
@@ -389,6 +417,14 @@ function renderIngredientCategories(items) {
     const section        = document.createElement('div');
     section.className    = 'border border-gray-100 rounded-2xl bg-white overflow-hidden';
 
+    const catRecord = INGREDIENT_CATEGORIES_RECORDS.find(r => r.name === category);
+    const catIdStr = catRecord ? `'${catRecord.id}', 'ingredient_categories'` : `null, null`;
+    const editCatBtn = catRecord ? `
+      <button onclick="openEditModal(${catIdStr})" class="p-1.5 text-gray-400 hover:text-cookgreen-900 hover:bg-cookgreen-50 rounded-lg transition-colors ml-2" title="Edit Kategori">
+        <i data-feather="edit-2" class="w-4 h-4"></i>
+      </button>
+    ` : '';
+
     const ingredientChips = grouped[category]
       .map((item) => `
         <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-full text-sm text-gray-700">
@@ -406,10 +442,13 @@ function renderIngredientCategories(items) {
     section.innerHTML = `
       <details class="group" open>
         <summary class="list-none cursor-pointer px-4 py-3 flex items-center justify-between bg-gray-50 border-b border-gray-100">
-          <div class="flex items-center gap-2">
-            <span class="text-lg">${CATEGORY_EMOJI_MAP[category] || '📦'}</span>
-            <span class="font-medium text-gray-900">${category}</span>
-            <span class="text-xs text-gray-500">(${grouped[category].length})</span>
+          <div class="flex items-center">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">${CATEGORY_EMOJI_MAP[category] || '📦'}</span>
+              <span class="font-medium text-gray-900">${category}</span>
+              <span class="text-xs text-gray-500">(${grouped[category].length})</span>
+            </div>
+            ${editCatBtn}
           </div>
           <i data-feather="chevron-down" class="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform"></i>
         </summary>
@@ -448,7 +487,26 @@ window.deleteRecord = async (id) => {
   }
 };
 
-
-
-
-
+window.exportJSON = async () => {
+   try {
+     showToast(`Mempersiapkan export data ${state.collection}...`, 'info');
+     const items = await pb.collection(state.collection).getFullList();
+     
+     const cleanedItems = items.map(item => {
+        const { collectionId, collectionName, created, updated, expand, ...rest } = item;
+        return rest;
+     });
+     
+     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(cleanedItems, null, 2));
+     const downloadAnchorNode = document.createElement('a');
+     downloadAnchorNode.setAttribute("href", dataStr);
+     downloadAnchorNode.setAttribute("download", `${state.collection}_export.json`);
+     document.body.appendChild(downloadAnchorNode);
+     downloadAnchorNode.click();
+     downloadAnchorNode.remove();
+     showToast(`Berhasil export data ${state.collection}`, 'success');
+   } catch (err) {
+     console.error(err);
+     showToast('Gagal export JSON: ' + err.message, 'error');
+   }
+};

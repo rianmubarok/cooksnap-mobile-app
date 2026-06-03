@@ -1,9 +1,12 @@
 // ─── Edit Modal ───────────────────────────────────────────────────────────────
-window.openEditModal = async (id) => {
+window.openEditModal = async (id, overrideCollection = null) => {
   try {
-    const record = await pb.collection(state.collection).getOne(id);
+    const col = overrideCollection || state.collection;
+    const record = await pb.collection(col).getOne(id);
+    window.currentEditRecord = record;
+    window.currentEditCollection = col; // Save for saveEditRecord
     editRecordId.value             = record.id;
-    editCollectionName.textContent = state.collection;
+    editCollectionName.textContent = col;
     renderDynamicEditFields(record);
     editModal.classList.remove('hidden');
     feather.replace();
@@ -25,10 +28,43 @@ window.saveEditRecord = async () => {
 
   try {
     const payload = collectDynamicEditPayload();
-    await pb.collection(state.collection).update(id, payload);
+    const col = window.currentEditCollection || state.collection;
+    
+    if (col === 'ingredients' && window.currentEditRecord) {
+      const oldName = (window.currentEditRecord.name || '').trim();
+      const newName = (payload.name || '').trim();
+      
+      if (oldName !== newName) {
+        const existingList = await pb.collection('ingredients').getFullList({ fields: 'id,name' });
+        const duplicate = existingList.find(ing => ing.name.trim().toLowerCase() === newName.toLowerCase() && ing.id !== id);
+
+        if (duplicate) {
+           await updateRecipesIngredientName(oldName, duplicate.name);
+           await pb.collection('ingredients').delete(id);
+           showToast(`Bahan digabungkan dengan ${duplicate.name} dan dihapus`, 'success');
+           closeEditModal();
+           loadData();
+        } else {
+           await pb.collection('ingredients').update(id, payload);
+           await updateRecipesIngredientName(oldName, newName);
+           showToast('Data berhasil diperbarui dan resep disinkronkan', 'success');
+           closeEditModal();
+           loadData();
+        }
+        return;
+      }
+    }
+
+    await pb.collection(col).update(id, payload);
     showToast('Data berhasil diperbarui', 'success');
     closeEditModal();
-    loadData(); // assumes loadData is available globally
+    
+    if (col === 'ingredient_categories') {
+      await loadIngredientCategories(); // reload categories dynamically
+      setupFilterOptions();
+    }
+    
+    loadData(); 
   } catch (err) {
     console.error(err);
     showToast('Gagal menyimpan perubahan: ' + err.message, 'error');
@@ -38,6 +74,32 @@ window.saveEditRecord = async () => {
     feather.replace();
   }
 };
+
+async function updateRecipesIngredientName(oldName, newName) {
+    if (!oldName || !newName) return;
+    const recipes = await pb.collection('recipes').getFullList({ fields: 'id,ingredients' });
+    let updatedCount = 0;
+    for (const r of recipes) {
+       if (Array.isArray(r.ingredients)) {
+          let hasChanged = false;
+          const newIngredients = r.ingredients.map(ing => {
+             if (ing && ing.name && ing.name.trim() === oldName) {
+                hasChanged = true;
+                return { ...ing, name: newName };
+             }
+             return ing;
+          });
+
+          if (hasChanged) {
+             await pb.collection('recipes').update(r.id, { ingredients: newIngredients });
+             updatedCount++;
+          }
+       }
+    }
+    if (updatedCount > 0) {
+       showToast(`Telah menyinkronkan ${updatedCount} resep!`, 'info');
+    }
+}
 
 function isSystemField(key) {
   return ['id', 'created', 'updated', 'collectionId', 'collectionName', 'expand'].includes(key);

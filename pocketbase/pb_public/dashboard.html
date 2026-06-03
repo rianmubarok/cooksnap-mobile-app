@@ -37,7 +37,7 @@
     <!-- Toast Notification Container -->
     <div
       id="toast-container"
-      class="fixed top-4 right-4 z-[100] flex flex-col gap-2"
+      class="fixed top-4 right-4 z-[9999] flex flex-col gap-2"
     ></div>
 
     <!-- VIEW: LOGIN (Injected) -->
@@ -45,6 +45,7 @@
     <div id="component-bulk-modal"></div>
     <div id="component-edit-modal"></div>
     <div id="component-unregistered-modal"></div>
+    <div id="component-json-editor-modal"></div>
 
     <!-- VIEW: DASHBOARD -->
     <div
@@ -136,6 +137,22 @@
               >
                 <i data-feather="alert-circle" class="w-5 h-5"></i>
                 Pindai Bahan Hilang
+              </button>
+              <button
+                id="btn-edit-json"
+                onclick="openJsonEditorModal()"
+                class="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white text-gray-700 border border-gray-200 py-2.5 px-4 rounded-xl font-medium hover:bg-gray-50 transition-all shadow-sm"
+              >
+                <i data-feather="code" class="w-5 h-5"></i>
+                Edit Massal (JSON)
+              </button>
+              <button
+                id="btn-export-json"
+                onclick="exportJSON()"
+                class="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white text-gray-700 border border-gray-200 py-2.5 px-4 rounded-xl font-medium hover:bg-gray-50 transition-all shadow-sm"
+              >
+                <i data-feather="download-cloud" class="w-5 h-5"></i>
+                Export JSON
               </button>
               <button
                 onclick="openBulkModal()"
@@ -314,6 +331,7 @@
     <script src="assets/scripts/settings.js"></script>
     <script src="assets/scripts/edit-modal.js"></script>
     <script src="assets/scripts/bulk-import.js"></script>
+    <script src="assets/scripts/json-editor.js"></script>
     <script src="assets/scripts/unregistered-ingredients.js"></script>
     <script src="assets/scripts/dashboard.js"></script>
     <script src="assets/scripts/boot.js"></script>

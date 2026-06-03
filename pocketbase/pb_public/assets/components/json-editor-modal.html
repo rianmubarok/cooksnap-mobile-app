@@ -1,0 +1,67 @@
+<div
+  id="json-editor-modal"
+  class="fixed inset-0 z-[110] flex items-center justify-center p-4 hidden animate-fade-in"
+>
+  <div
+    class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"
+    onclick="closeJsonEditorModal()"
+  ></div>
+  <div
+    class="relative bg-white rounded-3xl shadow-2xl w-full max-w-4xl flex flex-col max-h-[90vh] animate-slide-up"
+  >
+    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="bg-blue-100 p-2 rounded-lg text-blue-600">
+          <i data-feather="code"></i>
+        </div>
+        <div>
+          <h3 class="text-xl font-medium text-gray-900">
+            Edit Massal JSON
+          </h3>
+          <p class="text-sm text-gray-500">Edit data <span id="json-editor-collection" class="font-medium text-gray-700"></span> secara langsung</p>
+        </div>
+      </div>
+      <button
+        onclick="closeJsonEditorModal()"
+        class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-xl transition-all"
+      >
+        <i data-feather="x"></i>
+      </button>
+    </div>
+
+    <div class="p-6 flex-1 flex flex-col min-h-0">
+      <div class="mb-4 bg-blue-50 text-blue-800 p-4 rounded-xl border border-blue-100">
+        <div class="flex items-start gap-3">
+          <i data-feather="info" class="w-5 h-5 flex-shrink-0 mt-0.5"></i>
+          <p class="text-sm">
+            Edit JSON di bawah ini. Anda dapat mengubah <strong>kategori</strong> atau <strong>nama</strong> bahan secara massal.<br/>
+            <strong>Perhatian:</strong> Untuk alasan keamanan, menghapus baris JSON tidak akan menghapus data dari database. Ini hanya untuk Update dan Create.
+          </p>
+        </div>
+      </div>
+
+      <textarea
+        id="json-editor-textarea"
+        class="flex-1 w-full p-4 border border-gray-200 rounded-xl font-mono text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-cookgreen-500 outline-none resize-none"
+        placeholder="Memuat data..."
+      ></textarea>
+    </div>
+
+    <div class="p-6 border-t border-gray-100 bg-gray-50 rounded-b-3xl flex justify-end gap-3">
+      <button
+        onclick="closeJsonEditorModal()"
+        class="px-5 py-2.5 text-gray-600 font-medium hover:bg-gray-200 rounded-xl transition-all"
+      >
+        Batal
+      </button>
+      <button
+        id="btn-save-json"
+        onclick="saveJsonEditor()"
+        class="px-5 py-2.5 bg-cookgreen-900 text-white font-medium hover:bg-cookgreen-800 rounded-xl transition-all flex items-center gap-2"
+      >
+        <i data-feather="save" class="w-4 h-4"></i>
+        Simpan Perubahan
+      </button>
+    </div>
+  </div>
+</div>

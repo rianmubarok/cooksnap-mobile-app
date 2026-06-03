@@ -5,10 +5,15 @@ import 'string_utils.dart';
 class IngredientResolver {
   IngredientResolver._();
 
-  static final List<String> _catalog = DummyIngredients.items;
+  static List<String> _catalog = DummyIngredients.items;
 
   /// Daftar bahan resmi untuk autocomplete.
   static List<String> get catalog => List.unmodifiable(_catalog);
+
+  /// Perbarui katalog (misal dari PocketBase secara asinkron)
+  static void updateCatalog(List<String> newItems) {
+    _catalog = newItems;
+  }
 
   /// Cari saran autocomplete berdasarkan query.
   static List<String> search(String query, {int limit = 30}) {

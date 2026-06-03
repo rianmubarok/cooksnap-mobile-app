@@ -10,7 +10,7 @@ import '../../widgets/common/section_header_row.dart';
 import '../../widgets/common/square_icon_button.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/ingredient/removable_ingredient_chip.dart';
-import '../../data/dummy/dummy_ingredients.dart';
+import '../../providers/ingredient_provider.dart';
 import '../../utils/string_utils.dart';
 import '../../utils/app_snackbar.dart';
 
@@ -111,7 +111,8 @@ class _PantryEssentialsSheetState extends State<PantryEssentialsSheet> {
                           if (textEditingValue.text.isEmpty) {
                             return const Iterable<String>.empty();
                           }
-                          return DummyIngredients.items.where((String option) {
+                          final allItems = context.read<IngredientProvider>().items;
+                          return allItems.where((String option) {
                             return option.toLowerCase().contains(textEditingValue.text.toLowerCase());
                           });
                         },
