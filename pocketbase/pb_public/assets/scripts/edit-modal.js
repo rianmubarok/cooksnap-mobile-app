@@ -127,6 +127,22 @@ window.renderDynamicEditFields = function(record) {
         fieldEl.rows     = 4;
         fieldEl.className = 'w-full p-3 border border-gray-200 rounded-xl font-mono text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-cookgreen-500 focus:border-cookgreen-500 outline-none transition-all';
         fieldEl.value    = JSON.stringify(value, null, 2);
+      } else if (window.currentEditCollection === 'ingredients' && key === 'category') {
+        fieldEl          = document.createElement('select');
+        fieldEl.className = 'w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cookgreen-500 focus:border-cookgreen-500 outline-none transition-all bg-white';
+        
+        const categories = window.INGREDIENT_CATEGORIES || [];
+        let optionsHtml = '';
+        
+        // Pastikan nilai saat ini ada dalam opsi
+        if (value && !categories.includes(value)) {
+          optionsHtml += `<option value="${value}">${value}</option>`;
+        }
+        
+        optionsHtml += categories.map(c => `<option value="${c}">${c}</option>`).join('');
+        
+        fieldEl.innerHTML = optionsHtml;
+        fieldEl.value = value ?? '';
       } else {
         fieldEl          = document.createElement('input');
         fieldEl.type     = 'text';
