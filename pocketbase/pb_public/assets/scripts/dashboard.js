@@ -456,6 +456,13 @@ function renderIngredientCategories(items) {
       `)
       .join('');
 
+    const addChip = `
+      <div onclick="addIngredientToCategory('${category}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border-2 border-dashed border-gray-300 text-sm font-medium text-gray-500 hover:text-cookgreen-600 hover:border-cookgreen-300 hover:bg-cookgreen-50 cursor-pointer transition-all" title="Tambah Bahan ke Kategori Ini">
+        <i data-feather="plus" class="w-3.5 h-3.5"></i>
+        Tambah
+      </div>
+    `;
+
     section.innerHTML = `
       <details class="group" open>
         <summary class="list-none cursor-pointer px-4 py-3 flex items-center justify-between bg-gray-50 border-b border-gray-100">
@@ -470,7 +477,7 @@ function renderIngredientCategories(items) {
           <i data-feather="chevron-down" class="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform"></i>
         </summary>
         <div class="p-4">
-          <div class="flex flex-wrap gap-2">${ingredientChips}</div>
+          <div class="flex flex-wrap items-center gap-2">${ingredientChips} ${addChip}</div>
         </div>
       </details>
     `;
@@ -508,6 +515,23 @@ window.addCategory = async () => {
   } catch (err) {
     console.error(err);
     showToast('Gagal menambah kategori: ' + err.message, 'error');
+  }
+};
+
+window.addIngredientToCategory = async (category) => {
+  const name = prompt(`Masukkan nama bahan baru untuk kategori "${category}":`);
+  if (!name || name.trim() === '') return;
+  
+  try {
+    await pb.collection('ingredients').create({ 
+      name: name.trim(), 
+      category: category 
+    });
+    showToast('Bahan berhasil ditambahkan!', 'success');
+    loadData();
+  } catch (err) {
+    console.error(err);
+    showToast('Gagal menambah bahan: ' + err.message, 'error');
   }
 };
 

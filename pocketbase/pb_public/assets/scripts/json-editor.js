@@ -37,9 +37,22 @@ window.openJsonEditorModal = async () => {
         if (!grouped[cat]) grouped[cat] = [];
         if (item.name) grouped[cat].push(item.name);
       });
-      // Urutkan abjad
-      Object.keys(grouped).forEach(k => grouped[k].sort());
-      jsonStr = JSON.stringify(grouped, null, 2);
+      // Urutkan kategori berdasarkan order (INGREDIENT_CATEGORIES)
+      const sortedKeys = Object.keys(grouped).sort((a, b) => {
+        const idxA = (window.INGREDIENT_CATEGORIES || []).indexOf(a);
+        const idxB = (window.INGREDIENT_CATEGORIES || []).indexOf(b);
+        const orderA = idxA === -1 ? 9999 : idxA;
+        const orderB = idxB === -1 ? 9999 : idxB;
+        return orderA - orderB;
+      });
+
+      const sortedGrouped = {};
+      sortedKeys.forEach(k => {
+        grouped[k].sort(); // urutkan bahan di dalamnya sesuai abjad
+        sortedGrouped[k] = grouped[k];
+      });
+
+      jsonStr = JSON.stringify(sortedGrouped, null, 2);
     } else {
       jsonStr = JSON.stringify(cleanedItems, null, 2);
     }
