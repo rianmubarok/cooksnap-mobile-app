@@ -55,6 +55,29 @@ window.saveEditRecord = async () => {
       }
     }
 
+    // Jika mengedit Kategori Bahan dan namanya berubah, sinkronkan ke semua bahan
+    if (col === 'ingredient_categories' && window.currentEditRecord) {
+      const oldName = (window.currentEditRecord.name || '').trim();
+      const newName = (payload.name || '').trim();
+      
+      if (oldName && newName && oldName !== newName) {
+         // Temukan semua bahan yang menggunakan kategori lama
+         const existingIngredients = await pb.collection('ingredients').getFullList({ 
+            filter: `category = '${oldName.replace(/'/g, "\\'")}'` 
+         });
+         
+         let updatedIngCount = 0;
+         for (const ing of existingIngredients) {
+            await pb.collection('ingredients').update(ing.id, { category: newName });
+            updatedIngCount++;
+         }
+         
+         if (updatedIngCount > 0) {
+            showToast(`Telah menyinkronkan kategori untuk ${updatedIngCount} bahan!`, 'info');
+         }
+      }
+    }
+
     await pb.collection(col).update(id, payload);
     showToast('Data berhasil diperbarui', 'success');
     closeEditModal();
