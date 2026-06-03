@@ -427,6 +427,12 @@ function renderIngredientCategories(items) {
 
   ingredientsCategories.innerHTML = '';
   const grouped = {};
+  
+  // Pastikan semua kategori muncul meskipun belum ada bahannya
+  window.INGREDIENT_CATEGORIES.forEach(c => {
+    grouped[c] = [];
+  });
+
   items.forEach((item) => {
     const key = item.category || 'Lainnya';
     (grouped[key] = grouped[key] || []).push(item);
