@@ -70,6 +70,13 @@ window.scanUnregisteredIngredients = async () => {
     // 5. Render list
     listContainer.innerHTML = '';
     const categoryOptions = INGREDIENT_CATEGORIES.map(c => `<option value="${c}">${c}</option>`).join('');
+    
+    const masterIngredientOptions = masterItems
+      .map(m => (m.name || '').trim())
+      .filter(n => n)
+      .sort()
+      .map(n => `<option value="${n.replace(/"/g, '&quot;')}">${n}</option>`)
+      .join('');
 
     unregistered.forEach(name => {
       const idSafe = 'ing-' + btoa(name).replace(/[^a-zA-Z0-9]/g, '');
@@ -78,14 +85,27 @@ window.scanUnregisteredIngredients = async () => {
       row.id = idSafe;
       
       row.innerHTML = `
-        <div class="flex-1 font-medium text-gray-900 break-words">${name}</div>
-        <select id="sel-${idSafe}" class="px-3 py-2 border border-gray-200 rounded-lg bg-white text-sm outline-none focus:ring-2 focus:ring-cookgreen-500">
-          <option value="" disabled selected>Pilih Kategori...</option>
-          ${categoryOptions}
-        </select>
-        <button onclick="registerMissingIngredient('${name.replace(/'/g, "\\'")}', '${idSafe}')" class="px-4 py-2 bg-cookgreen-900 text-white rounded-lg text-sm font-medium hover:bg-cookgreen-800 transition-colors whitespace-nowrap">
-          Daftarkan
-        </button>
+        <div class="flex-1 font-medium text-gray-900 break-words mb-2 sm:mb-0">${name}</div>
+        <div class="flex flex-col gap-2 w-full sm:w-auto">
+          <div class="flex items-center gap-2 justify-between sm:justify-end">
+            <select id="sel-${idSafe}" class="px-3 py-2 border border-gray-200 rounded-lg bg-white text-sm outline-none focus:ring-2 focus:ring-cookgreen-500 w-full sm:w-40 flex-1">
+              <option value="" disabled selected>Pilih Kategori...</option>
+              ${categoryOptions}
+            </select>
+            <button onclick="registerMissingIngredient('${name.replace(/'/g, "\\'")}', '${idSafe}')" class="px-4 py-2 bg-cookgreen-900 text-white rounded-lg text-sm font-medium hover:bg-cookgreen-800 transition-colors whitespace-nowrap">
+              Daftarkan
+            </button>
+          </div>
+          <div class="flex items-center gap-2 justify-between sm:justify-end">
+            <select id="map-sel-${idSafe}" class="px-3 py-2 border border-gray-200 rounded-lg bg-white text-sm outline-none focus:ring-2 focus:ring-amber-500 w-full sm:w-40 flex-1">
+              <option value="" disabled selected>Koreksi ke Bahan...</option>
+              ${masterIngredientOptions}
+            </select>
+            <button onclick="correctMissingIngredient('${name.replace(/'/g, "\\'")}', '${idSafe}')" class="px-4 py-2 bg-amber-500 text-white rounded-lg text-sm font-medium hover:bg-amber-600 transition-colors whitespace-nowrap">
+              Koreksi
+            </button>
+          </div>
+        </div>
       `;
       listContainer.appendChild(row);
     });
@@ -127,5 +147,59 @@ window.registerMissingIngredient = async (name, rowIdSafe) => {
 
   } catch (err) {
     showToast(`Gagal mendaftarkan ${name}: ${err.message}`, 'error');
+  }
+};
+
+window.correctMissingIngredient = async (unregisteredName, rowIdSafe) => {
+  const select = document.getElementById(`map-sel-${rowIdSafe}`);
+  const targetIngredientName = select.value;
+  if (!targetIngredientName) {
+    showToast(`Pilih bahan pengganti untuk ${unregisteredName} terlebih dahulu!`, 'error');
+    return;
+  }
+
+  try {
+    showToast(`Sedang mengkoreksi ${unregisteredName}...`, 'info');
+
+    // Fetch all recipes to find usages
+    const recipes = await pb.collection('recipes').getFullList({ fields: 'id,ingredients' });
+    
+    let updatedCount = 0;
+    for (const r of recipes) {
+       if (Array.isArray(r.ingredients)) {
+          let hasChanged = false;
+          const newIngredients = r.ingredients.map(ing => {
+             if (ing && ing.name && ing.name.trim() === unregisteredName) {
+                hasChanged = true;
+                return { ...ing, name: targetIngredientName };
+             }
+             return ing;
+          });
+
+          if (hasChanged) {
+             await pb.collection('recipes').update(r.id, { ingredients: newIngredients });
+             updatedCount++;
+          }
+       }
+    }
+
+    showToast(`${unregisteredName} berhasil dikoreksi menjadi ${targetIngredientName} pada ${updatedCount} resep!`, 'success');
+    
+    // Remove row from UI
+    const row = document.getElementById(rowIdSafe);
+    if (row) {
+      row.remove();
+    }
+    
+    // Check if list is empty now
+    const listContainer = document.getElementById('unregistered-list');
+    if (listContainer.children.length === 0) {
+      listContainer.classList.add('hidden');
+      document.getElementById('unregistered-empty').classList.remove('hidden');
+    }
+
+  } catch (err) {
+    console.error(err);
+    showToast(`Gagal mengkoreksi: ${err.message}`, 'error');
   }
 };
