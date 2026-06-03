@@ -469,9 +469,39 @@ function renderIngredientCategories(items) {
     ingredientsCategories.appendChild(section);
   });
 
+  const addCatBtn = document.createElement('button');
+  addCatBtn.onclick = addCategory;
+  addCatBtn.className = 'w-full py-4 mt-2 border-2 border-dashed border-gray-200 rounded-2xl text-gray-500 hover:text-cookgreen-700 hover:border-cookgreen-400 hover:bg-cookgreen-50 transition-all font-medium flex items-center justify-center gap-2';
+  addCatBtn.innerHTML = `<i data-feather="plus" class="w-5 h-5"></i> Tambah Kategori Baru`;
+  ingredientsCategories.appendChild(addCatBtn);
+
   feather.replace();
   setView('ingredients');
 }
+
+window.addCategory = async () => {
+  const name = prompt("Masukkan nama kategori baru (contoh: Sayuran Organik):");
+  if (!name || name.trim() === '') return;
+  
+  const icon = prompt("Masukkan emoji/ikon untuk kategori ini:", "📦");
+  if (!icon) return;
+
+  try {
+    const order = INGREDIENT_CATEGORIES_RECORDS.length + 1;
+    await pb.collection('ingredient_categories').create({ 
+      name: name.trim(), 
+      icon: icon.trim(), 
+      order 
+    });
+    showToast('Kategori baru berhasil ditambahkan!', 'success');
+    await loadIngredientCategories();
+    setupFilterOptions();
+    loadData();
+  } catch (err) {
+    console.error(err);
+    showToast('Gagal menambah kategori: ' + err.message, 'error');
+  }
+};
 
 // ─── Pagination ────────────────────────────────────────────────────────────────
 window.prevPage = () => {
