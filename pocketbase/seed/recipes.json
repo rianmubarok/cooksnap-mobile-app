@@ -50,7 +50,6 @@
     ],
     "cooking_time": 15,
     "difficulty": "Mudah",
-    "category": "Indonesia",
     "tags": [
       "Indonesia",
       "Cepat",
@@ -115,7 +114,6 @@
     ],
     "cooking_time": 25,
     "difficulty": "Sedang",
-    "category": "Indonesia",
     "tags": [
       "Indonesia",
       "Mudah"
@@ -174,7 +172,6 @@
     ],
     "cooking_time": 20,
     "difficulty": "Mudah",
-    "category": "Indonesia",
     "tags": [
       "Indonesia",
       "Cepat",
@@ -234,7 +231,6 @@
     ],
     "cooking_time": 30,
     "difficulty": "Mudah",
-    "category": "Indonesia",
     "tags": [
       "Indonesia",
       "Sehat",
@@ -284,7 +280,6 @@
     ],
     "cooking_time": 5,
     "difficulty": "Mudah",
-    "category": "Minuman",
     "tags": [
       "Minuman",
       "Cepat",
@@ -349,7 +344,6 @@
     ],
     "cooking_time": 20,
     "difficulty": "Mudah",
-    "category": "Sarapan",
     "tags": [
       "Penutup",
       "Cepat",
@@ -404,7 +398,6 @@
     ],
     "cooking_time": 45,
     "difficulty": "Sedang",
-    "category": "Indonesia",
     "tags": [
       "Indonesia"
     ],
@@ -452,7 +445,6 @@
     ],
     "cooking_time": 10,
     "difficulty": "Mudah",
-    "category": "Minuman",
     "tags": [
       "Minuman",
       "Cepat",
@@ -518,7 +510,6 @@
     ],
     "cooking_time": 15,
     "difficulty": "Mudah",
-    "category": "Penutup",
     "tags": [
       "Penutup",
       "Sehat",
@@ -579,11 +570,1080 @@
     ],
     "cooking_time": 60,
     "difficulty": "Sedang",
-    "category": "Indonesia",
     "tags": [
       "Indonesia"
     ],
     "source_url": "https://cooksnap.com/recipes/nasi-uduk",
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  {
+    "recipe_name": "Soto Ayam Bening",
+    "description": "Soto ayam segar dengan kuah bening kuning yang kaya rempah, disajikan dengan suwiran ayam, bihun, dan telur.",
+    "image_url": "https://images.unsplash.com/photo-1604503468506-a8da13d82791?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {
+        "name": "Ayam",
+        "quantity": 500,
+        "unit": "gram"
+      },
+      {
+        "name": "Bihun",
+        "quantity": 100,
+        "unit": "gram"
+      },
+      {
+        "name": "Kol",
+        "quantity": 100,
+        "unit": "gram"
+      },
+      {
+        "name": "Tauge",
+        "quantity": 50,
+        "unit": "gram"
+      },
+      {
+        "name": "Telur Ayam",
+        "quantity": 2,
+        "unit": "butir"
+      },
+      {
+        "name": "Bawang Putih",
+        "quantity": 5,
+        "unit": "siung"
+      },
+      {
+        "name": "Bawang Merah",
+        "quantity": 7,
+        "unit": "siung"
+      },
+      {
+        "name": "Kunyit",
+        "quantity": 2,
+        "unit": "ruas"
+      },
+      {
+        "name": "Serai",
+        "quantity": 2,
+        "unit": "batang"
+      },
+      {
+        "name": "Daun Jeruk",
+        "quantity": 3,
+        "unit": "lembar"
+      }
+    ],
+    "steps": [
+      "Rebus ayam dengan air secukupnya hingga matang dan empuk. Angkat ayam, suwir-suwir dagingnya, dan sisihkan kaldu sisa rebusannya.",
+      "Haluskan bawang putih, bawang merah, kunyit, dan sedikit garam.",
+      "Tumis bumbu halus bersama serai yang dimemarkan dan daun jeruk hingga harum dan matang.",
+      "Masukkan bumbu tumis ke dalam air kaldu rebusan ayam. Didihkan kembali dan koreksi rasa dengan garam atau penyedap.",
+      "Seduh bihun dan tauge dengan air panas hingga lunak, lalu tiriskan. Iris tipis kol.",
+      "Tata bihun, tauge, kol, suwiran ayam, dan irisan telur rebus di mangkuk. Siram dengan kuah soto panas dan taburi bawang goreng serta seledri."
+    ],
+    "cooking_time": 45,
+    "difficulty": "Sedang",
+    "tags": [
+      "Indonesia",
+      "Berkuah"
+    ],
+    "source_url": "https://cooksnap.com/recipes/soto-ayam",
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  {
+    "recipe_name": "Rendang Daging Sapi",
+    "description": "Rendang daging asli Padang dengan bumbu rempah meresap dan tekstur daging empuk.",
+    "image_url": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {
+        "name": "Daging Sapi",
+        "quantity": 500,
+        "unit": "gram"
+      },
+      {
+        "name": "Santan",
+        "quantity": 1000,
+        "unit": "ml"
+      },
+      {
+        "name": "Cabai Merah",
+        "quantity": 100,
+        "unit": "gram"
+      },
+      {
+        "name": "Bawang Merah",
+        "quantity": 10,
+        "unit": "siung"
+      },
+      {
+        "name": "Bawang Putih",
+        "quantity": 5,
+        "unit": "siung"
+      },
+      {
+        "name": "Jahe",
+        "quantity": 2,
+        "unit": "ruas"
+      },
+      {
+        "name": "Lengkuas",
+        "quantity": 2,
+        "unit": "ruas"
+      },
+      {
+        "name": "Serai",
+        "quantity": 2,
+        "unit": "batang"
+      },
+      {
+        "name": "Daun Kunyit",
+        "quantity": 1,
+        "unit": "lembar"
+      },
+      {
+        "name": "Daun Jeruk",
+        "quantity": 4,
+        "unit": "lembar"
+      }
+    ],
+    "steps": [
+      "Potong daging sapi berlawanan arah serat agar cepat empuk dengan ukuran sesuai selera.",
+      "Haluskan cabai merah, bawang merah, bawang putih, jahe, dan lengkuas.",
+      "Tuang santan ke dalam wajan besar. Masukkan bumbu halus, serai memar, daun kunyit, dan daun jeruk.",
+      "Masak santan berbumbu sambil terus diaduk perlahan hingga mendidih agar santan tidak pecah.",
+      "Setelah santan mendidih dan mengeluarkan minyak, masukkan potongan daging sapi.",
+      "Masak dengan api kecil selama 2-3 jam sambil sesekali diaduk. Rendang siap disajikan setelah bumbu mengering dan berwarna coklat pekat."
+    ],
+    "cooking_time": 180,
+    "difficulty": "Sulit",
+    "tags": [
+      "Indonesia",
+      "Daging",
+      "Pedas"
+    ],
+    "source_url": "https://cooksnap.com/recipes/rendang-daging",
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  {
+    "recipe_name": "Gado-Gado Jakarta",
+    "description": "Salad sayur khas Indonesia dengan siraman saus kacang gurih dan tambahan kerupuk renyah.",
+    "image_url": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {
+        "name": "Kacang Panjang",
+        "quantity": 100,
+        "unit": "gram"
+      },
+      {
+        "name": "Tauge",
+        "quantity": 100,
+        "unit": "gram"
+      },
+      {
+        "name": "Bayam",
+        "quantity": 1,
+        "unit": "ikat"
+      },
+      {
+        "name": "Lontong",
+        "quantity": 2,
+        "unit": "buah"
+      },
+      {
+        "name": "Tahu",
+        "quantity": 2,
+        "unit": "buah"
+      },
+      {
+        "name": "Tempe",
+        "quantity": 2,
+        "unit": "potong"
+      },
+      {
+        "name": "Telur Ayam",
+        "quantity": 2,
+        "unit": "butir"
+      },
+      {
+        "name": "Kacang Tanah",
+        "quantity": 150,
+        "unit": "gram"
+      },
+      {
+        "name": "Gula Merah",
+        "quantity": 2,
+        "unit": "sdm"
+      },
+      {
+        "name": "Jeruk Limau",
+        "quantity": 1,
+        "unit": "buah"
+      }
+    ],
+    "steps": [
+      "Rebus telur ayam hingga matang. Goreng tahu dan tempe hingga kuning keemasan. Sisihkan.",
+      "Rebus secara terpisah sayuran seperti kacang panjang, tauge, dan bayam hingga matang lalu tiriskan.",
+      "Goreng kacang tanah hingga matang, lalu haluskan bersama cabai, bawang putih secukupnya, dan gula merah.",
+      "Campur bumbu kacang halus dengan air hangat secukupnya, lalu peras jeruk limau untuk menambah kesegaran.",
+      "Siapkan piring saji, potong lontong, tahu, tempe, telur, dan tata sayuran rebus di atas piring.",
+      "Siram seluruh bahan dengan saus kacang yang telah dibuat, taburi bawang goreng, dan sajikan bersama kerupuk."
+    ],
+    "cooking_time": 30,
+    "difficulty": "Sedang",
+    "tags": [
+      "Indonesia",
+      "Sayuran",
+      "Sehat"
+    ],
+    "source_url": "https://cooksnap.com/recipes/gado-gado",
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  {
+    "recipe_name": "Tempe Orek Manis Pedas",
+    "description": "Tempe goreng renyah yang dimasak dengan saus kecap manis pedas. Lauk sederhana yang lezat.",
+    "image_url": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {
+        "name": "Tempe",
+        "quantity": 250,
+        "unit": "gram"
+      },
+      {
+        "name": "Cabai Merah",
+        "quantity": 3,
+        "unit": "buah"
+      },
+      {
+        "name": "Cabai Rawit",
+        "quantity": 5,
+        "unit": "buah"
+      },
+      {
+        "name": "Bawang Putih",
+        "quantity": 3,
+        "unit": "siung"
+      },
+      {
+        "name": "Bawang Merah",
+        "quantity": 4,
+        "unit": "siung"
+      },
+      {
+        "name": "Kecap Manis",
+        "quantity": 3,
+        "unit": "sdm"
+      },
+      {
+        "name": "Gula Merah",
+        "quantity": 1,
+        "unit": "sdm"
+      },
+      {
+        "name": "Garam",
+        "quantity": 0.5,
+        "unit": "sdt"
+      },
+      {
+        "name": "Minyak Goreng",
+        "quantity": 200,
+        "unit": "ml"
+      }
+    ],
+    "steps": [
+      "Potong tempe menjadi korek api atau dadu kecil sesuai selera, lalu goreng dalam minyak panas hingga kering dan berwarna kecoklatan.",
+      "Iris tipis bawang merah, bawang putih, cabai merah, dan cabai rawit.",
+      "Tumis irisan bawang merah dan bawang putih dengan sedikit minyak sisa menggoreng hingga harum.",
+      "Masukkan irisan cabai, tumis sebentar lalu masukkan tempe goreng yang sudah renyah.",
+      "Tuangkan kecap manis dan gula merah, aduk rata. Tambahkan garam secukupnya.",
+      "Masak dengan api kecil sambil terus diaduk hingga saus meresap dan tempe tampak mengkilap. Angkat dan sajikan."
+    ],
+    "cooking_time": 20,
+    "difficulty": "Mudah",
+    "tags": [
+      "Indonesia",
+      "Mudah",
+      "Pedas"
+    ],
+    "source_url": "https://cooksnap.com/recipes/tempe-orek"
+  },
+  {
+    "recipe_name": "Bakso Kuah Sapi",
+    "description": "Bakso daging sapi kenyal dengan kuah kaldu gurih, disajikan dengan mie, bihun, dan tahu.",
+    "image_url": "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {
+        "name": "Daging Sapi",
+        "quantity": 500,
+        "unit": "gram"
+      },
+      {
+        "name": "Tepung Tapioka",
+        "quantity": 100,
+        "unit": "gram"
+      },
+      {
+        "name": "Bawang Putih",
+        "quantity": 5,
+        "unit": "siung"
+      },
+      {
+        "name": "Merica Bubuk",
+        "quantity": 1,
+        "unit": "sdt"
+      },
+      {
+        "name": "Garam",
+        "quantity": 2,
+        "unit": "sdt"
+      },
+      {
+        "name": "Mie Telur",
+        "quantity": 2,
+        "unit": "bungkus"
+      },
+      {
+        "name": "Tahu",
+        "quantity": 4,
+        "unit": "buah"
+      },
+      {
+        "name": "Daun Bawang",
+        "quantity": 2,
+        "unit": "batang"
+      },
+      {
+        "name": "Seledri",
+        "quantity": 2,
+        "unit": "batang"
+      }
+    ],
+    "steps": [
+      "Giling daging sapi hingga halus menggunakan blender atau food processor. Haluskan bawang putih.",
+      "Campur daging giling, tepung tapioka, bawang putih halus, garam, dan merica. Uleni hingga adonan kalis dan tercampur rata.",
+      "Didihkan air dalam panci besar. Ambil adonan, kepal di telapak tangan dan dorong keluar dengan ibu jari membentuk bola, lalu sendok masuk ke dalam air mendidih.",
+      "Masak bakso hingga mengapung ke permukaan pertanda sudah matang. Angkat dan sisihkan.",
+      "Untuk kuahnya, rebus tulang sapi atau gunakan kaldu sachet dengan bumbu bawang putih, garam, dan merica hingga gurih.",
+      "Tata mie rebus, tahu goreng, dan bakso di mangkuk. Siram dengan kuah panas, taburi daun bawang dan seledri cincang. Sajikan dengan saus sambal dan kecap manis."
+    ],
+    "cooking_time": 60,
+    "difficulty": "Sulit",
+    "tags": [
+      "Indonesia",
+      "Berkuah",
+      "Daging"
+    ],
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  {
+    "recipe_name": "Tumis Kangkung Belacan",
+    "description": "Tumis kangkung segar dengan terasi dan cabai. Cepat, sehat, dan nikmat.",
+    "image_url": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {
+        "name": "Kangkung",
+        "quantity": 2,
+        "unit": "ikat"
+      },
+      {
+        "name": "Bawang Putih",
+        "quantity": 4,
+        "unit": "siung"
+      },
+      {
+        "name": "Bawang Merah",
+        "quantity": 5,
+        "unit": "siung"
+      },
+      {
+        "name": "Cabai Merah",
+        "quantity": 3,
+        "unit": "buah"
+      },
+      {
+        "name": "Cabai Rawit",
+        "quantity": 5,
+        "unit": "buah"
+      },
+      {
+        "name": "Saus Tiram",
+        "quantity": 2,
+        "unit": "sdm"
+      },
+      {
+        "name": "Kecap Asin",
+        "quantity": 1,
+        "unit": "sdm"
+      },
+      {
+        "name": "Garam",
+        "quantity": 0.5,
+        "unit": "sdt"
+      },
+      {
+        "name": "Minyak Goreng",
+        "quantity": 3,
+        "unit": "sdm"
+      }
+    ],
+    "steps": [
+      "Bersihkan kangkung, petik batangnya dan siangi daun-daunnya. Cuci bersih di bawah air mengalir.",
+      "Iris tipis bawang merah, bawang putih, dan cabai merah. Biarkan cabai rawit utuh.",
+      "Panaskan minyak goreng di wajan dengan api besar hingga benar-benar panas.",
+      "Masukkan bawang merah, bawang putih, cabai merah, dan cabai rawit. Tumis dengan cepat sambil diaduk hingga harum.",
+      "Masukkan kangkung sekaligus. Tuangkan saus tiram dan kecap asin. Aduk dengan api besar selama 2-3 menit saja.",
+      "Kangkung yang baik tetap hijau dan sedikit renyah. Koreksi rasa, angkat dan sajikan segera selagi panas."
+    ],
+    "cooking_time": 10,
+    "difficulty": "Mudah",
+    "tags": [
+      "Indonesia",
+      "Sayuran",
+      "Cepat",
+      "Sehat"
+    ]
+  },
+  {
+    "recipe_name": "Opor Ayam Kuning",
+    "description": "Ayam empuk dalam kuah santan kuning berbumbu rempah. Hidangan wajib Lebaran yang memanjakan lidah.",
+    "image_url": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {
+        "name": "Ayam Kampung",
+        "quantity": 1,
+        "unit": "ekor"
+      },
+      {
+        "name": "Santan",
+        "quantity": 800,
+        "unit": "ml"
+      },
+      {
+        "name": "Bawang Merah",
+        "quantity": 8,
+        "unit": "siung"
+      },
+      {
+        "name": "Bawang Putih",
+        "quantity": 5,
+        "unit": "siung"
+      },
+      {
+        "name": "Kunyit",
+        "quantity": 2,
+        "unit": "ruas"
+      },
+      {
+        "name": "Jahe",
+        "quantity": 2,
+        "unit": "ruas"
+      },
+      {
+        "name": "Ketumbar",
+        "quantity": 1,
+        "unit": "sdt"
+      },
+      {
+        "name": "Serai",
+        "quantity": 2,
+        "unit": "batang"
+      },
+      {
+        "name": "Daun Salam",
+        "quantity": 3,
+        "unit": "lembar"
+      },
+      {
+        "name": "Daun Jeruk",
+        "quantity": 4,
+        "unit": "lembar"
+      },
+      {
+        "name": "Lengkuas",
+        "quantity": 2,
+        "unit": "ruas"
+      },
+      {
+        "name": "Garam",
+        "quantity": 1.5,
+        "unit": "sdt"
+      }
+    ],
+    "steps": [
+      "Potong ayam kampung menjadi 8-10 bagian, cuci bersih dan tiriskan.",
+      "Haluskan bawang merah, bawang putih, kunyit, jahe, dan ketumbar menggunakan blender atau ulekan.",
+      "Tumis bumbu halus bersama serai, daun salam, daun jeruk, dan lengkuas yang dimemarkan hingga harum dan bumbu matang.",
+      "Masukkan potongan ayam, aduk rata hingga semua bagian ayam terlumuri bumbu dengan sempurna.",
+      "Tuangkan santan encer terlebih dahulu. Masak sambil sesekali diaduk agar santan tidak pecah.",
+      "Setelah ayam setengah matang, tuangkan santan kental. Masak kembali dengan api kecil hingga ayam empuk dan kuah mengental. Koreksi rasa dan sajikan."
+    ],
+    "cooking_time": 75,
+    "difficulty": "Sedang",
+    "tags": [
+      "Indonesia",
+      "Berkuah",
+      "Daging"
+    ],
+    "source_url": "https://cooksnap.com/recipes/opor-ayam",
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  {
+    "recipe_name": "Pisang Goreng Crispy",
+    "description": "Pisang goreng renyah dengan balutan tepung tipis dan taburan gula bubuk. Camilan sore yang sempurna.",
+    "image_url": "https://images.unsplash.com/photo-1571748982800-fa51082c2224?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {
+        "name": "Pisang Kepok",
+        "quantity": 5,
+        "unit": "buah"
+      },
+      {
+        "name": "Tepung Terigu",
+        "quantity": 150,
+        "unit": "gram"
+      },
+      {
+        "name": "Tepung Beras",
+        "quantity": 50,
+        "unit": "gram"
+      },
+      {
+        "name": "Gula Pasir",
+        "quantity": 2,
+        "unit": "sdm"
+      },
+      {
+        "name": "Garam",
+        "quantity": 0.5,
+        "unit": "sdt"
+      },
+      {
+        "name": "Air",
+        "quantity": 150,
+        "unit": "ml"
+      },
+      {
+        "name": "Minyak Goreng",
+        "quantity": 500,
+        "unit": "ml"
+      }
+    ],
+    "steps": [
+      "Kupas pisang kepok, lalu belah memanjang menjadi 2 atau 3 bagian tergantung ukuran pisang.",
+      "Campur tepung terigu, tepung beras, gula pasir, dan garam dalam mangkuk. Tuangkan air sedikit demi sedikit sambil aduk hingga adonan tidak terlalu encer.",
+      "Panaskan minyak dalam jumlah banyak di wajan dengan api sedang.",
+      "Celupkan potongan pisang ke dalam adonan tepung hingga terbalut merata.",
+      "Goreng pisang dalam minyak panas hingga berwarna kuning keemasan dan lapisan tepung kering renyah.",
+      "Angkat dan tiriskan di atas kertas minyak. Sajikan selagi hangat, bisa ditaburi gula bubuk atau disajikan dengan saus coklat."
+    ],
+    "cooking_time": 20,
+    "difficulty": "Mudah",
+    "tags": [
+      "Camilan",
+      "Mudah",
+      "Cepat"
+    ],
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  {
+    "recipe_name": "Ikan Gurame Bakar Kecap",
+    "description": "Ikan gurame segar dibakar dengan olesan kecap manis dan bumbu rempah. Gurih dan harum.",
+    "image_url": "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {
+        "name": "Ikan Gurame",
+        "quantity": 1,
+        "unit": "ekor"
+      },
+      {
+        "name": "Kecap Manis",
+        "quantity": 5,
+        "unit": "sdm"
+      },
+      {
+        "name": "Bawang Putih",
+        "quantity": 4,
+        "unit": "siung"
+      },
+      {
+        "name": "Jahe",
+        "quantity": 1,
+        "unit": "ruas"
+      },
+      {
+        "name": "Jeruk Limau",
+        "quantity": 2,
+        "unit": "buah"
+      },
+      {
+        "name": "Cabai Merah",
+        "quantity": 2,
+        "unit": "buah"
+      },
+      {
+        "name": "Garam",
+        "quantity": 1,
+        "unit": "sdt"
+      },
+      {
+        "name": "Minyak Goreng",
+        "quantity": 2,
+        "unit": "sdm"
+      }
+    ],
+    "steps": [
+      "Bersihkan ikan gurame, buang sisik dan isi perutnya. Buat sayatan miring di kedua sisi badan ikan agar bumbu meresap.",
+      "Haluskan bawang putih dan jahe. Campurkan dengan perasan jeruk limau, garam, dan sedikit minyak. Lumuri ikan dengan bumbu ini dan diamkan 20 menit.",
+      "Siapkan panggangan atau teflon grilling dengan lapisan tipis minyak. Pastikan api sedang.",
+      "Bakar ikan di atas api sambil sesekali diolesi campuran kecap manis dan irisan cabai merah.",
+      "Balik ikan dengan hati-hati setelah satu sisi matang dan berwarna kecoklatan. Lakukan hal yang sama untuk sisi lainnya.",
+      "Ikan siap disajikan ketika berwarna coklat mengkilap dan daging mudah terlepas dari tulang. Sajikan dengan nasi putih dan lalapan."
+    ],
+    "cooking_time": 40,
+    "difficulty": "Sedang",
+    "tags": [
+      "Indonesia",
+      "Seafood",
+      "Bakar"
+    ],
+    "source_url": "https://cooksnap.com/recipes/gurame-bakar"
+  },
+  {
+    "recipe_name": "Bubur Ayam Jakarta",
+    "description": "Bubur nasi lembut dengan topping ayam suwir, cakwe, kerupuk, dan saus gurih khas Jakarta.",
+    "image_url": "https://images.unsplash.com/photo-1598514982901-8ce2e32e96cf?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {
+        "name": "Beras",
+        "quantity": 200,
+        "unit": "gram"
+      },
+      {
+        "name": "Ayam",
+        "quantity": 300,
+        "unit": "gram"
+      },
+      {
+        "name": "Jahe",
+        "quantity": 2,
+        "unit": "ruas"
+      },
+      {
+        "name": "Bawang Putih",
+        "quantity": 4,
+        "unit": "siung"
+      },
+      {
+        "name": "Serai",
+        "quantity": 1,
+        "unit": "batang"
+      },
+      {
+        "name": "Daun Salam",
+        "quantity": 2,
+        "unit": "lembar"
+      },
+      {
+        "name": "Garam",
+        "quantity": 1.5,
+        "unit": "sdt"
+      },
+      {
+        "name": "Merica Bubuk",
+        "quantity": 0.5,
+        "unit": "sdt"
+      },
+      {
+        "name": "Daun Bawang",
+        "quantity": 2,
+        "unit": "batang"
+      },
+      {
+        "name": "Seledri",
+        "quantity": 2,
+        "unit": "batang"
+      }
+    ],
+    "steps": [
+      "Rebus ayam bersama jahe, serai, daun salam, dan garam. Setelah matang, angkat ayam dan suwir-suwir. Simpan kaldu untuk memasak bubur.",
+      "Masukkan beras yang sudah dicuci ke dalam kaldu ayam. Masak dengan api sedang sambil terus diaduk.",
+      "Setelah beras pecah dan bubur mulai mengental, kecilkan api. Terus aduk agar tidak gosong di dasar panci.",
+      "Tambahkan garam dan merica bubuk sesuai selera. Masak hingga bubur benar-benar lembut dan teksturnya creamy.",
+      "Tumis bawang putih cincang hingga keemasan sebagai topping.",
+      "Sajikan bubur panas dalam mangkuk, beri topping ayam suwir, bawang goreng, daun bawang dan seledri cincang, serta perasan jeruk limau."
+    ],
+    "cooking_time": 50,
+    "difficulty": "Sedang",
+    "tags": [
+      "Indonesia",
+      "Sarapan",
+      "Berkuah"
+    ],
+    "source_url": "https://cooksnap.com/recipes/bubur-ayam",
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  {
+    "recipe_name": "Es Cendol Dawet",
+    "description": "Minuman tradisional segar dengan cendol hijau, santan, gula merah, dan es batu.",
+    "image_url": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {
+        "name": "Tepung Beras",
+        "quantity": 100,
+        "unit": "gram"
+      },
+      {
+        "name": "Tepung Tapioka",
+        "quantity": 50,
+        "unit": "gram"
+      },
+      {
+        "name": "Santan",
+        "quantity": 400,
+        "unit": "ml"
+      },
+      {
+        "name": "Gula Merah",
+        "quantity": 150,
+        "unit": "gram"
+      },
+      {
+        "name": "Daun Pandan",
+        "quantity": 3,
+        "unit": "lembar"
+      },
+      {
+        "name": "Garam",
+        "quantity": 0.5,
+        "unit": "sdt"
+      },
+      {
+        "name": "Es Batu",
+        "quantity": 1,
+        "unit": "gelas"
+      },
+      {
+        "name": "Air",
+        "quantity": 500,
+        "unit": "ml"
+      }
+    ],
+    "steps": [
+      "Blender daun pandan dengan sedikit air, saring dan ambil airnya sebagai pewarna hijau alami.",
+      "Campur tepung beras dan tepung tapioka dengan air pandan. Tambahkan sedikit garam, aduk rata hingga tidak bergerindil.",
+      "Masak adonan tepung di atas api kecil sambil terus diaduk hingga mengental dan matang.",
+      "Tekan adonan cendol panas melalui cetakan khusus atau saringan berlubang ke dalam wadah berisi air dingin.",
+      "Rebus gula merah dengan sedikit air dan daun pandan hingga larut dan kental. Saring dan dinginkan.",
+      "Masak santan dengan sedikit garam dan daun pandan hingga mendidih. Dinginkan. Sajikan cendol dalam gelas berisi es batu, siram santan dan gula merah cair di atasnya."
+    ],
+    "cooking_time": 35,
+    "difficulty": "Sedang",
+    "tags": [
+      "Minuman",
+      "Indonesia",
+      "Tradisional"
+    ]
+  },
+  {
+    "recipe_name": "Semur Tahu Telur",
+    "description": "Semur tahu dan telur yang dimasak dalam saus kecap coklat manis berbumbu rempah.",
+    "image_url": "https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {
+        "name": "Tahu",
+        "quantity": 4,
+        "unit": "buah"
+      },
+      {
+        "name": "Telur Ayam",
+        "quantity": 4,
+        "unit": "butir"
+      },
+      {
+        "name": "Kecap Manis",
+        "quantity": 5,
+        "unit": "sdm"
+      },
+      {
+        "name": "Bawang Merah",
+        "quantity": 5,
+        "unit": "siung"
+      },
+      {
+        "name": "Bawang Putih",
+        "quantity": 3,
+        "unit": "siung"
+      },
+      {
+        "name": "Tomat",
+        "quantity": 1,
+        "unit": "buah"
+      },
+      {
+        "name": "Jahe",
+        "quantity": 1,
+        "unit": "ruas"
+      },
+      {
+        "name": "Penyedap Rasa",
+        "quantity": 0.5,
+        "unit": "sdt"
+      },
+      {
+        "name": "Garam",
+        "quantity": 1,
+        "unit": "sdt"
+      },
+      {
+        "name": "Minyak Goreng",
+        "quantity": 3,
+        "unit": "sdm"
+      }
+    ],
+    "steps": [
+      "Rebus telur hingga matang, kupas kulitnya. Goreng tahu hingga kecoklatan di luar.",
+      "Iris bawang merah, bawang putih, dan tomat. Geprek jahe.",
+      "Panaskan minyak, tumis bawang merah, bawang putih, dan jahe hingga harum.",
+      "Masukkan tomat, tumis hingga layu. Tambahkan kecap manis, penyedap rasa, dan garam.",
+      "Tuangkan air sekitar 200ml. Masukkan telur dan tahu goreng ke dalam saus.",
+      "Masak dengan api kecil selama 15 menit hingga kuah mengental dan bumbu meresap. Koreksi rasa dan sajikan."
+    ],
+    "cooking_time": 30,
+    "difficulty": "Mudah",
+    "tags": [
+      "Indonesia",
+      "Mudah",
+      "Sehari-hari"
+    ],
+    "source_url": "https://cooksnap.com/recipes/semur-tahu-telur",
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  {
+    "recipe_name": "Perkedel Kentang",
+    "description": "Patty kentang goreng yang gurih dengan campuran daging cincang dan bumbu rempah.",
+    "image_url": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {
+        "name": "Kentang",
+        "quantity": 500,
+        "unit": "gram"
+      },
+      {
+        "name": "Daging Sapi",
+        "quantity": 100,
+        "unit": "gram"
+      },
+      {
+        "name": "Telur Ayam",
+        "quantity": 2,
+        "unit": "butir"
+      },
+      {
+        "name": "Bawang Putih",
+        "quantity": 3,
+        "unit": "siung"
+      },
+      {
+        "name": "Daun Bawang",
+        "quantity": 2,
+        "unit": "batang"
+      },
+      {
+        "name": "Merica Bubuk",
+        "quantity": 1,
+        "unit": "sdt"
+      },
+      {
+        "name": "Penyedap Rasa",
+        "quantity": 0.5,
+        "unit": "sdt"
+      },
+      {
+        "name": "Garam",
+        "quantity": 1,
+        "unit": "sdt"
+      },
+      {
+        "name": "Minyak Goreng",
+        "quantity": 300,
+        "unit": "ml"
+      }
+    ],
+    "steps": [
+      "Kupas kentang dan potong-potong, lalu goreng hingga matang dan keemasan. Angkat dan haluskan selagi panas.",
+      "Tumis bawang putih cincang dan daging sapi giling hingga matang. Bumbui dengan garam dan merica.",
+      "Campurkan kentang halus, tumisan daging, irisan daun bawang, dan penyedap rasa. Aduk rata.",
+      "Kocok satu butir telur. Ambil adonan kentang, bentuk bulat-gepeng. Celupkan ke dalam telur kocok.",
+      "Goreng perkedel dalam minyak panas dengan api sedang hingga berwarna kuning keemasan di kedua sisi.",
+      "Angkat dan tiriskan. Sajikan perkedel sebagai lauk pelengkap nasi atau dapat dimakan langsung sebagai camilan."
+    ],
+    "cooking_time": 35,
+    "difficulty": "Mudah",
+    "tags": [
+      "Indonesia",
+      "Camilan",
+      "Mudah"
+    ],
+    "source_url": "https://cooksnap.com/recipes/perkedel-kentang"
+  },
+  {
+    "recipe_name": "Capcay Kuah Seafood",
+    "description": "Capcay sayuran segar dengan udang dan cumi dalam kuah saus tiram yang gurih.",
+    "image_url": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {
+        "name": "Brokoli",
+        "quantity": 200,
+        "unit": "gram"
+      },
+      {
+        "name": "Wortel",
+        "quantity": 1,
+        "unit": "buah"
+      },
+      {
+        "name": "Kol",
+        "quantity": 100,
+        "unit": "gram"
+      },
+      {
+        "name": "Sawi Putih",
+        "quantity": 2,
+        "unit": "lembar"
+      },
+      {
+        "name": "Bawang Putih",
+        "quantity": 4,
+        "unit": "siung"
+      },
+      {
+        "name": "Bawang Bombay",
+        "quantity": 0.5,
+        "unit": "buah"
+      },
+      {
+        "name": "Saus Tiram",
+        "quantity": 3,
+        "unit": "sdm"
+      },
+      {
+        "name": "Kecap Asin",
+        "quantity": 1,
+        "unit": "sdm"
+      },
+      {
+        "name": "Tepung Maizena",
+        "quantity": 1,
+        "unit": "sdm"
+      },
+      {
+        "name": "Garam",
+        "quantity": 1,
+        "unit": "sdt"
+      },
+      {
+        "name": "Merica Bubuk",
+        "quantity": 0.5,
+        "unit": "sdt"
+      }
+    ],
+    "steps": [
+      "Potong semua sayuran. Brokoli jadi kuntum kecil, wortel serong tipis, kol dan sawi kasar.",
+      "Panaskan minyak, tumis bawang putih cincang dan bawang bombay hingga harum dan transparan.",
+      "Masukkan wortel terlebih dahulu karena paling keras. Tumis 2 menit, lalu masukkan brokoli dan kol.",
+      "Tambahkan saus tiram, kecap asin, garam, dan merica. Tuangkan air 150ml dan aduk rata.",
+      "Masak hingga semua sayuran agak layu namun masih renyah. Larutkan tepung maizena dengan sedikit air lalu tuangkan.",
+      "Aduk terus hingga kuah mengental dan semua sayuran matang sempurna. Koreksi rasa dan sajikan."
+    ],
+    "cooking_time": 20,
+    "difficulty": "Mudah",
+    "tags": [
+      "Sayuran",
+      "Sehat",
+      "Cepat"
+    ],
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  },
+  {
+    "recipe_name": "Lontong Sayur Padang",
+    "description": "Lontong dengan kuah sayur santan kental khas Padang yang kaya rempah.",
+    "image_url": "https://images.unsplash.com/photo-1604503468506-a8da13d82791?q=80&w=800&auto=format&fit=crop",
+    "ingredients": [
+      {
+        "name": "Lontong",
+        "quantity": 4,
+        "unit": "buah"
+      },
+      {
+        "name": "Santan",
+        "quantity": 600,
+        "unit": "ml"
+      },
+      {
+        "name": "Kacang Panjang",
+        "quantity": 150,
+        "unit": "gram"
+      },
+      {
+        "name": "Tempe",
+        "quantity": 200,
+        "unit": "gram"
+      },
+      {
+        "name": "Tahu",
+        "quantity": 3,
+        "unit": "buah"
+      },
+      {
+        "name": "Bawang Merah",
+        "quantity": 6,
+        "unit": "siung"
+      },
+      {
+        "name": "Bawang Putih",
+        "quantity": 4,
+        "unit": "siung"
+      },
+      {
+        "name": "Lengkuas",
+        "quantity": 2,
+        "unit": "ruas"
+      },
+      {
+        "name": "Daun Salam",
+        "quantity": 2,
+        "unit": "lembar"
+      },
+      {
+        "name": "Serai",
+        "quantity": 2,
+        "unit": "batang"
+      },
+      {
+        "name": "Cabai Merah",
+        "quantity": 4,
+        "unit": "buah"
+      },
+      {
+        "name": "Garam",
+        "quantity": 1.5,
+        "unit": "sdt"
+      }
+    ],
+    "steps": [
+      "Haluskan bawang merah, bawang putih, dan cabai merah. Goreng tahu dan tempe hingga kekuningan.",
+      "Tumis bumbu halus bersama serai, daun salam, dan lengkuas geprek hingga benar-benar harum.",
+      "Tuangkan santan encer, masak sambil diaduk perlahan hingga mendidih.",
+      "Masukkan kacang panjang yang sudah dipotong-potong, tahu, dan tempe goreng.",
+      "Setelah santan mendidih kembali, tuangkan santan kental. Tambahkan garam dan masak lagi dengan api kecil.",
+      "Sajikan lontong yang sudah dipotong-potong dalam mangkuk, siram dengan kuah sayur padang yang gurih dan kental."
+    ],
+    "cooking_time": 45,
+    "difficulty": "Sedang",
+    "tags": [
+      "Indonesia",
+      "Berkuah",
+      "Sarapan"
+    ],
+    "source_url": "https://cooksnap.com/recipes/lontong-sayur-padang",
     "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
   }
 ]

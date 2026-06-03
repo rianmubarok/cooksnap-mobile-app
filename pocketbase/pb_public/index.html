@@ -23,33 +23,8 @@
     <!-- Tailwind CSS (CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Tailwind Config -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['"Work Sans"', 'sans-serif'],
-                    },
-                    colors: {
-                        cookgreen: {
-                            50: '#f0fdf4',
-                            100: '#dcfce7',
-                            500: '#22c55e',
-                            800: '#166534',
-                            900: '#143B16', // Primary Forest Green
-                        },
-                        cooklime: '#A7EE6A',
-                        cookorange: '#F58700',
-                    },
-                    letterSpacing: {
-                        tighter: '-0.04em',
-                        tight: '-0.03em',
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Tailwind Config (shared across all pages) -->
+    <script src="assets/scripts/config.js"></script>
 
     <!-- Custom animations & reveal logic -->
     <link rel="stylesheet" href="assets/styles/style.css">

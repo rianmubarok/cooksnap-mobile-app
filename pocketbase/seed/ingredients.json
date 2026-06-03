@@ -318,5 +318,17 @@
   {
     "name": "Yogurt Plain",
     "category": "Susu & Olahan Susu"
+  },
+  {
+    "name": "Tauge",
+    "category": "Sayuran"
+  },
+  {
+    "name": "Daun Kunyit",
+    "category": "Bumbu"
+  },
+  {
+    "name": "Lontong",
+    "category": "Karbohidrat"
   }
 ]

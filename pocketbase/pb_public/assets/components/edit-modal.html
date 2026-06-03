@@ -1,0 +1,55 @@
+<div
+  id="edit-modal"
+  class="fixed inset-0 z-[110] flex items-center justify-center p-4 hidden animate-fade-in"
+>
+  <div
+    class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"
+    onclick="closeEditModal()"
+  ></div>
+  <div
+    class="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[90vh] animate-slide-up"
+  >
+    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="bg-cookgreen-100 p-2 rounded-lg text-cookgreen-900">
+          <i data-feather="edit-3"></i>
+        </div>
+        <h3 class="text-xl font-medium text-gray-900">
+          Edit Data
+          <span id="edit-collection-name" class="text-cookgreen-900 capitalize"></span>
+        </h3>
+      </div>
+      <button
+        onclick="closeEditModal()"
+        class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-xl transition-all"
+      >
+        <i data-feather="x"></i>
+      </button>
+    </div>
+
+    <div class="p-6 flex-1 overflow-y-auto">
+      <input id="edit-record-id" type="hidden" />
+      <div id="edit-fields-container" class="space-y-4"></div>
+      <p class="text-xs text-gray-500 mt-4">
+        Semua field non-sistem ditampilkan otomatis sesuai record PocketBase.
+      </p>
+    </div>
+
+    <div class="p-6 border-t border-gray-100 flex justify-end gap-3 bg-gray-50 rounded-b-3xl">
+      <button
+        onclick="closeEditModal()"
+        class="px-5 py-2.5 text-gray-600 font-medium hover:bg-gray-200 rounded-xl transition-all"
+      >
+        Batal
+      </button>
+      <button
+        onclick="saveEditRecord()"
+        id="btn-save-edit"
+        class="flex items-center gap-2 bg-cookgreen-900 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-cookgreen-800 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all"
+      >
+        <i data-feather="save" class="w-4 h-4"></i>
+        Simpan Perubahan
+      </button>
+    </div>
+  </div>
+</div>

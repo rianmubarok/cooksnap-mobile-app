@@ -109,7 +109,7 @@ class _RecipeIngredientsSectionState extends State<RecipeIngredientsSection> {
                       ),
                     ),
                     AppText(
-                      '${ing.quantity} ${ing.unit}',
+                      ing.amountLabel,
                       variant: AppTextVariant.bodyMedium,
                       color: AppColors.grey666,
                     ),

@@ -1,18 +1,55 @@
 class RecipeIngredient {
   final String name;
-  final num quantity;
+  final num? quantity;
   final String unit;
 
   const RecipeIngredient({
     required this.name,
-    required this.quantity,
+    this.quantity,
     required this.unit,
   });
+
+  /// Returns true when the unit is purely qualitative (e.g. "secukupnya").
+  bool get isQualitative => quantity == null || quantity == 0;
+
+  String _formatQuantity(num q) {
+    if (q == q.roundToDouble()) {
+      return q.toInt().toString();
+    }
+    
+    final int whole = q.toInt();
+    final num fraction = q - whole;
+    
+    String fractionStr = '';
+    if ((fraction - 0.5).abs() < 0.01) {
+      fractionStr = '1/2';
+    } else if ((fraction - 0.25).abs() < 0.01) {
+      fractionStr = '1/4';
+    } else if ((fraction - 0.75).abs() < 0.01) {
+      fractionStr = '3/4';
+    } else if ((fraction - 0.33).abs() < 0.02) {
+      fractionStr = '1/3';
+    } else if ((fraction - 0.66).abs() < 0.02 || (fraction - 0.67).abs() < 0.02) {
+      fractionStr = '2/3';
+    } else {
+      // Fallback for non-standard decimals, remove trailing zeros
+      return q.toString().replaceAll(RegExp(r'([.]*0)(?!.*\d)'), '');
+    }
+    
+    if (whole == 0) return fractionStr;
+    return '$whole $fractionStr';
+  }
+
+  /// Returns the display string for the amount column.
+  String get amountLabel {
+    if (isQualitative) return unit;
+    return '${_formatQuantity(quantity!)} $unit';
+  }
 
   factory RecipeIngredient.fromMap(Map<String, dynamic> map) {
     return RecipeIngredient(
       name: map['name'] as String,
-      quantity: map['quantity'] as num,
+      quantity: map['quantity'] as num?,
       unit: map['unit'] as String,
     );
   }
@@ -58,7 +95,7 @@ class Recipe {
           parsedIngredients.add(
             RecipeIngredient(
               name: (item['name'] ?? '').toString(),
-              quantity: (item['quantity'] is num) ? item['quantity'] as num : 1,
+              quantity: (item['quantity'] is num) ? item['quantity'] as num : null,
               unit: (item['unit'] ?? 'pcs').toString(),
             ),
           );

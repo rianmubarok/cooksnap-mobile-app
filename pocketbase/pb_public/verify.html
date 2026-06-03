@@ -24,29 +24,8 @@
     <!-- PocketBase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/pocketbase@latest/dist/pocketbase.umd.js"></script>
 
-    <!-- Tailwind Config -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['"Work Sans"', 'sans-serif'],
-                    },
-                    colors: {
-                        cookgreen: {
-                            50: '#f0fdf4',
-                            100: '#dcfce7',
-                            500: '#22c55e',
-                            800: '#166534',
-                            900: '#143B16',
-                        },
-                        cooklime: '#A7EE6A',
-                        cookorange: '#F58700',
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Tailwind Config (shared across all pages) -->
+    <script src="assets/scripts/config.js"></script>
 </head>
 
 <body class="font-sans text-gray-800 bg-gray-50 flex flex-col min-h-screen">
@@ -71,64 +50,7 @@
         </div>
     </div>
 
-    <script>
-        feather.replace();
-        
-        document.addEventListener('DOMContentLoaded', async () => {
-            const pb = new PocketBase('/'); // Connects to the same origin
-            const urlParams = new URLSearchParams(window.location.search);
-            const token = urlParams.get('token');
-
-            const titleEl = document.getElementById('status-title');
-            const msgEl = document.getElementById('status-message');
-            const iconContainer = document.getElementById('icon-container');
-            const iconEl = document.getElementById('status-icon');
-
-            if (!token) {
-                titleEl.textContent = 'Token Tidak Valid';
-                msgEl.textContent = 'Link verifikasi tidak lengkap atau tidak valid.';
-                iconContainer.className = 'bg-red-100 p-4 rounded-full text-red-600';
-                iconEl.setAttribute('data-feather', 'x-circle');
-                iconEl.classList.remove('animate-spin');
-                feather.replace();
-                return;
-            }
-
-            try {
-                // Confirm verification for 'users' collection
-                await pb.collection('users').confirmVerification(token);
-                
-                titleEl.textContent = 'Verifikasi Berhasil!';
-                msgEl.textContent = 'Akun Anda telah berhasil diverifikasi. Silakan klik tombol di bawah ini untuk kembali ke aplikasi.';
-                iconContainer.className = 'bg-cookgreen-100 p-4 rounded-full text-cookgreen-600';
-                iconEl.setAttribute('data-feather', 'check-circle');
-                iconEl.classList.remove('animate-spin');
-                
-                // Ganti tombol "Kembali ke Beranda" dengan "Buka Aplikasi"
-                const actionBtn = document.querySelector('a[href="/"]');
-                if (actionBtn) {
-                    actionBtn.textContent = 'Buka Aplikasi CookSnap';
-                    actionBtn.href = 'cooksnap://login';
-                    actionBtn.className = 'inline-block bg-cookgreen-500 text-white font-medium py-3 px-6 rounded-xl shadow-lg shadow-cookgreen-500/30 hover:bg-cookgreen-600 hover:-translate-y-1 transition-all';
-                    
-                    // Otomatis arahkan ke aplikasi setelah 2 detik
-                    setTimeout(() => {
-                        window.location.href = 'cooksnap://login';
-                    }, 2000);
-                }
-                
-                feather.replace();
-            } catch (error) {
-                console.error(error);
-                titleEl.textContent = 'Verifikasi Gagal';
-                msgEl.textContent = 'Link verifikasi mungkin sudah kadaluarsa atau tidak valid lagi.';
-                iconContainer.className = 'bg-red-100 p-4 rounded-full text-red-600';
-                iconEl.setAttribute('data-feather', 'alert-circle');
-                iconEl.classList.remove('animate-spin');
-                feather.replace();
-            }
-        });
-    </script>
+    <script src="assets/scripts/verify.js"></script>
 </body>
 
 </html>
