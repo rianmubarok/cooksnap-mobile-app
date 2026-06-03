@@ -20,6 +20,7 @@ let emptyState, tableContainer, recipesGridContainer, recipesGrid;
 let ingredientsCategoryContainer, ingredientsCategories, settingsContainer, pagination;
 let pageInfo, btnPrev, btnNext, headerTitle, searchInput, filterPrimary, filterSecondary;
 let perPageSelect, editModal, editCollectionName, editRecordId, editFieldsContainer, btnSaveEdit;
+let searchContainer, perPageContainer;
 let editFieldMeta = [];
 
 // ─── View Management ──────────────────────────────────────────────────────────
@@ -144,6 +145,8 @@ window.initDashboard = () => {
   editRecordId                 = document.getElementById('edit-record-id');
   editFieldsContainer          = document.getElementById('edit-fields-container');
   btnSaveEdit                  = document.getElementById('btn-save-edit');
+  searchContainer              = document.getElementById('search-container');
+  perPageContainer             = document.getElementById('per-page-container');
 
   CONTENT_VIEWS = {
     loading:     loadingState,
@@ -255,7 +258,7 @@ window.switchTab = (collection) => {
   });
   document.getElementById(`tab-${collection}`).classList.add('bg-cookgreen-100', 'text-cookgreen-900');
 
-  // Update header
+  // Update header and toolbars
   const btnScan = document.getElementById('btn-scan-ingredients');
   if (collection === 'settings') {
     headerTitle.textContent = 'Pengaturan Aplikasi';
@@ -264,12 +267,18 @@ window.switchTab = (collection) => {
   } else {
     headerTitle.textContent = collection === 'recipes' ? 'Manajemen Resep' : 'Manajemen Bahan';
     document.getElementById('action-bar').classList.remove('hidden');
-    if (btnScan) {
-      if (collection === 'ingredients') {
-        btnScan.classList.remove('hidden');
-      } else {
-        btnScan.classList.add('hidden');
-      }
+    
+    // Toggle ingredients specific UI
+    if (collection === 'ingredients') {
+      if (btnScan) btnScan.classList.remove('hidden');
+      if (searchContainer) searchContainer.classList.add('hidden');
+      if (filterPrimary) filterPrimary.classList.add('hidden');
+      if (perPageContainer) perPageContainer.classList.add('hidden');
+    } else {
+      if (btnScan) btnScan.classList.add('hidden');
+      if (searchContainer) searchContainer.classList.remove('hidden');
+      if (filterPrimary) filterPrimary.classList.remove('hidden');
+      if (perPageContainer) perPageContainer.classList.remove('hidden');
     }
   }
 

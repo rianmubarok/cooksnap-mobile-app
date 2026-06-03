@@ -91,7 +91,7 @@
             class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8"
           >
             <div class="w-full sm:w-auto grid gap-3 sm:grid-cols-3">
-              <div class="relative sm:col-span-2 min-w-[280px]">
+              <div id="search-container" class="relative sm:col-span-2 min-w-[280px]">
                 <div
                   class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
                 >
@@ -114,7 +114,7 @@
               ></select>
             </div>
             <div class="flex items-center gap-3 w-full sm:w-auto">
-              <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-2">
+              <div id="per-page-container" class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-2">
                 <label for="per-page-select" class="text-sm text-gray-500">Per halaman</label>
                 <select id="per-page-select" class="text-sm bg-transparent text-gray-700 outline-none">
                   <option value="6">6</option>
