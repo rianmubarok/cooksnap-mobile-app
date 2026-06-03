@@ -66,7 +66,11 @@ window.scanUnregisteredIngredients = async () => {
       }
     });
 
-    unregistered.sort((a, b) => a.name.localeCompare(b.name));
+    unregistered.sort((a, b) => {
+      const diff = b.usages.length - a.usages.length;
+      if (diff !== 0) return diff;
+      return a.name.localeCompare(b.name);
+    });
 
     loadingState.classList.add('hidden');
 
