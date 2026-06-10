@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'services/remote_config_service.dart';
 import 'core/app_providers.dart';
 import 'core/app_theme.dart';
 import 'core/app_routes.dart';
@@ -16,6 +18,14 @@ Future<void> main() async {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+    
+    // Inisialisasi Firebase
+    await Firebase.initializeApp();
+    
+    // Inisialisasi Remote Config
+    await RemoteConfigService.instance.initialize();
+
+    // Masih me-load .env untuk variabel lain jika ada
     await dotenv.load(fileName: '.env');
   } catch (e) {
     debugPrint('Error loading .env or initializing: $e');

@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/remote_config_service.dart';
 
 /// Singleton wrapper for PocketBase client.
 class PocketBaseClient {
@@ -21,7 +22,10 @@ class PocketBaseClient {
       }
     } catch (_) {}
 
-    final String baseUrl = dotenv.env['POCKETBASE_URL'] ?? defaultUrl;
+    String baseUrl = RemoteConfigService.instance.pocketbaseUrl;
+    if (baseUrl.isEmpty) {
+      baseUrl = dotenv.env['POCKETBASE_URL'] ?? defaultUrl;
+    }
     
     final prefs = await SharedPreferences.getInstance();
     final store = AsyncAuthStore(
@@ -43,7 +47,10 @@ class PocketBaseClient {
         }
       } catch (_) {}
 
-      final String baseUrl = dotenv.env['POCKETBASE_URL'] ?? defaultUrl;
+      String baseUrl = RemoteConfigService.instance.pocketbaseUrl;
+      if (baseUrl.isEmpty) {
+        baseUrl = dotenv.env['POCKETBASE_URL'] ?? defaultUrl;
+      }
       _instance = PocketBase(baseUrl);
     }
     return _instance!;
