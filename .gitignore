@@ -53,3 +53,7 @@ app.*.map.json
 pocketbase/pb_data/
 pocketbase/*.exe
 pocketbase/pocketbase
+
+# Firebase
+google-services.json
+android/app/google-services.json
