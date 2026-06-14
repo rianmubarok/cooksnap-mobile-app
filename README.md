@@ -8,7 +8,7 @@
 [![PocketBase](https://img.shields.io/badge/PocketBase-B8DBE4?style=for-the-badge&logo=pocketbase&logoColor=black)](https://pocketbase.io/)
 [![Gemini API](https://img.shields.io/badge/Gemini_API-8E75B2?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
 
-### [Download APK CookSnap v1.0.0](https://github.com/rianmubarok/cooksnap-mobile-app/releases/download/v1.0.0-030626/cooksnap-v1.0.0.apk)
+### [Download APK CookSnap v1.0.0](https://github.com/rianmubarok/cooksnap-mobile-app/releases/download/v1.0.0/cooksnap-v1.apk)
 
 ---
 
