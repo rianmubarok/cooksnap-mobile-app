@@ -80,7 +80,7 @@ class HelpScreen extends StatelessWidget {
             onPressed: () async {
               final Uri emailLaunchUri = Uri(
                 scheme: 'mailto',
-                path: 'support@cooksnap.com',
+                path: 'rupacode0@gmail.com',
                 query: 'subject=Bantuan%20CookSnap%20Mobile%20App',
               );
               try {

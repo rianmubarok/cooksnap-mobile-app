@@ -18,6 +18,7 @@ abstract class RecipeRepository {
     int perPage = 20,
     String? tag,
     String? difficulty,
+    String sort = '-created',
   });
 
   /// Full-text search across recipe names, tags, and ingredients.
@@ -39,6 +40,10 @@ abstract class RecipeRepository {
   /// in-memory ingredient matching. Cache and invalidate periodically
   /// when using PocketBase to avoid loading thousands of records on every scan.
   Future<List<Recipe>> getAllRecipes();
+
+  /// Retrieve a list of the most popular tags across all recipes.
+  /// Used to dynamically build category chips on the Home screen.
+  Future<List<String>> getAllUniqueTags({int? seed});
 
   /// Batch-fetch multiple recipes by their IDs — used by Favorites.
   ///

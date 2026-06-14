@@ -1,58 +1,34 @@
-import 'dart:math';
-import '../../models/recipe_model.dart';
+
 
 /// Tag filter definition for the home screen chip row.
 class HomeRecipeTag {
   final String label;
-  final bool Function(Recipe recipe) matcher;
+  final String? query; // Null indicates "Semua" (no filter)
 
   const HomeRecipeTag({
     required this.label,
-    required this.matcher,
+    this.query,
   });
 }
 
 /// Maximum number of tag chips shown after "Semua" (excludes "Semua").
 const int _kMaxTagChips = 10;
 
-/// Builds the chip list from all available recipe tags.
+/// Builds the chip list from popular tags.
 ///
 /// - "Semua" always comes first.
-/// - Tags are collected from [Recipe.tags], de-duplicated, then shuffled so
-///   a random subset is shown each time (e.g., on pull-to-refresh).
 /// - Each label is Title-cased for display.
-List<HomeRecipeTag> buildHomeRecipeTags(List<Recipe> recipes, {int? seed}) {
-  // Count frequency of each tag
-  final tagCounts = <String, int>{};
-  for (final recipe in recipes) {
-    for (final tag in recipe.tags) {
-      final normalized = tag.trim();
-      if (normalized.isNotEmpty) {
-        tagCounts[normalized] = (tagCounts[normalized] ?? 0) + 1;
-      }
-    }
-  }
-
-  // Sort by frequency (descending). Jika frekuensi sama, acak posisinya (tie-breaker)
-  final rand = Random(seed);
-  final sortedTags = tagCounts.keys.toList()
-    ..sort((a, b) {
-      final diff = tagCounts[b]!.compareTo(tagCounts[a]!);
-      if (diff != 0) return diff;
-      return rand.nextBool() ? 1 : -1;
-    });
-
-  // Pick at most [_kMaxTagChips] most popular tags
-  final selected = sortedTags.take(_kMaxTagChips).toList();
+List<HomeRecipeTag> buildHomeRecipeTags(List<String> popularTags, {int? seed}) {
+  // If we want to shuffle the popular tags before picking the top N:
+  // (In practice, we just pick the top _kMaxTagChips if they are already sorted by popularity)
+  final selected = popularTags.take(_kMaxTagChips).toList();
 
   return [
-    const HomeRecipeTag(label: 'Semua', matcher: _matchAll),
+    const HomeRecipeTag(label: 'Semua', query: null),
     for (final tag in selected)
       HomeRecipeTag(
         label: _capitalize(tag),
-        matcher: (recipe) => recipe.tags.any(
-          (t) => t.trim().toLowerCase() == tag.toLowerCase(),
-        ),
+        query: tag,
       ),
   ];
 }
@@ -66,4 +42,3 @@ String _capitalize(String text) {
       .join(' ');
 }
 
-bool _matchAll(Recipe _) => true;

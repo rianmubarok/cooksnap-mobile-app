@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math' as dart_math;
 
 import 'package:flutter/foundation.dart';
 import 'package:pocketbase/pocketbase.dart';
@@ -157,6 +158,7 @@ class PocketBaseRecipeRepository implements RecipeRepository {
     int perPage = 20,
     String? tag,
     String? difficulty,
+    String sort = '-created',
   }) async {
     final filters = <String>[];
     if (tag != null && tag.isNotEmpty) {
@@ -173,7 +175,7 @@ class PocketBaseRecipeRepository implements RecipeRepository {
         page: page,
         perPage: perPage,
         filter: filterString,
-        sort: '-created',
+        sort: sort,
       );
       
       return records.items
@@ -248,6 +250,42 @@ class PocketBaseRecipeRepository implements RecipeRepository {
       return _allRecipesCache!;
     } catch (e) {
       debugPrint('Error getting all recipes: $e');
+      if (_isNetworkError(e)) rethrow;
+      return [];
+    }
+  }
+
+  @override
+  Future<List<String>> getAllUniqueTags({int? seed}) async {
+    try {
+      final records = await pb.collection('recipes').getFullList(
+        fields: 'tags',
+      );
+      
+      final tagCounts = <String, int>{};
+      for (final r in records) {
+        final tags = r.data['tags'];
+        if (tags is List) {
+          for (final tag in tags) {
+            final t = tag.toString().trim();
+            if (t.isNotEmpty) {
+              tagCounts[t] = (tagCounts[t] ?? 0) + 1;
+            }
+          }
+        }
+      }
+      
+      final rand = dart_math.Random(seed ?? DateTime.now().millisecondsSinceEpoch);
+      final sorted = tagCounts.keys.toList()
+        ..sort((a, b) {
+          final diff = tagCounts[b]!.compareTo(tagCounts[a]!);
+          if (diff != 0) return diff;
+          return rand.nextBool() ? 1 : -1;
+        });
+        
+      return sorted;
+    } catch (e) {
+      debugPrint('Error getting unique tags: $e');
       if (_isNetworkError(e)) rethrow;
       return [];
     }

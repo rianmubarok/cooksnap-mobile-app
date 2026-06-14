@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -24,9 +23,7 @@ import 'home_recipe_tags.dart';
 const int _kPopularLimit = 10;
 
 /// Initial and incremental count for the "Untuk Kamu" infinite scroll.
-const int _kInitialGridCount = 10;
-const int _kLoadMoreCount = 10;
-bool _matchAllTag(Recipe _) => true;
+const int _kPerPage = 20;
 
 /// Home tab — recipes, categories, and sections.
 class HomeScreen extends StatefulWidget {
@@ -47,39 +44,63 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedTagIndex = 0;
   late List<HomeRecipeTag> _displayTags;
 
-  List<Recipe> _allRecipes = [];
+  List<Recipe> _popularRecipes = [];
+  List<Recipe> _forYouRecipes = [];
   bool _isLoading = true;
   bool _hasError = false;
   bool _isLoadingMore = false;
-  int _displayedCount = _kInitialGridCount;
+  
+  bool _hasMoreForYou = true;
   late int _seed;
 
   @override
   void initState() {
     super.initState();
     _seed = DateTime.now().millisecondsSinceEpoch;
-    _displayTags = const [HomeRecipeTag(label: 'Semua', matcher: _matchAllTag)];
-    _loadRecipes();
+    _displayTags = const [HomeRecipeTag(label: 'Semua', query: null)];
+    _loadInitialData();
   }
 
-  Future<void> _loadMore(List<Recipe> forYouRecipes) async {
-    if (_isLoadingMore) return;
-    if (_displayedCount >= forYouRecipes.length) return;
+  Future<void> _loadMore() async {
+    if (_isLoadingMore || !_hasMoreForYou) return;
 
     setState(() => _isLoadingMore = true);
-    // Simulate a brief delay so the loading indicator is visible
-    await Future.delayed(const Duration(milliseconds: 300));
-    if (!mounted) return;
-    setState(() {
-      _displayedCount =
-          (_displayedCount + _kLoadMoreCount).clamp(0, forYouRecipes.length);
-      _isLoadingMore = false;
-    });
+    
+    try {
+      final tagQuery = _displayTags[_selectedTagIndex].query;
+      final newRecipes = await context.read<RecipeRepository>().getRecipes(
+        page: 1, // Always page 1 for @random
+        perPage: _kPerPage,
+        tag: tagQuery,
+        sort: '@random',
+      );
+      
+      if (!mounted) return;
+      setState(() {
+        final existingIds = _forYouRecipes.map((e) => e.id).toSet();
+        final uniqueNew = newRecipes.where((r) => !existingIds.contains(r.id)).toList();
+        _forYouRecipes.addAll(uniqueNew);
+        // Infinite scroll for @random never really ends unless there are very few items, 
+        // but we'll stop if it returns 0 new unique items to avoid infinite empty loops
+        if (uniqueNew.isEmpty && newRecipes.isNotEmpty) {
+           // We might have just hit duplicates, try again next scroll
+           _hasMoreForYou = true;
+        } else {
+           _hasMoreForYou = newRecipes.isNotEmpty;
+        }
+        _isLoadingMore = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _isLoadingMore = false;
+        // Optionally handle load more error
+      });
+    }
   }
 
-  /// Fetches all recipes from the repository (instant for dummy,
-  /// network call for PocketBase) and caches them in state.
-  Future<void> _loadRecipes() async {
+  /// Fetches initial tags and first page of recipes
+  Future<void> _loadInitialData() async {
     if (!mounted) return;
     setState(() {
       _isLoading = true;
@@ -87,15 +108,44 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     try {
-      final recipes =
-          await context.read<RecipeRepository>().getAllRecipes();
+      final repo = context.read<RecipeRepository>();
+      
+      // Fetch tags dynamically to ensure refresh logic and tie-breakers work
+      final tags = await repo.getAllUniqueTags(seed: _seed);
+      if (mounted) {
+        // Find what was selected before we rebuild the tags list
+        final previousSelectedTagQuery = _displayTags[_selectedTagIndex].query;
+
+        _displayTags = buildHomeRecipeTags(tags, seed: _seed);
+        
+        // Try to maintain the selected tag, or fallback to "Semua" (0)
+        final newIndex = _displayTags.indexWhere((t) => t.query == previousSelectedTagQuery);
+        _selectedTagIndex = newIndex != -1 ? newIndex : 0;
+      }
+
+      final tagQuery = _displayTags[_selectedTagIndex].query;
+      
+      // Resep Populer: Newest recipes
+      final popular = await repo.getRecipes(
+        page: 1, 
+        perPage: _kPopularLimit, 
+        tag: tagQuery,
+        sort: '-created',
+      );
+
+      // Untuk Kamu: Random recipes
+      final forYou = await repo.getRecipes(
+        page: 1, 
+        perPage: _kPerPage, 
+        tag: tagQuery,
+        sort: '@random',
+      );
+
       if (!mounted) return;
       setState(() {
-        _allRecipes = recipes;
-        _displayTags = buildHomeRecipeTags(recipes, seed: _seed);
-        if (_selectedTagIndex >= _displayTags.length) {
-          _selectedTagIndex = 0;
-        }
+        _popularRecipes = popular;
+        _forYouRecipes = forYou;
+        _hasMoreForYou = forYou.isNotEmpty;
         _isLoading = false;
       });
     } catch (_) {
@@ -107,36 +157,15 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  List<Recipe> _applyTagFilter(List<Recipe> recipes) {
-    if (_selectedTagIndex == 0) return recipes;
-    return recipes.where(_displayTags[_selectedTagIndex].matcher).toList();
-  }
-
   Future<void> _onRefresh() async {
-    final selectedTag = _displayTags[_selectedTagIndex];
-    final rest = _displayTags.sublist(1)..shuffle();
-    final newTags = [_displayTags.first, ...rest];
-    final newSelectedIndex = newTags.indexOf(selectedTag);
-
     setState(() {
-      _displayTags = newTags;
-      _selectedTagIndex = newSelectedIndex;
       _seed = DateTime.now().millisecondsSinceEpoch;
-      _displayedCount = _kInitialGridCount;
     });
-    await _loadRecipes();
+    await _loadInitialData();
   }
 
   @override
   Widget build(BuildContext context) {
-    final filteredRecipes = _applyTagFilter(_allRecipes);
-    final popularRecipes = filteredRecipes.take(_kPopularLimit).toList();
-
-    // Create a deterministically shuffled list for the "Untuk Kamu" section
-    final random = Random(_seed);
-    final forYouRecipes = List<Recipe>.from(filteredRecipes)..shuffle(random);
-    final displayedRecipes = forYouRecipes.take(_displayedCount).toList();
-    final hasMore = _displayedCount < forYouRecipes.length;
 
     return Column(
       children: [
@@ -150,11 +179,11 @@ class _HomeScreenState extends State<HomeScreen> {
             child: NotificationListener<ScrollNotification>(
               onNotification: (notification) {
                 if (!_isLoading &&
-                    hasMore &&
+                    _hasMoreForYou &&
                     notification is ScrollUpdateNotification) {
                   final metrics = notification.metrics;
                   if (metrics.pixels >= metrics.maxScrollExtent * 0.85) {
-                    _loadMore(forYouRecipes);
+                    _loadMore();
                   }
                 }
                 return false;
@@ -202,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           selectedIndex: _selectedTagIndex,
                           onSelected: (index) => setState(() {
                             _selectedTagIndex = index;
-                            _displayedCount = _kInitialGridCount;
+                            _loadInitialData();
                           }),
                         ),
                       ],
@@ -215,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ? SizedBox(
                                 height: 420,
                                 child: OfflineErrorView(
-                                  onRetry: _loadRecipes,
+                                  onRetry: _loadInitialData,
                                 ),
                               )
                             : Column(
@@ -227,18 +256,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                     onSeeAll: () => Navigator.pushNamed(
                                       context,
                                       AppRoutes.popularRecipes,
-                                      arguments: filteredRecipes,
+                                      arguments: _popularRecipes, // pass all popular
                                     ),
                                   ),
                                   _PopularRecipesRow(
-                                    recipes: popularRecipes,
+                                    recipes: _popularRecipes,
                                   ),
                                   const _SectionHeader(
                                     title: 'Untuk Kamu',
                                     topPadding: 20,
                                   ),
                                   _RecentRecipesGrid(
-                                    recipes: displayedRecipes,
+                                    recipes: _forYouRecipes,
                                   ),
                                   if (_isLoadingMore)
                                     const Padding(
@@ -250,7 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                       ),
                                     )
-                                  else if (hasMore)
+                                  else if (_hasMoreForYou)
                                     const SizedBox(height: 8),
                                   const SizedBox(height: AppConstants.spacingXl),
                                 ],
