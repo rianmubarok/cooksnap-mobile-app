@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math' as dart_math;
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -48,6 +49,19 @@ class NotificationService {
     );
 
     _isInitialized = true;
+    _refreshScheduleIfNeeded();
+  }
+
+  Future<void> _refreshScheduleIfNeeded() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (prefs.getBool('meal_reminders_enabled') == true) {
+        // Do not await to avoid blocking app startup
+        scheduleDailyMealReminders();
+      }
+    } catch (e) {
+      debugPrint('Error refreshing schedule: $e');
+    }
   }
 
   void _handleNotificationTap(String? payload) {
@@ -76,7 +90,6 @@ class NotificationService {
 
     if (androidImplementation != null) {
       granted = await androidImplementation.requestNotificationsPermission() ?? false;
-      await androidImplementation.requestExactAlarmsPermission();
     }
 
     final iOSImplementation = flutterLocalNotificationsPlugin
@@ -95,13 +108,18 @@ class NotificationService {
 
   Future<void> cancelAllNotifications() async {
     await flutterLocalNotificationsPlugin.cancelAll();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('meal_reminders_enabled', false);
   }
 
   Future<void> scheduleDailyMealReminders() async {
     final recipes = await _fetchRandomRecipes(3);
     if (recipes.length < 3) return; 
 
-    await cancelAllNotifications();
+    await flutterLocalNotificationsPlugin.cancelAll();
+    
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('meal_reminders_enabled', true);
 
     final now = tz.TZDateTime.now(tz.local);
     final rand = dart_math.Random();
@@ -182,7 +200,7 @@ class NotificationService {
         ),
         iOS: DarwinNotificationDetails(),
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time,
       payload: payload,
     );
