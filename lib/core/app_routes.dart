@@ -21,6 +21,9 @@ import '../models/recipe_model.dart';
 class AppRoutes {
   AppRoutes._();
 
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+
   static const String splash = '/';
   static const String onboarding = '/onboarding';
   static const String login = '/login';

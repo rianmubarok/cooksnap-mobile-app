@@ -9,6 +9,7 @@ import 'core/app_theme.dart';
 import 'core/app_routes.dart';
 import 'core/app_constants.dart';
 import 'core/pocketbase_client.dart';
+import 'services/notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,6 +35,9 @@ Future<void> main() async {
   
   await PocketBaseClient.init();
   
+  // Initialize Notification Service
+  await NotificationService.instance.init();
+  
   runApp(const CookSnapApp());
 }
 
@@ -48,6 +52,7 @@ class CookSnapApp extends StatelessWidget {
         title: AppConstants.appName,
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
+        navigatorKey: AppRoutes.navigatorKey,
         builder: (context, child) => GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: child,

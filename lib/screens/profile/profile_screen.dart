@@ -6,12 +6,13 @@ import '../../core/app_constants.dart';
 import '../../core/app_routes.dart';
 import '../../core/app_strings.dart';
 import '../../providers/user_provider.dart';
-import '../../utils/placeholder_snackbar.dart';
 import '../../widgets/navigation/tab_page_scaffold.dart';
 import '../../widgets/common/app_confirm_dialog.dart';
 import '../../widgets/common/paywall_sheet.dart';
 import '../../widgets/profile/profile_menu_tile.dart';
 import '../../widgets/common/app_text.dart';
+import '../../services/notification_service.dart';
+import '../../utils/app_snackbar.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -128,10 +129,18 @@ class ProfileScreen extends StatelessWidget {
             ProfileMenuTile(
               icon: LucideIcons.bell,
               title: AppStrings.notificationSettings,
-              onTap: () => showPlaceholderSnackBar(
-                context,
-                'Notifikasi segera hadir',
-              ),
+              onTap: () async {
+                final granted = await NotificationService.instance.requestPermissions();
+                if (granted && context.mounted) {
+                  showAppSnackBar(context, 'Mengatur pengingat masak harian...');
+                  await NotificationService.instance.scheduleDailyMealReminders();
+                  if (context.mounted) {
+                    showAppSnackBar(context, 'Pengingat sarapan, siang, dan malam aktif!');
+                  }
+                } else if (context.mounted) {
+                  showAppSnackBar(context, 'Izin notifikasi ditolak.');
+                }
+              },
             ),
             ProfileMenuTile(
               icon: LucideIcons.helpCircle,

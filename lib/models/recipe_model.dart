@@ -53,6 +53,14 @@ class RecipeIngredient {
       unit: map['unit'] as String,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'quantity': quantity,
+      'unit': unit,
+    };
+  }
 }
 
 class Recipe {
@@ -145,6 +153,23 @@ class Recipe {
           ? DateTime.tryParse((map['created_at'] ?? map['created']).toString()) 
           : null,
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'recipe_name': recipeName,
+      'description': description,
+      'image_url': imageUrl,
+      'ingredients': ingredients.map((x) => x.toMap()).toList(),
+      'steps': steps,
+      'cooking_time': cookingTime,
+      'difficulty': difficulty,
+      'tags': tags,
+      'source_url': sourceUrl,
+      'video_url': videoUrl,
+      'created_at': createdAt?.toIso8601String(),
+    };
   }
 }
 
