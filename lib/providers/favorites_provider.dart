@@ -51,12 +51,18 @@ class FavoritesProvider extends ChangeNotifier {
 
   bool isFavorite(String recipeId) => _favoriteRecordMap.containsKey(recipeId);
 
+  String? _currentUserId;
+
   // ── Auth lifecycle ────────────────────────────────────────────────────────
 
   void _onAuthChanged() {
     final pb = PocketBaseClient.instance;
-    if (pb.authStore.isValid && pb.authStore.record != null) {
-      final userId = pb.authStore.record!.id;
+    final userId = pb.authStore.isValid ? pb.authStore.record?.id : null;
+
+    if (userId == _currentUserId) return; // Prevent full reload if just a token refresh
+    _currentUserId = userId;
+
+    if (userId != null) {
       _loadFromPocketBase(userId);
     } else {
       _clearState();
@@ -67,6 +73,7 @@ class FavoritesProvider extends ChangeNotifier {
     _favoriteRecordMap.clear();
     _favoriteRecipes = [];
     _isLoading = false;
+    _currentUserId = null;
     notifyListeners();
   }
 

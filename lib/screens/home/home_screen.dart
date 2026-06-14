@@ -416,7 +416,10 @@ class _RecentRecipesGrid extends StatelessWidget {
         recipes: recipes,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        itemBuilder: (context, recipe) => RecipeCardGrid(recipe: recipe),
+        itemBuilder: (context, recipe) => RecipeCardGrid(
+          key: ValueKey(recipe.id),
+          recipe: recipe,
+        ),
       ),
     );
   }

@@ -104,7 +104,10 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                               shrinkWrap: false,
                               physics: const AlwaysScrollableScrollPhysics(),
                               itemBuilder: (context, recipe) =>
-                                  RecipeCardGrid(recipe: recipe),
+                                  RecipeCardGrid(
+                                    key: ValueKey(recipe.id),
+                                    recipe: recipe,
+                                  ),
                             ),
                           ),
                   ),
