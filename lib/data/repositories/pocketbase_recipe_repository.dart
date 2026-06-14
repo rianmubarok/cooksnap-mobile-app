@@ -188,13 +188,25 @@ class PocketBaseRecipeRepository implements RecipeRepository {
   }
 
   @override
-  Future<List<Recipe>> searchRecipes(String query, {int perPage = 30}) async {
+  Future<List<Recipe>> searchRecipes(
+    String query, {
+    int perPage = 30,
+    String? difficulty,
+    int? maxCookingTime,
+  }) async {
     final q = query.trim().toLowerCase();
     if (q.isEmpty) return [];
 
     try {
-      final filterString =
-          'recipe_name ~ "$q" || tags ~ "$q" || ingredients ~ "$q"';
+      var filterString =
+          '(recipe_name ~ "$q" || tags ~ "$q" || ingredients ~ "$q")';
+      
+      if (difficulty != null && difficulty.isNotEmpty) {
+        filterString += ' && difficulty = "$difficulty"';
+      }
+      if (maxCookingTime != null) {
+        filterString += ' && cooking_time <= $maxCookingTime';
+      }
       
       final records = await pb.collection('recipes').getList(
         page: 1,

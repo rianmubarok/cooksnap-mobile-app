@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import '../../utils/placeholder_snackbar.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../utils/app_snackbar.dart';
 import '../../widgets/common/app_text.dart';
 import '../../widgets/navigation/circular_header_button.dart';
 import '../../widgets/custom_button.dart';
@@ -76,8 +77,23 @@ class HelpScreen extends StatelessWidget {
           PrimaryButton(
             text: 'Hubungi Kami',
             icon: LucideIcons.mail,
-            onPressed: () {
-              showPlaceholderSnackBar(context, 'Menghubungi dukungan pelanggan segera hadir');
+            onPressed: () async {
+              final Uri emailLaunchUri = Uri(
+                scheme: 'mailto',
+                path: 'support@cooksnap.com',
+                query: 'subject=Bantuan%20CookSnap%20Mobile%20App',
+              );
+              try {
+                if (!await launchUrl(emailLaunchUri)) {
+                  if (context.mounted) {
+                    showAppSnackBar(context, 'Tidak dapat membuka aplikasi email.');
+                  }
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  showAppSnackBar(context, 'Terjadi kesalahan saat membuka email.');
+                }
+              }
             },
           ),
         ],

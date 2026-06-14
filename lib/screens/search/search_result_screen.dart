@@ -14,6 +14,7 @@ import '../../widgets/navigation/circular_header_button.dart';
 import '../../widgets/recipe/recipe_card_grid.dart';
 import '../../widgets/recipe/recipe_grid.dart';
 import '../../widgets/search/recipe_search_field.dart';
+import '../../widgets/search/search_filter_sheet.dart';
 
 class SearchResultScreen extends StatefulWidget {
   final String query;
@@ -30,6 +31,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   List<Recipe> _results = [];
   bool _isLoading = true;
   bool _hasError = false;
+
+  String? _selectedDifficulty;
+  int? _maxCookingTime;
+
+  bool get _hasActiveFilters => _selectedDifficulty != null || _maxCookingTime != null;
 
   @override
   void initState() {
@@ -68,9 +74,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     });
 
     try {
-      final results = await context
-          .read<RecipeRepository>()
-          .searchRecipes(q, perPage: 50);
+      final results = await context.read<RecipeRepository>().searchRecipes(
+            q,
+            perPage: 50,
+            difficulty: _selectedDifficulty,
+            maxCookingTime: _maxCookingTime,
+          );
       if (!mounted) return;
       setState(() {
         _results = results;
@@ -125,8 +134,22 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   const SizedBox(width: AppConstants.spacingSm),
                   CircularHeaderButton(
                     icon: LucideIcons.sliders,
-                    onPressed: () {
-                      // TODO: Implement filter sheet
+                    iconColor: _hasActiveFilters ? AppColors.primary : AppColors.textPrimary,
+                    backgroundColor: _hasActiveFilters ? AppColors.primary.withValues(alpha: 0.1) : Colors.white,
+                    onPressed: () async {
+                      final result = await showSearchFilterSheet(
+                        context,
+                        initialDifficulty: _selectedDifficulty,
+                        initialMaxCookingTime: _maxCookingTime,
+                      );
+
+                      if (result != null && mounted) {
+                        setState(() {
+                          _selectedDifficulty = result.difficulty;
+                          _maxCookingTime = result.maxCookingTime;
+                        });
+                        _runSearch(_controller.text);
+                      }
                     },
                   ),
                 ],

@@ -15,6 +15,7 @@ class CustomTextField extends StatefulWidget {
   final TextEditingController? controller;
   final String? Function(String?)? validator;
   final TextInputType keyboardType;
+  final TextCapitalization textCapitalization;
   final TextInputAction textInputAction;
   final void Function(String)? onSubmitted;
   final ValueChanged<String>? onChanged;
@@ -37,6 +38,7 @@ class CustomTextField extends StatefulWidget {
     this.controller,
     this.validator,
     this.keyboardType = TextInputType.text,
+    this.textCapitalization = TextCapitalization.sentences,
     this.textInputAction = TextInputAction.next,
     this.onSubmitted,
     this.onChanged,
@@ -181,6 +183,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
           readOnly: widget.readOnly,
           enabled: !widget.readOnly,
           keyboardType: widget.keyboardType,
+          textCapitalization: widget.isPassword || widget.keyboardType == TextInputType.emailAddress 
+              ? TextCapitalization.none 
+              : widget.textCapitalization,
           textInputAction: widget.textInputAction,
           onFieldSubmitted: widget.onSubmitted,
           onChanged: widget.onChanged,

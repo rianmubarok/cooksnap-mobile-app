@@ -24,7 +24,13 @@ abstract class RecipeRepository {
   ///
   /// Returns up to [perPage] results, ranked by relevance score.
   /// When using PocketBase: maps to `?filter=recipe_name~"q"&perPage=X`.
-  Future<List<Recipe>> searchRecipes(String query, {int perPage = 30});
+  /// Supports optional filters: [difficulty] and [maxCookingTime].
+  Future<List<Recipe>> searchRecipes(
+    String query, {
+    int perPage = 30,
+    String? difficulty,
+    int? maxCookingTime,
+  });
 
   /// Fetch a single recipe by its ID — used by the Detail screen.
   Future<Recipe?> getRecipeById(String id);
