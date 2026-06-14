@@ -30,6 +30,9 @@ class FavoritesProvider extends ChangeNotifier {
   /// Map of `recipeId → favoriteRecordId` (PB record ID needed for deletion).
   final Map<String, String> _favoriteRecordMap = {};
 
+  /// Tracks recipes currently being toggled to prevent race conditions.
+  final Set<String> _pendingRecipeIds = {};
+
   /// Fully-loaded Recipe objects for the favorites list screen.
   List<Recipe> _favoriteRecipes = [];
   bool _isLoading = false;
@@ -93,18 +96,29 @@ class FavoritesProvider extends ChangeNotifier {
       return;
     }
     // Single batch call — maps to one PocketBase API request.
-    _favoriteRecipes = await _repo.getRecipesByIds(
-      _favoriteRecordMap.keys.toList(),
-    );
+    final keys = _favoriteRecordMap.keys.toList();
+    final recipes = await _repo.getRecipesByIds(keys);
+    
+    // Sort recipes to match the exact order of the keys (newest favorite first)
+    recipes.sort((a, b) {
+      final indexA = keys.indexOf(a.id);
+      final indexB = keys.indexOf(b.id);
+      return indexA.compareTo(indexB);
+    });
+    
+    _favoriteRecipes = recipes;
   }
 
   // ── Public API ────────────────────────────────────────────────────────────
 
   Future<void> toggleFavorite(String recipeId) async {
+    if (_pendingRecipeIds.contains(recipeId)) return; // Prevent race conditions
+    
     final pb = PocketBaseClient.instance;
     if (!pb.authStore.isValid || pb.authStore.record == null) return;
 
     final userId = pb.authStore.record!.id;
+    _pendingRecipeIds.add(recipeId);
 
     if (isFavorite(recipeId)) {
       // ── Remove favorite ──────────────────────────────────────────────────
@@ -112,8 +126,6 @@ class FavoritesProvider extends ChangeNotifier {
 
       // Optimistic update
       _favoriteRecordMap.remove(recipeId);
-      // Removed: _favoriteRecipes.removeWhere((r) => r.id == recipeId);
-      // to keep it in the list until a manual refresh is triggered.
       notifyListeners();
 
       try {
@@ -122,12 +134,10 @@ class FavoritesProvider extends ChangeNotifier {
         // Roll back on error
         debugPrint('FavoritesProvider: failed to remove favorite: $e');
         await _loadFromPocketBase(userId);
-        rethrow;
       }
     } else {
       // ── Add favorite ─────────────────────────────────────────────────────
-      // Optimistic placeholder — we don't have the PB record ID yet,
-      // so use a temporary key that will be replaced after the API call.
+      // Optimistic placeholder
       _favoriteRecordMap[recipeId] = '__pending__';
       notifyListeners();
 
@@ -141,9 +151,10 @@ class FavoritesProvider extends ChangeNotifier {
         debugPrint('FavoritesProvider: failed to add favorite: $e');
         _favoriteRecordMap.remove(recipeId);
         notifyListeners();
-        rethrow;
       }
     }
+    
+    _pendingRecipeIds.remove(recipeId);
   }
 
   /// Force-reload favorites from PocketBase (e.g., after pull-to-refresh).

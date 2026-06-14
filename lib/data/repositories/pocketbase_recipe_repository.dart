@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 import 'dart:math' as dart_math;
 
@@ -129,7 +128,6 @@ bool _isNetworkError(Object e) {
         msg.contains('Connection timed out') ||
         msg.contains('XMLHttpRequest error');
   }
-  if (e is TimeoutException) return true;
   return false;
 }
 
@@ -178,7 +176,7 @@ class PocketBaseRecipeRepository implements RecipeRepository {
         perPage: perPage,
         filter: filterString,
         sort: sort,
-      ).timeout(const Duration(seconds: 15));
+      );
       
       return records.items
           .map(_recordToRecipeSafe)
@@ -216,7 +214,7 @@ class PocketBaseRecipeRepository implements RecipeRepository {
         page: 1,
         perPage: perPage,
         filter: filterString,
-      ).timeout(const Duration(seconds: 15));
+      );
 
       return records.items
           .map(_recordToRecipeSafe)
@@ -232,7 +230,7 @@ class PocketBaseRecipeRepository implements RecipeRepository {
   @override
   Future<Recipe?> getRecipeById(String id) async {
     try {
-      final record = await pb.collection('recipes').getOne(id).timeout(const Duration(seconds: 15));
+      final record = await pb.collection('recipes').getOne(id);
       return _recordToRecipeSafe(record);
     } catch (e) {
       debugPrint('Error getting recipe by id: $e');
@@ -244,7 +242,7 @@ class PocketBaseRecipeRepository implements RecipeRepository {
   @override
   Future<List<Recipe>> getAllRecipes() async {
     try {
-      final records = await pb.collection('recipes').getFullList().timeout(const Duration(seconds: 15));
+      final records = await pb.collection('recipes').getFullList();
       _allRecipesCache = records
           .map(_recordToRecipeSafe)
           .whereType<Recipe>()
@@ -262,7 +260,7 @@ class PocketBaseRecipeRepository implements RecipeRepository {
     try {
       final records = await pb.collection('recipes').getFullList(
         fields: 'tags',
-      ).timeout(const Duration(seconds: 15));
+      );
       
       final tagCounts = <String, int>{};
       for (final r in records) {
@@ -301,7 +299,7 @@ class PocketBaseRecipeRepository implements RecipeRepository {
       final filterString = ids.map((id) => 'id = "$id"').join(' || ');
       final records = await pb.collection('recipes').getFullList(
         filter: filterString,
-      ).timeout(const Duration(seconds: 15));
+      );
       return records
           .map(_recordToRecipeSafe)
           .whereType<Recipe>()
@@ -337,7 +335,8 @@ class PocketBaseRecipeRepository implements RecipeRepository {
     try {
       final records = await pb.collection('favorites').getFullList(
         filter: 'user_id = "$userId"',
-      ).timeout(const Duration(seconds: 15));
+        sort: '-created',
+      );
       return {
         for (final r in records)
           (r.data['recipe_id'] as String? ?? r.get<String>('recipe_id')): r.id,
@@ -353,12 +352,12 @@ class PocketBaseRecipeRepository implements RecipeRepository {
     final record = await pb.collection('favorites').create(body: {
       'user_id': userId,
       'recipe_id': recipeId,
-    }).timeout(const Duration(seconds: 15));
+    });
     return record.id;
   }
 
   @override
   Future<void> removeFavorite(String favoriteRecordId) async {
-    await pb.collection('favorites').delete(favoriteRecordId).timeout(const Duration(seconds: 15));
+    await pb.collection('favorites').delete(favoriteRecordId);
   }
 }
