@@ -8,6 +8,8 @@ import '../../core/app_text_styles.dart';
 import '../../data/repositories/recipe_repository.dart';
 import '../../models/recipe_model.dart';
 import '../../widgets/common/empty_state_view.dart';
+import '../../widgets/common/offline_error_view.dart';
+import '../../widgets/common/skeleton_loader.dart';
 import '../../widgets/navigation/circular_header_button.dart';
 import '../../widgets/recipe/recipe_card_grid.dart';
 import '../../widgets/recipe/recipe_grid.dart';
@@ -27,6 +29,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
   List<Recipe> _results = [];
   bool _isLoading = true;
+  bool _hasError = false;
 
   @override
   void initState() {
@@ -59,17 +62,27 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     final q = query.trim();
     if (q.isEmpty) return;
 
-    setState(() => _isLoading = true);
-
-    final results = await context
-        .read<RecipeRepository>()
-        .searchRecipes(q, perPage: 50);
-
-    if (!mounted) return;
     setState(() {
-      _results = results;
-      _isLoading = false;
+      _isLoading = true;
+      _hasError = false;
     });
+
+    try {
+      final results = await context
+          .read<RecipeRepository>()
+          .searchRecipes(q, perPage: 50);
+      if (!mounted) return;
+      setState(() {
+        _results = results;
+        _isLoading = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _hasError = true;
+      });
+    }
   }
 
   @override
@@ -128,11 +141,15 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
   Widget _buildBody() {
     if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(
-          strokeWidth: 2.5,
-          color: AppColors.primary,
-        ),
+      return const SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
+        child: SearchResultSkeleton(),
+      );
+    }
+
+    if (_hasError) {
+      return OfflineErrorView(
+        onRetry: () => _runSearch(_controller.text),
       );
     }
 

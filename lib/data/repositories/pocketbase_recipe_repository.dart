@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:pocketbase/pocketbase.dart';
 
@@ -95,6 +97,27 @@ List<RecipeRecommendation> _matchRecipesToIngredients(_MatchArgs args) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Network error helper
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Returns `true` when [e] looks like a connectivity / network error that the
+/// UI should surface as "Tidak ada koneksi" rather than swallowing silently.
+bool _isNetworkError(Object e) {
+  if (e is SocketException) return true;
+  if (e is HandshakeException) return true;
+  if (e is ClientException) {
+    final msg = e.toString();
+    return msg.contains('SocketException') ||
+        msg.contains('Connection refused') ||
+        msg.contains('Failed host lookup') ||
+        msg.contains('Network is unreachable') ||
+        msg.contains('Connection timed out') ||
+        msg.contains('XMLHttpRequest error');
+  }
+  return false;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // PocketBaseRecipeRepository
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -137,7 +160,7 @@ class PocketBaseRecipeRepository implements RecipeRepository {
         page: page,
         perPage: perPage,
         filter: filterString,
-        sort: '-created', // Newest first
+        sort: '-created',
       );
       
       return records.items
@@ -146,6 +169,7 @@ class PocketBaseRecipeRepository implements RecipeRepository {
           .toList();
     } catch (e) {
       debugPrint('Error getting recipes: $e');
+      if (_isNetworkError(e)) rethrow;
       return [];
     }
   }
@@ -156,12 +180,8 @@ class PocketBaseRecipeRepository implements RecipeRepository {
     if (q.isEmpty) return [];
 
     try {
-      // In PocketBase, we can search multiple fields
-      // For a better fuzzy search, we'll download all and filter locally, 
-      // OR we can do a simple filter query.
-      // Let's use PocketBase filter to query recipe_name, tags, or ingredients
-      // NOTE: 'ingredients' is a JSON field, searching inside JSON requires ~ operator.
-      final filterString = 'recipe_name ~ "$q" || tags ~ "$q" || ingredients ~ "$q"';
+      final filterString =
+          'recipe_name ~ "$q" || tags ~ "$q" || ingredients ~ "$q"';
       
       final records = await pb.collection('recipes').getList(
         page: 1,
@@ -175,6 +195,7 @@ class PocketBaseRecipeRepository implements RecipeRepository {
           .toList();
     } catch (e) {
       debugPrint('Error searching recipes: $e');
+      if (_isNetworkError(e)) rethrow;
       return [];
     }
   }
@@ -186,6 +207,7 @@ class PocketBaseRecipeRepository implements RecipeRepository {
       return _recordToRecipeSafe(record);
     } catch (e) {
       debugPrint('Error getting recipe by id: $e');
+      if (_isNetworkError(e)) rethrow;
       return null;
     }
   }
@@ -193,8 +215,6 @@ class PocketBaseRecipeRepository implements RecipeRepository {
   @override
   Future<List<Recipe>> getAllRecipes() async {
     try {
-      // Always refetch so data added from dashboard is reflected immediately
-      // when the app triggers a reload (e.g., pull-to-refresh / reopen screen).
       final records = await pb.collection('recipes').getFullList();
       _allRecipesCache = records
           .map(_recordToRecipeSafe)
@@ -203,6 +223,7 @@ class PocketBaseRecipeRepository implements RecipeRepository {
       return _allRecipesCache!;
     } catch (e) {
       debugPrint('Error getting all recipes: $e');
+      if (_isNetworkError(e)) rethrow;
       return [];
     }
   }
@@ -222,6 +243,7 @@ class PocketBaseRecipeRepository implements RecipeRepository {
           .toList();
     } catch (e) {
       debugPrint('Error getting recipes by ids: $e');
+      if (_isNetworkError(e)) rethrow;
       return [];
     }
   }
@@ -251,7 +273,6 @@ class PocketBaseRecipeRepository implements RecipeRepository {
       final records = await pb.collection('favorites').getFullList(
         filter: 'user_id = "$userId"',
       );
-      // Map: recipeId -> favoriteRecordId
       return {
         for (final r in records)
           (r.data['recipe_id'] as String? ?? r.get<String>('recipe_id')): r.id,

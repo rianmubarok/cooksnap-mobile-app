@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
@@ -11,6 +12,8 @@ import '../../providers/favorites_provider.dart';
 import '../../providers/pantry_provider.dart';
 import '../../utils/app_snackbar.dart';
 import '../../utils/placeholder_snackbar.dart';
+import '../../widgets/common/offline_error_view.dart';
+import '../../widgets/common/skeleton_loader.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/recipe/recipe_detail_sliver_app_bar.dart';
 import '../../widgets/recipe/recipe_info_chip.dart';
@@ -41,6 +44,19 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   List<String> _availableIngredients = [];
   String? _recipeId;
   bool _isTogglingFavorite = false;
+  bool _hasError = false;
+
+  void _loadRecipe() {
+    if (_recipeId == null) return;
+    setState(() => _hasError = false);
+    _recipeFuture =
+        context.read<RecipeRepository>().getRecipeById(_recipeId!).catchError(
+      (e) {
+        if (mounted) setState(() => _hasError = true);
+        return null as Recipe?;
+      },
+    );
+  }
 
   @override
   void didChangeDependencies() {
@@ -51,8 +67,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           RecipeDetailScreen._parseArgs(ModalRoute.of(context)?.settings.arguments);
       _recipeId = parsed.id;
       _availableIngredients = parsed.ingredients;
-      _recipeFuture =
-          context.read<RecipeRepository>().getRecipeById(parsed.id);
+      _loadRecipe();
     }
   }
 
@@ -63,14 +78,23 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
       builder: (context, snapshot) {
         // ── Loading ──────────────────────────────────────────────────────
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
+          return const RecipeDetailSkeleton();
+        }
+
+        // ── Error (offline / network) ──────────────────────────────────
+        if (_hasError || snapshot.hasError) {
+          return Scaffold(
             backgroundColor: AppColors.background,
-            body: Center(
-              child: CircularProgressIndicator(
-                strokeWidth: 2.5,
+            appBar: AppBar(
+              backgroundColor: AppColors.background,
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded),
                 color: AppColors.primary,
+                onPressed: () => Navigator.pop(context),
               ),
             ),
+            body: OfflineErrorView(onRetry: _loadRecipe),
           );
         }
 
@@ -251,8 +275,20 @@ class _SourceLink extends StatelessWidget {
     return Align(
       alignment: Alignment.centerLeft,
       child: InkWell(
-        onTap: () =>
-            showPlaceholderSnackBar(context, 'Membuka sumber segera hadir'),
+        onTap: () async {
+          final uri = Uri.tryParse(url);
+          if (uri != null && await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          } else {
+            if (context.mounted) {
+              showAppSnackBar(
+                context,
+                'Gagal membuka sumber',
+                variant: AppSnackBarVariant.error,
+              );
+            }
+          }
+        },
         borderRadius: BorderRadius.circular(AppConstants.radiusLg),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

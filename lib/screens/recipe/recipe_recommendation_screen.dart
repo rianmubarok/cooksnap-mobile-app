@@ -9,6 +9,8 @@ import '../../core/app_text_styles.dart';
 import '../../providers/pantry_provider.dart';
 import '../../providers/recommendation_provider.dart';
 import '../../widgets/common/empty_state_view.dart';
+import '../../widgets/common/offline_error_view.dart';
+import '../../widgets/common/skeleton_loader.dart';
 import '../../widgets/ingredient/ingredient_tag_chip.dart';
 import '../../widgets/ingredient/suggestion_chip.dart';
 import '../../widgets/recipe/recipe_recommendation_card.dart';
@@ -81,16 +83,39 @@ class _RecipeRecommendationScreenState
     final recommendationProvider = context.watch<RecommendationProvider>();
     final data = recommendationProvider.data;
 
-    // Show spinner on first load (data is null) or while recomputing
+    // Show skeleton on first load (data is null) or while recomputing
     // after ingredient changes.
     if (data == null || recommendationProvider.isComputing) {
-      return const Scaffold(
+      return const RecipeRecommendationSkeleton();
+    }
+
+    // Show offline error when network failed
+    if (recommendationProvider.hasError) {
+      return Scaffold(
         backgroundColor: AppColors.background,
-        body: Center(
-          child: CircularProgressIndicator(
-            strokeWidth: 2.5,
-            color: AppColors.primary,
+        appBar: AppBar(
+          backgroundColor: AppColors.background,
+          elevation: 0,
+          leading: Padding(
+            padding: const EdgeInsets.only(left: AppConstants.paddingScreen),
+            child: UnconstrainedBox(
+              child: CircularHeaderButton(
+                icon: LucideIcons.chevronLeft,
+                onPressed: () => Navigator.pop(context, _currentIngredients),
+              ),
+            ),
           ),
+          leadingWidth: 72,
+          title: Text(
+            'Resep Rekomendasi',
+            style: AppTextStyles.h3.copyWith(color: AppColors.primary),
+          ),
+        ),
+        body: OfflineErrorView(
+          onRetry: () {
+            // Reset cached inputs so setInputs triggers a fresh fetch
+            context.read<RecommendationProvider>().reset();
+          },
         ),
       );
     }

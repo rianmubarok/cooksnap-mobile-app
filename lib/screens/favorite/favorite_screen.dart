@@ -4,8 +4,10 @@ import 'package:provider/provider.dart';
 import '../../core/app_constants.dart';
 import '../../providers/favorites_provider.dart';
 import '../../widgets/common/empty_state_view.dart';
+import '../../widgets/common/skeleton_loader.dart';
 import '../../widgets/navigation/tab_page_scaffold.dart';
 import '../../widgets/recipe/recipe_card_grid.dart';
+import '../../widgets/recipe/recipe_grid.dart';
 
 import '../../widgets/search/recipe_search_field.dart';
 
@@ -33,7 +35,9 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final allFavorites = context.watch<FavoritesProvider>().favoriteRecipes;
+    final favProvider = context.watch<FavoritesProvider>();
+    final isLoading = favProvider.isLoading;
+    final allFavorites = favProvider.favoriteRecipes;
     final favorites = _searchQuery.isEmpty
         ? allFavorites
         : allFavorites
@@ -69,40 +73,41 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
             ),
           ),
           Expanded(
-            child: RefreshIndicator(
-              onRefresh: () => context.read<FavoritesProvider>().refresh(),
-              child: favorites.isEmpty
-                  ? ListView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      children: const [
-                        SizedBox(height: 100),
-                        EmptyStateView(
-                          icon: LucideIcons.heart,
-                          title: 'Belum ada resep favorit',
-                          subtitle:
-                              'Simpan resep kesukaanmu di sini\nagar mudah ditemukan kembali',
-                          showIconCircle: true,
-                        ),
-                      ],
-                    )
-                  : GridView.builder(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppConstants.paddingScreen,
-                        vertical: 8,
-                      ),
-                      itemCount: favorites.length,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 16,
-                        childAspectRatio: 0.72,
-                      ),
-                      itemBuilder: (context, index) {
-                        return RecipeCardGrid(recipe: favorites[index]);
-                      },
-                    ),
-            ),
+            child: isLoading
+                ? const SingleChildScrollView(
+                    physics: NeverScrollableScrollPhysics(),
+                    child: FavoriteScreenSkeleton(),
+                  )
+                : RefreshIndicator(
+                    onRefresh: () => context.read<FavoritesProvider>().refresh(),
+                    child: favorites.isEmpty
+                        ? ListView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            children: const [
+                              SizedBox(height: 100),
+                              EmptyStateView(
+                                icon: LucideIcons.heart,
+                                title: 'Belum ada resep favorit',
+                                subtitle:
+                                    'Simpan resep kesukaanmu di sini\nagar mudah ditemukan kembali',
+                                showIconCircle: true,
+                              ),
+                            ],
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppConstants.paddingScreen,
+                              vertical: 8,
+                            ),
+                            child: RecipeGrid(
+                              recipes: favorites,
+                              shrinkWrap: false,
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              itemBuilder: (context, recipe) =>
+                                  RecipeCardGrid(recipe: recipe),
+                            ),
+                          ),
+                  ),
           ),
         ],
       ),

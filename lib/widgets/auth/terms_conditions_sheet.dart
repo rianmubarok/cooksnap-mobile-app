@@ -43,8 +43,9 @@ class TermsConditionsSheet extends StatelessWidget {
                     const SizedBox(height: AppConstants.spacingMd),
                     _buildSection('1. Penggunaan Aplikasi', 'CookSnap membantu Anda memindai bahan makanan dan memberikan rekomendasi resep yang relevan. Gunakan aplikasi ini untuk mempermudah pengalaman memasak Anda.'),
                     _buildSection('2. Akses Kamera & Privasi', 'Aplikasi memerlukan akses kamera dan galeri untuk fitur pemindaian bahan. Gambar yang dipindai hanya diproses untuk mengenali bahan dan tidak disebarluaskan.'),
-                    _buildSection('3. Tahap Pengembangan', 'Aplikasi CookSnap saat ini masih dalam tahap pengembangan (Beta). Beberapa fitur mungkin belum berfungsi dengan sempurna atau dapat berubah di masa mendatang.'),
-                    _buildSection('4. Akun & Keamanan', 'Data akun Anda seperti nama dan email disimpan secara aman. Kami tidak akan membagikan informasi pribadi Anda kepada pihak ketiga tanpa persetujuan Anda.'),
+                    _buildSection('3. Layanan Berbayar (CookSnap PRO)', 'Aplikasi ini menyediakan fitur berlangganan premium (CookSnap PRO) yang memberikan akses penuh ke pemindaian AI tanpa batas dan pengalaman bebas iklan. Kebijakan pembayaran dan pengembalian dana selengkapnya dapat dilihat pada website resmi kami.'),
+                    _buildSection('4. Tahap Pengembangan', 'Aplikasi CookSnap saat ini terus dikembangkan secara aktif. Beberapa fitur eksperimental mungkin dapat berubah di masa mendatang untuk memberikan pengalaman terbaik.'),
+                    _buildSection('5. Akun & Keamanan', 'Data akun Anda seperti nama dan email disimpan secara aman. Seluruh proses transaksi pembayaran (jika ada) diproses menggunakan standar keamanan tinggi oleh payment gateway terlisensi (Midtrans).'),
                     const SizedBox(height: AppConstants.spacingLg),
                     PrimaryButton(
                       text: 'Mengerti',

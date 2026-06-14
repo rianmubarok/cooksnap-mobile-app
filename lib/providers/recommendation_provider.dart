@@ -20,6 +20,9 @@ class RecommendationProvider extends ChangeNotifier {
   bool _isComputing = false;
   bool get isComputing => _isComputing;
 
+  bool _hasError = false;
+  bool get hasError => _hasError;
+
   List<String> _lastIngredients = const [];
   List<String> _lastPantryItems = const [];
 
@@ -50,6 +53,7 @@ class RecommendationProvider extends ChangeNotifier {
     final myVersion = ++_computationVersion;
 
     _isComputing = true;
+    _hasError = false;
     notifyListeners();
 
     try {
@@ -62,7 +66,8 @@ class RecommendationProvider extends ChangeNotifier {
 
       _data = result;
     } catch (_) {
-      // Keep previous data on error so the UI doesn't go blank.
+      // Network error — expose to UI for retry
+      if (myVersion == _computationVersion) _hasError = true;
     } finally {
       if (myVersion == _computationVersion) {
         _isComputing = false;
@@ -75,6 +80,7 @@ class RecommendationProvider extends ChangeNotifier {
     _computationVersion++; // invalidate any in-flight computation
     _data = null;
     _isComputing = false;
+    _hasError = false;
     _lastIngredients = const [];
     _lastPantryItems = const [];
     notifyListeners();

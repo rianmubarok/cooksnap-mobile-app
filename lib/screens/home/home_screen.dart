@@ -11,6 +11,8 @@ import '../../models/recipe_model.dart';
 import '../../providers/user_provider.dart';
 import '../../widgets/common/app_chip.dart';
 import '../../widgets/common/section_header_row.dart';
+import '../../widgets/common/offline_error_view.dart';
+import '../../widgets/common/skeleton_loader.dart';
 import '../../widgets/home/home_header.dart';
 import '../../widgets/recipe/recipe_card_horizontal.dart';
 import '../../widgets/recipe/recipe_card_grid.dart';
@@ -47,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Recipe> _allRecipes = [];
   bool _isLoading = true;
+  bool _hasError = false;
   bool _isLoadingMore = false;
   int _displayedCount = _kInitialGridCount;
   late int _seed;
@@ -78,20 +81,30 @@ class _HomeScreenState extends State<HomeScreen> {
   /// network call for PocketBase) and caches them in state.
   Future<void> _loadRecipes() async {
     if (!mounted) return;
-    setState(() => _isLoading = true);
-
-    final recipes =
-        await context.read<RecipeRepository>().getAllRecipes();
-
-    if (!mounted) return;
     setState(() {
-      _allRecipes = recipes;
-      _displayTags = buildHomeRecipeTags(recipes, seed: _seed);
-      if (_selectedTagIndex >= _displayTags.length) {
-        _selectedTagIndex = 0;
-      }
-      _isLoading = false;
+      _isLoading = true;
+      _hasError = false;
     });
+
+    try {
+      final recipes =
+          await context.read<RecipeRepository>().getAllRecipes();
+      if (!mounted) return;
+      setState(() {
+        _allRecipes = recipes;
+        _displayTags = buildHomeRecipeTags(recipes, seed: _seed);
+        if (_selectedTagIndex >= _displayTags.length) {
+          _selectedTagIndex = 0;
+        }
+        _isLoading = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _hasError = true;
+      });
+    }
   }
 
   List<Recipe> _applyTagFilter(List<Recipe> recipes) {
@@ -198,45 +211,50 @@ class _HomeScreenState extends State<HomeScreen> {
                   SliverToBoxAdapter(
                     child: _isLoading
                         ? const _LoadingSkeleton()
-                        : Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _SectionHeader(
-                                title: 'Resep Populer',
-                                topPadding: 16,
-                                onSeeAll: () => Navigator.pushNamed(
-                                  context,
-                                  AppRoutes.popularRecipes,
-                                  arguments: filteredRecipes,
+                        : _hasError
+                            ? SizedBox(
+                                height: 420,
+                                child: OfflineErrorView(
+                                  onRetry: _loadRecipes,
                                 ),
-                              ),
-                              // Limit to [_kPopularLimit] — avoids rendering
-                              // all recipes in one horizontal ListView.
-                              _PopularRecipesRow(
-                                recipes: popularRecipes,
-                              ),
-                              const _SectionHeader(
-                                title: 'Untuk Kamu',
-                                topPadding: 20,
-                              ),
-                              _RecentRecipesGrid(
-                                recipes: displayedRecipes,
-                              ),
-                              if (_isLoadingMore)
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 16),
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2.5,
-                                      color: AppColors.primary,
+                              )
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _SectionHeader(
+                                    title: 'Resep Populer',
+                                    topPadding: 16,
+                                    onSeeAll: () => Navigator.pushNamed(
+                                      context,
+                                      AppRoutes.popularRecipes,
+                                      arguments: filteredRecipes,
                                     ),
                                   ),
-                                )
-                              else if (hasMore)
-                                const SizedBox(height: 8),
-                              const SizedBox(height: AppConstants.spacingXl),
-                            ],
-                          ),
+                                  _PopularRecipesRow(
+                                    recipes: popularRecipes,
+                                  ),
+                                  const _SectionHeader(
+                                    title: 'Untuk Kamu',
+                                    topPadding: 20,
+                                  ),
+                                  _RecentRecipesGrid(
+                                    recipes: displayedRecipes,
+                                  ),
+                                  if (_isLoadingMore)
+                                    const Padding(
+                                      padding: EdgeInsets.symmetric(vertical: 16),
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2.5,
+                                          color: AppColors.primary,
+                                        ),
+                                      ),
+                                    )
+                                  else if (hasMore)
+                                    const SizedBox(height: 8),
+                                  const SizedBox(height: AppConstants.spacingXl),
+                                ],
+                              ),
                   ),
                 ],
               ),
@@ -381,14 +399,6 @@ class _LoadingSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 60),
-      child: Center(
-        child: CircularProgressIndicator(
-          strokeWidth: 2.5,
-          color: AppColors.primary,
-        ),
-      ),
-    );
+    return const HomeScreenSkeleton();
   }
 }
