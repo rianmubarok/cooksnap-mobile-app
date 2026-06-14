@@ -37,35 +37,28 @@ class SelectedIngredientsPanel extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppConstants.spacingMd),
-        AnimatedCrossFade(
-          duration: const Duration(milliseconds: 300),
-          crossFadeState: ingredients.isNotEmpty ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-          sizeCurve: Curves.easeInOut,
-          firstChild: AnimatedSize(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            alignment: Alignment.topCenter,
-            child: Container(
-              width: double.infinity,
-              alignment: Alignment.topLeft,
-              child: Wrap(
-                key: const ValueKey('ingredients_wrap'),
-                spacing: 8,
-                runSpacing: 8,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: ingredients
-                    .map(
-                      (ingredient) => RemovableIngredientChip(
-                        key: ValueKey(ingredient),
-                        label: ingredient,
-                        onRemove: () => onRemove(ingredient),
-                      ),
-                    )
-                    .toList(),
-              ),
+        if (ingredients.isNotEmpty)
+          Container(
+            width: double.infinity,
+            alignment: Alignment.topLeft,
+            child: Wrap(
+              key: const ValueKey('ingredients_wrap'),
+              spacing: 8,
+              runSpacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: ingredients
+                  .map(
+                    (ingredient) => RemovableIngredientChip(
+                      key: ValueKey(ingredient),
+                      label: ingredient,
+                      onRemove: () => onRemove(ingredient),
+                    ),
+                  )
+                  .toList(),
             ),
-          ),
-          secondChild: Container(
+          )
+        else
+          Container(
             key: const ValueKey('empty_state'),
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -80,7 +73,6 @@ class SelectedIngredientsPanel extends StatelessWidget {
               variant: AppTextVariant.bodySmall,
             ),
           ),
-        ),
       ],
     );
   }

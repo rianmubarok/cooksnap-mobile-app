@@ -34,6 +34,7 @@ List<RecipeRecommendation> _matchRecipesToIngredients(_MatchArgs args) {
     var matched = 0;
     var partialMatched = 0;
     String? firstMissing;
+    final missingIngredients = <String>[];
 
     for (final required in recipe.ingredients) {
       final reqNameLower = required.name.toLowerCase();
@@ -45,6 +46,7 @@ List<RecipeRecommendation> _matchRecipesToIngredients(_MatchArgs args) {
         matched++;
       } else {
         firstMissing ??= required.name;
+        missingIngredients.add(required.name);
 
         final reqWords =
             reqNameLower.split(RegExp(r'\s+')).where((w) => w.length > 3);
@@ -63,15 +65,26 @@ List<RecipeRecommendation> _matchRecipesToIngredients(_MatchArgs args) {
     if (matched == 0) continue;
 
     final total = recipe.ingredients.length;
+    final missingCount = total - matched;
     final percentage = ((matched / total) * 100).round();
+
+    String matchText;
+    if (percentage >= 100) {
+      matchText = 'Semua bahan tersedia!';
+    } else if (missingCount <= 2 && missingIngredients.isNotEmpty) {
+      final names = missingIngredients
+          .map((e) => StringUtils.capitalizeWords(e))
+          .join(', ');
+      matchText = 'Kurang: $names';
+    } else {
+      matchText = 'Kurang $missingCount bahan';
+    }
 
     recommendations.add(
       RecipeRecommendation(
         recipe: recipe,
         matchPercentage: percentage,
-        matchText: percentage >= 100
-            ? 'Semua bahan tersedia!'
-            : 'Kurang ${total - matched} bahan',
+        matchText: matchText,
         missingIngredientName: percentage >= 100 ? null : firstMissing,
         matchedCount: matched,
         partialMatchedCount: partialMatched,
