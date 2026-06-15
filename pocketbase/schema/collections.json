@@ -360,5 +360,60 @@
     "updateRule": null,
     "deleteRule": null,
     "indexes": []
+  },
+  {
+    "id": "ingrcorrect1234",
+    "name": "ingredient_corrections",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "id": "ingrcorr_orig",
+        "name": "original_name",
+        "type": "text",
+        "system": false,
+        "required": true,
+        "presentable": true,
+        "options": {
+          "min": 1,
+          "max": 100,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "ingrcorr_corr",
+        "name": "corrected_name",
+        "type": "text",
+        "system": false,
+        "required": true,
+        "presentable": true,
+        "options": {
+          "min": 1,
+          "max": 100,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "ingrcorr_cnt",
+        "name": "correction_count",
+        "type": "number",
+        "system": false,
+        "required": false,
+        "presentable": false,
+        "options": {
+          "min": 0,
+          "max": null,
+          "noDecimal": true
+        }
+      }
+    ],
+    "listRule": "",
+    "viewRule": "",
+    "createRule": "@request.auth.id != ''",
+    "updateRule": "@request.auth.id != ''",
+    "deleteRule": "@request.auth.id != ''",
+    "indexes": [
+      "CREATE UNIQUE INDEX idx_ingredient_corrections_original_name ON ingredient_corrections (original_name)"
+    ]
   }
 ]

@@ -203,10 +203,12 @@ window.initDashboard = () => {
 
 // ─── Toolbar Event Bindings ───────────────────────────────────────────────────
 function bindToolbarEvents() {
-  searchInput.addEventListener('input', () => {
-    state.search = searchInput.value.trim();
-    state.page   = 1;
-    loadData();
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      state.search = searchInput.value.trim();
+      state.page   = 1;
+      loadData();
+    }
   });
 
   filterPrimary.addEventListener('change', () => {

@@ -40,6 +40,14 @@ window.scanUnregisteredIngredients = async () => {
     // 2. Fetch all recipes
     const recipes = await pb.collection('recipes').getFullList({ fields: 'id,recipe_name,ingredients' });
     
+    // 2.5 Fetch corrections history
+    let correctionsHistory = [];
+    try {
+      correctionsHistory = await pb.collection('ingredient_corrections').getFullList();
+    } catch (e) {
+      console.warn("Failed to fetch ingredient_corrections", e);
+    }
+    
     // 3. Extract unique ingredient names from all recipes and their usages
     const recipeIngredientMap = new Map();
     recipes.forEach(r => {
@@ -92,16 +100,41 @@ window.scanUnregisteredIngredients = async () => {
     listContainer.innerHTML = '';
     const categoryOptions = (window.INGREDIENT_CATEGORIES || []).map(c => `<option value="${c}">${c}</option>`).join('');
     
-    const masterIngredientOptions = masterItems
+    const sortedMasterNames = masterItems
       .map(m => (m.name || '').trim())
       .filter(n => n)
-      .sort()
-      .map(n => `<option value="${n.replace(/"/g, '&quot;')}">${n}</option>`)
-      .join('');
+      .sort();
 
     unregistered.forEach(item => {
       const name = item.name;
       const usages = item.usages;
+      
+      // Find recommendation
+      let recommendedName = "";
+      const nameLower = name.toLowerCase();
+      
+      const historyMatch = correctionsHistory.find(c => (c.original_name || '').toLowerCase() === nameLower);
+      if (historyMatch && historyMatch.corrected_name) {
+         recommendedName = historyMatch.corrected_name;
+      } else {
+         let bestDist = Infinity;
+         let bestMatch = "";
+         sortedMasterNames.forEach(mName => {
+            const dist = typeof calculateLevenshteinDistance === 'function' ? calculateLevenshteinDistance(nameLower, mName.toLowerCase()) : Infinity;
+            if (dist < bestDist) {
+               bestDist = dist;
+               bestMatch = mName;
+            }
+         });
+         
+         if (bestMatch && bestDist <= Math.max(2, Math.floor(name.length * 0.4))) {
+            recommendedName = bestMatch;
+         }
+      }
+
+      const masterIngredientOptions = sortedMasterNames
+        .map(n => `<option value="${n.replace(/"/g, '&quot;')}" ${n === recommendedName ? 'selected' : ''}>${n}</option>`)
+        .join('');
       
       const usagesHtml = usages.length > 0 
         ? `<div class="text-[11px] text-gray-500 mt-2 flex flex-wrap items-center gap-1.5 w-full">
@@ -257,6 +290,27 @@ window.correctMissingIngredient = async (unregisteredName, rowIdSafe) => {
              await pb.collection('recipes').update(r.id, { ingredients: newIngredients });
              updatedCount++;
           }
+       }
+    }
+    
+    // Save to ingredient_corrections history
+    try {
+       // Check if already exists
+       const existingHistory = await pb.collection('ingredient_corrections').getFirstListItem(`original_name="${unregisteredName.replace(/"/g, '\\"')}"`);
+       await pb.collection('ingredient_corrections').update(existingHistory.id, {
+          corrected_name: targetIngredientName,
+          correction_count: (existingHistory.correction_count || 1) + 1
+       });
+    } catch (e) {
+       // Not exists, create new
+       try {
+          await pb.collection('ingredient_corrections').create({
+             original_name: unregisteredName,
+             corrected_name: targetIngredientName,
+             correction_count: 1
+          });
+       } catch (createErr) {
+          console.warn("Failed to create ingredient_corrections record", createErr);
        }
     }
 
