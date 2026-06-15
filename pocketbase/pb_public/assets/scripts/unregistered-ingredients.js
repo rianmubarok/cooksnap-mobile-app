@@ -21,6 +21,121 @@ window.closeUnregisteredModal = () => {
   }
 };
 
+// ─── Auto-Koreksi dari Histori ────────────────────────────────────────────────
+// Ambil SEMUA entri di ingredient_corrections lalu terapkan ke seluruh resep
+// secara sekaligus. Berguna setelah bulk import resep baru.
+window.applyAllCorrections = async () => {
+  const btn        = document.getElementById('btn-auto-correct');
+  const progressEl = document.getElementById('auto-correct-progress');
+  const statusEl   = document.getElementById('auto-correct-status');
+  const statsEl    = document.getElementById('auto-correct-stats');
+  const barEl      = document.getElementById('auto-correct-bar');
+  const logEl      = document.getElementById('auto-correct-log');
+
+  if (!confirm('Terapkan semua koreksi dari histori ke seluruh resep?\nProses ini akan memperbarui nama bahan di semua resep yang cocok.')) return;
+
+  // Disable tombol & tampilkan progress
+  btn.disabled = true;
+  btn.classList.add('opacity-60', 'cursor-not-allowed');
+  progressEl.classList.remove('hidden');
+  logEl.innerHTML = '';
+  barEl.style.width = '0%';
+
+  const appendLog = (msg, color = 'text-indigo-700') => {
+    const div = document.createElement('div');
+    div.className = color;
+    div.textContent = msg;
+    logEl.appendChild(div);
+    logEl.scrollTop = logEl.scrollHeight;
+  };
+
+  try {
+    // 1. Ambil semua histori koreksi (skip blacklist: corrected_name kosong/null)
+    statusEl.textContent = 'Memuat histori koreksi...';
+    const allCorrections = await pb.collection('ingredient_corrections').getFullList();
+    const validCorrections = allCorrections.filter(c => c.corrected_name && c.corrected_name.trim() !== '');
+
+    if (validCorrections.length === 0) {
+      appendLog('⚠️  Tidak ada histori koreksi yang valid.', 'text-amber-600');
+      statusEl.textContent = 'Selesai — tidak ada koreksi.';
+      return;
+    }
+
+    appendLog(`📋 ${validCorrections.length} koreksi ditemukan. Memuat resep...`);
+
+    // 2. Ambil semua resep
+    statusEl.textContent = 'Memuat semua resep...';
+    const recipes = await pb.collection('recipes').getFullList({ fields: 'id,ingredients' });
+    appendLog(`📖 ${recipes.length} resep dimuat.`);
+
+    // 3. Buat lookup map: original_name (lowercase) → corrected_name
+    const correctionMap = new Map();
+    validCorrections.forEach(c => {
+      correctionMap.set(c.original_name.trim().toLowerCase(), c.corrected_name.trim());
+    });
+
+    // 4. Proses setiap resep
+    let totalRecipesUpdated = 0;
+    let totalCorrectionsApplied = 0;
+
+    for (let i = 0; i < recipes.length; i++) {
+      const r = recipes[i];
+      const percent = Math.round(((i + 1) / recipes.length) * 100);
+      barEl.style.width = `${percent}%`;
+      statsEl.textContent = `${i + 1}/${recipes.length} resep`;
+      statusEl.textContent = 'Memproses resep...';
+
+      if (!Array.isArray(r.ingredients)) continue;
+
+      let hasChanged = false;
+      let correctionsThisRecipe = 0;
+
+      const newIngredients = r.ingredients.map(ing => {
+        if (!ing || !ing.name) return ing;
+        const key = ing.name.trim().toLowerCase();
+        if (correctionMap.has(key)) {
+          const corrected = correctionMap.get(key);
+          if (corrected !== ing.name.trim()) {
+            hasChanged = true;
+            correctionsThisRecipe++;
+            return { ...ing, name: corrected };
+          }
+        }
+        return ing;
+      });
+
+      if (hasChanged) {
+        await pb.collection('recipes').update(r.id, { ingredients: newIngredients });
+        totalRecipesUpdated++;
+        totalCorrectionsApplied += correctionsThisRecipe;
+        appendLog(`✅ Resep #${i + 1}: ${correctionsThisRecipe} koreksi diterapkan`);
+      }
+    }
+
+    // 5. Ringkasan
+    const summaryMsg = `🎉 Selesai! ${totalCorrectionsApplied} koreksi diterapkan ke ${totalRecipesUpdated} resep.`;
+    appendLog(summaryMsg, 'text-green-700 font-medium');
+    statusEl.textContent = 'Selesai!';
+    barEl.style.width = '100%';
+    barEl.classList.remove('bg-indigo-600');
+    barEl.classList.add('bg-green-500');
+
+    showToast(summaryMsg, 'success');
+
+    // Refresh list bahan tidak terdaftar setelah koreksi
+    await scanUnregisteredIngredients();
+
+  } catch (err) {
+    console.error(err);
+    appendLog(`❌ Error: ${err.message}`, 'text-red-600');
+    statusEl.textContent = 'Gagal!';
+    showToast('Gagal menerapkan koreksi: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove('opacity-60', 'cursor-not-allowed');
+  }
+};
+
 window.scanUnregisteredIngredients = async () => {
   const listContainer = document.getElementById('unregistered-list');
   const emptyState = document.getElementById('unregistered-empty');

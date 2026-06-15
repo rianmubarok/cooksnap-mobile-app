@@ -385,10 +385,10 @@
         "name": "corrected_name",
         "type": "text",
         "system": false,
-        "required": true,
+        "required": false,
         "presentable": true,
         "options": {
-          "min": 1,
+          "min": null,
           "max": 100,
           "pattern": ""
         }

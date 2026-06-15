@@ -9,7 +9,7 @@
   <div
     class="relative bg-white rounded-3xl shadow-2xl w-full max-w-3xl flex flex-col max-h-[90vh] animate-slide-up"
   >
-    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+    <div class="p-6 border-b border-gray-100 flex justify-between items-start gap-3 flex-wrap">
       <div class="flex items-center gap-3">
         <div class="bg-amber-100 p-2 rounded-lg text-amber-600">
           <i data-feather="alert-triangle"></i>
@@ -19,12 +19,37 @@
           <span id="unregistered-count" class="ml-3 text-sm bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full hidden">0</span>
         </h3>
       </div>
-      <button
-        onclick="closeUnregisteredModal()"
-        class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-xl transition-all"
-      >
-        <i data-feather="x"></i>
-      </button>
+      <div class="flex items-center gap-2">
+        <button
+          id="btn-auto-correct"
+          onclick="applyAllCorrections()"
+          class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-xl transition-all"
+          title="Terapkan semua koreksi yang sudah pernah disimpan ke seluruh resep sekaligus"
+        >
+          <i data-feather="zap" class="w-4 h-4"></i>
+          Auto-Koreksi dari Histori
+        </button>
+        <button
+          onclick="closeUnregisteredModal()"
+          class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-xl transition-all"
+        >
+          <i data-feather="x"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Progress Auto-Koreksi -->
+    <div id="auto-correct-progress" class="hidden px-6 pt-4">
+      <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-sm font-medium text-indigo-800" id="auto-correct-status">Memproses...</span>
+          <span class="text-xs text-indigo-600" id="auto-correct-stats">0/0</span>
+        </div>
+        <div class="w-full bg-indigo-100 rounded-full h-2 mb-3">
+          <div id="auto-correct-bar" class="bg-indigo-600 h-2 rounded-full transition-all duration-300" style="width:0%"></div>
+        </div>
+        <div id="auto-correct-log" class="text-xs text-indigo-700 max-h-24 overflow-y-auto space-y-0.5 font-mono"></div>
+      </div>
     </div>
 
     <div class="p-6 flex-1 overflow-y-auto">
