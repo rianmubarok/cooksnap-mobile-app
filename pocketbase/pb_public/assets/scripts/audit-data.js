@@ -133,31 +133,54 @@ window.runDataAudit = async () => {
       recipeDuplicates.forEach(item => {
         const r = item.recipe;
         
-        Object.entries(item.duplicates).forEach(([dupName, ingList]) => {
-          const row = document.createElement('div');
-          row.className = 'flex flex-col sm:flex-row items-center justify-between p-4 bg-white border border-gray-200 rounded-xl gap-4';
+        Object.entries(item.duplicates).forEach(([dupName, ingList], idxLoop) => {
+          const container = document.createElement('div');
+          container.className = 'flex flex-col p-4 bg-white border border-gray-200 rounded-xl gap-4';
           
           let detailsHtml = '<ul class="mt-2 text-sm text-gray-500 list-disc pl-5">';
           ingList.forEach((ing, idx) => {
-             detailsHtml += `<li>Entri ${idx + 1}: <strong>${ing.quantity || '-'} ${ing.unit || '-'}</strong></li>`;
+             detailsHtml += `<li>Entri ${idx + 1}: ${ing.quantity || '-'} ${ing.unit || '-'}</li>`;
           });
           detailsHtml += '</ul>';
 
-          row.innerHTML = `
-            <div class="flex flex-col flex-1">
-              <span class="text-sm font-medium text-gray-900 mb-1">
-                Resep: <span class="text-blue-600">"${r.recipe_name}"</span>
-              </span>
-              <span class="text-xs text-gray-600">
-                Bahan <strong class="text-red-500">"${dupName}"</strong> disebut ${ingList.length} kali di dalam komposisi:
-              </span>
-              ${detailsHtml}
+          const uniqueId = r.id + '-' + idxLoop;
+
+          container.innerHTML = `
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div class="flex flex-col flex-1">
+                <span class="text-sm font-medium text-gray-900 mb-1">
+                  Resep: <span class="text-blue-600">"${r.recipe_name}"</span>
+                </span>
+                <span class="text-xs text-gray-600">
+                  Bahan <strong class="text-red-500">"${dupName}"</strong> disebut ${ingList.length} kali di dalam komposisi:
+                </span>
+                ${detailsHtml}
+              </div>
+              <button onclick="document.getElementById('form-${uniqueId}').classList.toggle('hidden')" class="px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 rounded-lg text-sm font-medium transition-colors whitespace-nowrap self-start sm:self-auto">
+                Selesaikan Gandaan
+              </button>
             </div>
-            <button onclick="removeDuplicateFromRecipe('${r.id}', '${dupName.replace(/'/g, "\\'")}')" class="px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 rounded-lg text-sm font-medium transition-colors whitespace-nowrap self-start sm:self-auto">
-              Hapus Gandaan (Sisakan 1)
-            </button>
+            
+            <div id="form-${uniqueId}" class="hidden mt-3 pt-4 border-t border-gray-100 flex flex-col sm:flex-row gap-3 items-end bg-gray-50 p-4 rounded-xl">
+              <div class="flex-1 w-full">
+                <label class="block text-xs font-medium text-gray-700 mb-1">Kuantitas Akhir <span class="text-gray-400 font-normal">(Kosongkan jika tak pasti)</span></label>
+                <input type="number" step="any" id="qty-${uniqueId}" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-cookgreen-500 focus:border-cookgreen-500 outline-none" placeholder="misal: 1.25">
+              </div>
+              <div class="flex-1 w-full">
+                <label class="block text-xs font-medium text-gray-700 mb-1">Satuan Akhir <span class="text-gray-400 font-normal">(Wajib)</span></label>
+                <input type="text" id="unit-${uniqueId}" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-cookgreen-500 focus:border-cookgreen-500 outline-none" placeholder="misal: sdt, secukupnya">
+              </div>
+              <div class="flex gap-2 w-full sm:w-auto">
+                <button onclick="document.getElementById('form-${uniqueId}').classList.add('hidden')" class="px-4 py-2 bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 rounded-lg text-sm font-medium transition-colors flex-1 sm:flex-none">
+                  Batal
+                </button>
+                <button onclick="submitDuplicateResolution('${r.id}', '${dupName.replace(/'/g, "\\'")}', 'qty-${uniqueId}', 'unit-${uniqueId}')" class="px-4 py-2 bg-cookgreen-600 text-white hover:bg-cookgreen-700 border border-cookgreen-600 rounded-lg text-sm font-medium transition-colors flex-1 sm:flex-none">
+                  Simpan
+                </button>
+              </div>
+            </div>
           `;
-          recipesList.appendChild(row);
+          recipesList.appendChild(container);
         });
       });
     }
@@ -217,9 +240,17 @@ window.mergeMasterIngredients = async (idKehilangan, idDipertahankan, nameDibuan
   }
 };
 
-window.removeDuplicateFromRecipe = async (recipeId, duplicateName) => {
+window.submitDuplicateResolution = async (recipeId, duplicateName, qtyInputId, unitInputId) => {
+  const qtyVal = document.getElementById(qtyInputId).value;
+  const unitVal = document.getElementById(unitInputId).value;
+
+  if (!unitVal.trim()) {
+    showToast('Satuan tidak boleh kosong. Ketik "secukupnya" jika tidak pasti.', 'error');
+    return;
+  }
+
   try {
-    showToast(`Menghapus gandaan "${duplicateName}"...`, 'info');
+    showToast(`Menyatukan "${duplicateName}"...`, 'info');
 
     const recipe = await pb.collection('recipes').getOne(recipeId);
     if (!recipe || !Array.isArray(recipe.ingredients)) return;
@@ -227,14 +258,17 @@ window.removeDuplicateFromRecipe = async (recipeId, duplicateName) => {
     let seen = false;
     const newIngredients = [];
 
-    // Keep the first occurrence, remove subsequent ones
     for (const ing of recipe.ingredients) {
       if (ing && ing.name && ing.name.trim() === duplicateName) {
         if (!seen) {
           seen = true;
-          newIngredients.push(ing);
+          newIngredients.push({
+            ...ing,
+            quantity: qtyVal ? Number(qtyVal) : null,
+            unit: unitVal.trim()
+          });
         } else {
-          // This is a duplicate occurrence, skip it (effectively deleting it)
+          // Skip subsequent occurrences
         }
       } else {
         newIngredients.push(ing);
@@ -243,13 +277,11 @@ window.removeDuplicateFromRecipe = async (recipeId, duplicateName) => {
 
     await pb.collection('recipes').update(recipeId, { ingredients: newIngredients });
     
-    showToast(`Berhasil menghapus gandaan dari resep!`, 'success');
-    
-    // Refresh Audit
+    showToast(`Berhasil menggabungkan entri ganda!`, 'success');
     runDataAudit();
 
   } catch (err) {
     console.error(err);
-    showToast('Gagal menghapus gandaan: ' + err.message, 'error');
+    showToast('Gagal menyatukan gandaan: ' + err.message, 'error');
   }
 };
