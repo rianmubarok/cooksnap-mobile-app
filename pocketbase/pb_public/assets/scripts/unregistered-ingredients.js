@@ -22,9 +22,108 @@ window.closeUnregisteredModal = () => {
 };
 
 // ─── Auto-Koreksi dari Histori ────────────────────────────────────────────────
-// Ambil SEMUA entri di ingredient_corrections lalu terapkan ke seluruh resep
-// secara sekaligus. Berguna setelah bulk import resep baru.
+// FASE 1: Tampilkan preview daftar koreksi (original → corrected)
+// FASE 2: Setelah user konfirmasi, apply ke semua resep
+
 window.applyAllCorrections = async () => {
+  const previewEl = document.getElementById('auto-correct-preview');
+  const progressEl = document.getElementById('auto-correct-progress');
+
+  // Jika preview sedang ditampilkan, toggle tutup
+  if (previewEl && !previewEl.classList.contains('hidden')) {
+    previewEl.classList.add('hidden');
+    return;
+  }
+
+  const btn = document.getElementById('btn-auto-correct');
+  btn.disabled = true;
+  btn.innerHTML = `<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div> Memuat...`;
+
+  try {
+    const allCorrections = await pb.collection('ingredient_corrections').getFullList({ sort: 'original_name' });
+    const validCorrections = allCorrections.filter(c => c.corrected_name && c.corrected_name.trim() !== '');
+    const blacklist = allCorrections.filter(c => !c.corrected_name || c.corrected_name.trim() === '');
+
+    // Render tabel preview
+    const tableRows = validCorrections.map((c, i) => `
+      <tr class="${i % 2 === 0 ? 'bg-white' : 'bg-indigo-50/30'}">
+        <td class="px-3 py-1.5 text-xs text-gray-500 font-mono w-8">${i + 1}</td>
+        <td class="px-3 py-1.5 text-xs text-gray-700 font-medium">${c.original_name}</td>
+        <td class="px-2 py-1.5 text-gray-400 text-center">→</td>
+        <td class="px-3 py-1.5 text-xs text-indigo-700 font-medium">${c.corrected_name}</td>
+        <td class="px-3 py-1.5 text-center">
+          <button onclick="deleteCorrection('${c.id}')" class="text-red-400 hover:text-red-600 transition-colors" title="Hapus entri koreksi ini">
+            <i data-feather="trash-2" class="w-3 h-3"></i>
+          </button>
+        </td>
+      </tr>
+    `).join('');
+
+    const blacklistRows = blacklist.length > 0 ? `
+      <div class="mt-2 text-xs text-gray-500 flex items-center gap-1.5">
+        <i data-feather="slash" class="w-3 h-3 text-red-400"></i>
+        <span>${blacklist.length} item blacklist (bukan bahan makanan): ${blacklist.map(b => `<span class="bg-red-50 text-red-600 px-1.5 py-0.5 rounded">${b.original_name}</span>`).join(' ')}</span>
+      </div>
+    ` : '';
+
+    previewEl.innerHTML = `
+      <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <i data-feather="list" class="w-4 h-4 text-indigo-600"></i>
+            <span class="text-sm font-medium text-indigo-800">${validCorrections.length} koreksi siap diterapkan</span>
+          </div>
+          <button onclick="executeAllCorrections()" class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded-lg transition-all">
+            <i data-feather="check" class="w-3.5 h-3.5"></i>
+            Terapkan Sekarang
+          </button>
+        </div>
+        <div class="max-h-64 overflow-y-auto border border-indigo-100 rounded-lg bg-white">
+          <table class="w-full">
+            <thead class="bg-indigo-100 sticky top-0">
+              <tr>
+                <th class="px-3 py-2 text-left text-xs font-medium text-indigo-600 w-8">#</th>
+                <th class="px-3 py-2 text-left text-xs font-medium text-indigo-600">Nama Asli</th>
+                <th class="px-2 py-2 w-6"></th>
+                <th class="px-3 py-2 text-left text-xs font-medium text-indigo-600">Dikoreksi Menjadi</th>
+                <th class="px-3 py-2 w-8"></th>
+              </tr>
+            </thead>
+            <tbody>${tableRows}</tbody>
+          </table>
+        </div>
+        ${blacklistRows}
+      </div>
+    `;
+
+    previewEl.classList.remove('hidden');
+    feather.replace();
+
+  } catch (err) {
+    showToast('Gagal memuat daftar koreksi: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<i data-feather="zap" class="w-4 h-4"></i> Auto-Koreksi dari Histori`;
+    feather.replace();
+  }
+};
+
+// Hapus satu entri koreksi dari daftar
+window.deleteCorrection = async (id) => {
+  if (!confirm('Hapus entri koreksi ini dari histori?')) return;
+  try {
+    await pb.collection('ingredient_corrections').delete(id);
+    showToast('Entri koreksi dihapus', 'success');
+    // Refresh preview
+    document.getElementById('auto-correct-preview').classList.add('hidden');
+    await applyAllCorrections();
+  } catch (err) {
+    showToast('Gagal hapus: ' + err.message, 'error');
+  }
+};
+
+// FASE 2: Eksekusi penerapan ke semua resep
+window.executeAllCorrections = async () => {
   const btn        = document.getElementById('btn-auto-correct');
   const progressEl = document.getElementById('auto-correct-progress');
   const statusEl   = document.getElementById('auto-correct-status');
@@ -32,7 +131,8 @@ window.applyAllCorrections = async () => {
   const barEl      = document.getElementById('auto-correct-bar');
   const logEl      = document.getElementById('auto-correct-log');
 
-  if (!confirm('Terapkan semua koreksi dari histori ke seluruh resep?\nProses ini akan memperbarui nama bahan di semua resep yang cocok.')) return;
+  // Tutup panel preview, tampilkan progress
+  document.getElementById('auto-correct-preview').classList.add('hidden');
 
   // Disable tombol & tampilkan progress
   btn.disabled = true;
@@ -40,6 +140,8 @@ window.applyAllCorrections = async () => {
   progressEl.classList.remove('hidden');
   logEl.innerHTML = '';
   barEl.style.width = '0%';
+  barEl.classList.remove('bg-green-500');
+  barEl.classList.add('bg-indigo-600');
 
   const appendLog = (msg, color = 'text-indigo-700') => {
     const div = document.createElement('div');
