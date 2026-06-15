@@ -27,9 +27,8 @@ window.closeUnregisteredModal = () => {
 
 window.applyAllCorrections = async () => {
   const previewEl = document.getElementById('auto-correct-preview');
-  const progressEl = document.getElementById('auto-correct-progress');
 
-  // Jika preview sedang ditampilkan, toggle tutup
+  // Toggle tutup jika preview sedang tampil
   if (previewEl && !previewEl.classList.contains('hidden')) {
     previewEl.classList.add('hidden');
     return;
@@ -40,36 +39,57 @@ window.applyAllCorrections = async () => {
   btn.innerHTML = `<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div> Memuat...`;
 
   try {
-    // Ambil semua koreksi + master ingredients secara paralel
-    const [allCorrections, masterItems] = await Promise.all([
+    // Ambil semua data yang dibutuhkan secara paralel
+    const [allCorrections, masterItems, recipes] = await Promise.all([
       pb.collection('ingredient_corrections').getFullList({ sort: 'original_name' }),
       pb.collection('ingredients').getFullList({ fields: 'name' }),
+      pb.collection('recipes').getFullList({ fields: 'id,ingredients' }),
     ]);
 
+    // 1. Tentukan nama bahan yang TAK TERDAFTAR di resep saat ini
     const masterNames = new Set(masterItems.map(m => (m.name || '').trim().toLowerCase()));
-    const blacklist   = allCorrections.filter(c => !c.corrected_name || c.corrected_name.trim() === '');
+    const unregisteredNames = new Set();
+    recipes.forEach(r => {
+      if (!Array.isArray(r.ingredients)) return;
+      r.ingredients.forEach(ing => {
+        if (ing && ing.name) {
+          const n = ing.name.trim();
+          if (!masterNames.has(n.toLowerCase())) unregisteredNames.add(n.toLowerCase());
+        }
+      });
+    });
 
-    // Hanya tampilkan koreksi untuk nama yang BELUM ada di master saat ini
-    const validCorrections = allCorrections.filter(c =>
-      c.corrected_name &&
-      c.corrected_name.trim() !== '' &&
-      !masterNames.has(c.original_name.trim().toLowerCase())
-    );
+    // 2. Buat lookup dari corrections
+    const correctionsMap = new Map();
+    allCorrections.forEach(c => {
+      if (c.corrected_name && c.corrected_name.trim() !== '') {
+        correctionsMap.set(c.original_name.trim().toLowerCase(), c);
+      }
+    });
 
-    const skippedCount = allCorrections.filter(c =>
-      c.corrected_name &&
-      c.corrected_name.trim() !== '' &&
-      masterNames.has(c.original_name.trim().toLowerCase())
-    ).length;
+    // 3. Dari bahan TAK TERDAFTAR, cari yang ada di corrections
+    const matchedCorrections = [];
+    const noHistoryCount = { count: 0 };
+    unregisteredNames.forEach(name => {
+      if (correctionsMap.has(name)) {
+        matchedCorrections.push(correctionsMap.get(name));
+      } else {
+        noHistoryCount.count++;
+      }
+    });
 
-    if (validCorrections.length === 0) {
+    // Render preview
+    if (matchedCorrections.length === 0) {
       previewEl.innerHTML = `
-        <div class="bg-green-50 border border-green-100 rounded-xl p-4 flex items-center gap-3">
-          <i data-feather="check-circle" class="w-5 h-5 text-green-500 flex-shrink-0"></i>
-          <span class="text-sm text-green-700 font-medium">
-            Semua bahan dalam histori sudah terdaftar di master.
-            ${skippedCount > 0 ? `(${skippedCount} entri sudah terdaftar)` : ''}
-          </span>
+        <div class="bg-amber-50 border border-amber-100 rounded-xl p-4 flex items-start gap-3">
+          <i data-feather="info" class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5"></i>
+          <div>
+            <p class="text-sm text-amber-800 font-medium">Tidak ada bahan tak terdaftar yang bisa di-auto-koreksi.</p>
+            <p class="text-xs text-amber-600 mt-1">
+              ${unregisteredNames.size} bahan belum terdaftar, tapi tidak ada yang cocok dengan histori koreksi.
+              Koreksi manual diperlukan untuk bahan-bahan tersebut.
+            </p>
+          </div>
         </div>
       `;
       previewEl.classList.remove('hidden');
@@ -77,8 +97,9 @@ window.applyAllCorrections = async () => {
       return;
     }
 
-    // Render tabel preview — hanya koreksi yang relevan
-    const tableRows = validCorrections.map((c, i) => `
+    matchedCorrections.sort((a, b) => a.original_name.localeCompare(b.original_name));
+
+    const tableRows = matchedCorrections.map((c, i) => `
       <tr class="${i % 2 === 0 ? 'bg-white' : 'bg-indigo-50/30'}">
         <td class="px-3 py-1.5 text-xs text-gray-500 font-mono w-8">${i + 1}</td>
         <td class="px-3 py-1.5 text-xs text-gray-700 font-medium">${c.original_name}</td>
@@ -92,23 +113,16 @@ window.applyAllCorrections = async () => {
       </tr>
     `).join('');
 
-    const skippedNote = skippedCount > 0
-      ? `<div class="mt-1.5 text-xs text-gray-400">${skippedCount} entri lain dilewati karena sudah terdaftar di master.</div>`
+    const noHistoryNote = noHistoryCount.count > 0
+      ? `<div class="mt-2 text-xs text-gray-500">⚠️ ${noHistoryCount.count} bahan tak terdaftar lainnya belum ada di histori — perlu koreksi manual.</div>`
       : '';
-
-    const blacklistRows = blacklist.length > 0 ? `
-      <div class="mt-2 text-xs text-gray-500 flex items-center gap-1.5">
-        <i data-feather="slash" class="w-3 h-3 text-red-400"></i>
-        <span>${blacklist.length} blacklist: ${blacklist.map(b => `<span class="bg-red-50 text-red-600 px-1.5 py-0.5 rounded">${b.original_name}</span>`).join(' ')}</span>
-      </div>
-    ` : '';
 
     previewEl.innerHTML = `
       <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
-            <i data-feather="list" class="w-4 h-4 text-indigo-600"></i>
-            <span class="text-sm font-medium text-indigo-800">${validCorrections.length} koreksi relevan dengan bahan tak terdaftar saat ini</span>
+            <i data-feather="zap" class="w-4 h-4 text-indigo-600"></i>
+            <span class="text-sm font-medium text-indigo-800">${matchedCorrections.length} dari ${unregisteredNames.size} bahan tak terdaftar bisa di-auto-koreksi</span>
           </div>
           <button onclick="executeAllCorrections()" class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded-lg transition-all">
             <i data-feather="check" class="w-3.5 h-3.5"></i>
@@ -120,7 +134,7 @@ window.applyAllCorrections = async () => {
             <thead class="bg-indigo-100 sticky top-0">
               <tr>
                 <th class="px-3 py-2 text-left text-xs font-medium text-indigo-600 w-8">#</th>
-                <th class="px-3 py-2 text-left text-xs font-medium text-indigo-600">Nama Asli (Belum Terdaftar)</th>
+                <th class="px-3 py-2 text-left text-xs font-medium text-indigo-600">Nama di Resep (Belum Terdaftar)</th>
                 <th class="px-2 py-2 w-6"></th>
                 <th class="px-3 py-2 text-left text-xs font-medium text-indigo-600">Dikoreksi Menjadi</th>
                 <th class="px-3 py-2 w-8"></th>
@@ -129,8 +143,7 @@ window.applyAllCorrections = async () => {
             <tbody>${tableRows}</tbody>
           </table>
         </div>
-        ${skippedNote}
-        ${blacklistRows}
+        ${noHistoryNote}
       </div>
     `;
 
@@ -190,77 +203,69 @@ window.executeAllCorrections = async () => {
   };
 
   try {
-    // 1. Ambil semua histori koreksi (skip blacklist: corrected_name kosong/null)
-    statusEl.textContent = 'Memuat histori koreksi...';
-    const allCorrections = await pb.collection('ingredient_corrections').getFullList();
-    const validCorrections = allCorrections.filter(c => c.corrected_name && c.corrected_name.trim() !== '');
+    // 1. Ambil semua data secara paralel
+    statusEl.textContent = 'Memuat data...';
+    const [allCorrections, masterItems, recipes] = await Promise.all([
+      pb.collection('ingredient_corrections').getFullList(),
+      pb.collection('ingredients').getFullList({ fields: 'name' }),
+      pb.collection('recipes').getFullList({ fields: 'id,ingredients' }),
+    ]);
 
-    if (validCorrections.length === 0) {
-      appendLog('⚠️  Tidak ada histori koreksi yang valid.', 'text-amber-600');
-      statusEl.textContent = 'Selesai — tidak ada koreksi.';
-      return;
-    }
-
-    // 2. Ambil master bahan yang SUDAH terdaftar
-    statusEl.textContent = 'Memuat master bahan...';
-    const masterItems = await pb.collection('ingredients').getFullList({ fields: 'name' });
+    // 2. Tentukan nama bahan TAK TERDAFTAR yang ada di resep
     const masterNames = new Set(masterItems.map(m => (m.name || '').trim().toLowerCase()));
-    appendLog(`📦 ${masterNames.size} bahan terdaftar di master.`);
+    const unregisteredNames = new Set();
+    recipes.forEach(r => {
+      if (!Array.isArray(r.ingredients)) return;
+      r.ingredients.forEach(ing => {
+        if (ing && ing.name && !masterNames.has(ing.name.trim().toLowerCase())) {
+          unregisteredNames.add(ing.name.trim().toLowerCase());
+        }
+      });
+    });
 
-    // 3. Filter: hanya koreksi untuk nama yang BELUM ada di master
+    appendLog(`📦 ${masterNames.size} master bahan. 🔍 ${unregisteredNames.size} nama tak terdaftar ditemukan di resep.`);
+
+    // 3. Buat correctionMap HANYA dari nama yang tak terdaftar DAN ada di corrections
     const correctionMap = new Map();
-    let skippedCount = 0;
-    validCorrections.forEach(c => {
+    allCorrections.forEach(c => {
+      if (!c.corrected_name || c.corrected_name.trim() === '') return;
       const origLower = c.original_name.trim().toLowerCase();
-      // Jika original_name sudah ada di master → tidak perlu dikoreksi
-      if (masterNames.has(origLower)) {
-        skippedCount++;
-        return;
+      if (unregisteredNames.has(origLower)) {
+        correctionMap.set(origLower, c.corrected_name.trim());
       }
-      correctionMap.set(origLower, c.corrected_name.trim());
     });
 
     if (correctionMap.size === 0) {
-      appendLog(`✅ Semua bahan sudah terdaftar di master. Tidak ada yang perlu dikoreksi.`, 'text-green-700');
-      if (skippedCount > 0) appendLog(`   (${skippedCount} entri dilewati karena sudah terdaftar)`, 'text-gray-500');
-      statusEl.textContent = 'Selesai!';
+      appendLog('⚠️  Tidak ada bahan tak terdaftar yang cocok dengan histori koreksi.', 'text-amber-600');
+      statusEl.textContent = 'Selesai — tidak ada yang bisa di-auto-koreksi.';
       barEl.style.width = '100%';
       return;
     }
 
-    appendLog(`📋 ${correctionMap.size} koreksi aktif (${skippedCount} dilewati — sudah terdaftar). Memuat resep...`);
+    appendLog(`✅ ${correctionMap.size} bahan bisa di-auto-koreksi. Memproses ${recipes.length} resep...`);
 
-    // 4. Ambil semua resep
-    statusEl.textContent = 'Memuat semua resep...';
-    const recipes = await pb.collection('recipes').getFullList({ fields: 'id,ingredients' });
-    appendLog(`📖 ${recipes.length} resep dimuat.`);
-
-    // 5. Proses setiap resep — hanya sentuh bahan yang ada di correctionMap
+    // 4. Proses resep
     let totalRecipesUpdated = 0;
     let totalCorrectionsApplied = 0;
 
     for (let i = 0; i < recipes.length; i++) {
       const r = recipes[i];
-      const percent = Math.round(((i + 1) / recipes.length) * 100);
-      barEl.style.width = `${percent}%`;
+      barEl.style.width = `${Math.round(((i + 1) / recipes.length) * 100)}%`;
       statsEl.textContent = `${i + 1}/${recipes.length} resep`;
       statusEl.textContent = 'Memproses resep...';
 
       if (!Array.isArray(r.ingredients)) continue;
 
       let hasChanged = false;
-      let correctionsThisRecipe = 0;
+      let count = 0;
 
       const newIngredients = r.ingredients.map(ing => {
         if (!ing || !ing.name) return ing;
         const key = ing.name.trim().toLowerCase();
         if (correctionMap.has(key)) {
-          const corrected = correctionMap.get(key);
-          if (corrected !== ing.name.trim()) {
-            hasChanged = true;
-            correctionsThisRecipe++;
-            return { ...ing, name: corrected };
-          }
+          hasChanged = true;
+          count++;
+          return { ...ing, name: correctionMap.get(key) };
         }
         return ing;
       });
@@ -268,22 +273,17 @@ window.executeAllCorrections = async () => {
       if (hasChanged) {
         await pb.collection('recipes').update(r.id, { ingredients: newIngredients });
         totalRecipesUpdated++;
-        totalCorrectionsApplied += correctionsThisRecipe;
-        appendLog(`✅ Resep #${i + 1}: ${correctionsThisRecipe} koreksi diterapkan`);
+        totalCorrectionsApplied += count;
+        appendLog(`✅ Resep #${i + 1}: ${count} koreksi diterapkan`);
       }
     }
 
-    // 5. Ringkasan
     const summaryMsg = `🎉 Selesai! ${totalCorrectionsApplied} koreksi diterapkan ke ${totalRecipesUpdated} resep.`;
     appendLog(summaryMsg, 'text-green-700 font-medium');
     statusEl.textContent = 'Selesai!';
     barEl.style.width = '100%';
-    barEl.classList.remove('bg-indigo-600');
-    barEl.classList.add('bg-green-500');
-
+    barEl.classList.replace('bg-indigo-600', 'bg-green-500');
     showToast(summaryMsg, 'success');
-
-    // Refresh list bahan tidak terdaftar setelah koreksi
     await scanUnregisteredIngredients();
 
   } catch (err) {
