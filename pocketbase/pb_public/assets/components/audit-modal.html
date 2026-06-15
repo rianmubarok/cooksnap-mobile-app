@@ -1,34 +1,44 @@
 <div
   id="audit-modal"
-  class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm hidden"
+  class="fixed inset-0 z-[110] flex items-center justify-center p-4 hidden animate-fade-in"
 >
   <div
-    class="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl animate-scale-up overflow-hidden"
+    class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"
+    onclick="closeAuditModal()"
+  ></div>
+  <div
+    class="relative bg-white rounded-3xl shadow-2xl w-full max-w-4xl flex flex-col max-h-[90vh] animate-slide-up"
   >
-    <!-- Header -->
-    <div class="flex items-center justify-between px-8 py-6 border-b border-gray-100 bg-white z-10">
-      <div>
-        <h3 class="text-xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
-          <i data-feather="activity" class="w-6 h-6 text-purple-600"></i>
+    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="bg-purple-100 p-2 rounded-lg text-purple-600">
+          <i data-feather="activity"></i>
+        </div>
+        <h3 class="text-xl font-medium text-gray-900 flex items-center">
           Audit Data (Pengecekan Duplikat)
         </h3>
-        <p class="text-sm text-gray-500 mt-1">Sistem otomatis mendeteksi bahan ganda atau berulang untuk menjaga integritas data.</p>
       </div>
       <button
         onclick="closeAuditModal()"
-        class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+        class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-xl transition-all"
       >
-        <i data-feather="x" class="w-6 h-6"></i>
+        <i data-feather="x"></i>
       </button>
     </div>
 
-    <!-- Body -->
-    <div class="p-8 flex-1 overflow-y-auto bg-gray-50">
-      
+    <div class="p-6 flex-1 overflow-y-auto bg-white">
+      <div class="mb-6 bg-purple-50 text-purple-800 p-4 rounded-xl border border-purple-100">
+        <div class="flex items-start gap-3">
+          <i data-feather="info" class="w-5 h-5 flex-shrink-0 mt-0.5"></i>
+          <p class="text-sm">
+            Sistem otomatis mendeteksi bahan ganda atau berulang untuk menjaga integritas data master dan komposisi resep Anda.
+          </p>
+        </div>
+      </div>
+
       <!-- Loading State -->
-      <div id="audit-loading" class="py-20 flex flex-col items-center justify-center hidden">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mb-4"></div>
-        <p class="text-gray-500 font-medium">Sedang memindai database...</p>
+      <div id="audit-loading" class="flex justify-center py-10 hidden">
+        <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-cookgreen-500"></div>
       </div>
 
       <!-- Content -->
@@ -37,31 +47,37 @@
         <!-- Section 1: Master Ingredients -->
         <section>
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center">
+            <div class="bg-orange-100 p-1.5 rounded-md text-orange-600 flex items-center justify-center">
               <i data-feather="database" class="w-4 h-4"></i>
             </div>
-            <h4 class="text-lg font-semibold text-gray-900">Duplikat di Master Bahan</h4>
+            <h4 class="text-base font-semibold text-gray-900">Duplikat di Master Bahan</h4>
           </div>
-          <div id="audit-master-empty" class="hidden text-sm text-gray-500 bg-white p-4 border border-gray-200 rounded-xl">
-            Tidak ditemukan duplikat di master bahan.
+          <div id="audit-master-empty" class="hidden text-center py-6">
+            <div class="bg-gray-100 p-3 rounded-full inline-block mb-3">
+              <i data-feather="check-circle" class="w-6 h-6 text-cookgreen-500"></i>
+            </div>
+            <p class="text-gray-600 text-sm">Tidak ditemukan duplikat di master bahan.</p>
           </div>
           <div id="audit-master-list" class="space-y-3">
             <!-- Injected by JS -->
           </div>
         </section>
 
-        <hr class="border-gray-200">
+        <hr class="border-gray-100">
 
         <!-- Section 2: Recipes Ingredients -->
         <section>
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+            <div class="bg-blue-100 p-1.5 rounded-md text-blue-600 flex items-center justify-center">
               <i data-feather="book" class="w-4 h-4"></i>
             </div>
-            <h4 class="text-lg font-semibold text-gray-900">Bahan Ganda dalam 1 Resep</h4>
+            <h4 class="text-base font-semibold text-gray-900">Bahan Ganda dalam 1 Resep</h4>
           </div>
-          <div id="audit-recipes-empty" class="hidden text-sm text-gray-500 bg-white p-4 border border-gray-200 rounded-xl">
-            Tidak ditemukan resep dengan bahan berulang.
+          <div id="audit-recipes-empty" class="hidden text-center py-6">
+            <div class="bg-gray-100 p-3 rounded-full inline-block mb-3">
+              <i data-feather="check-circle" class="w-6 h-6 text-cookgreen-500"></i>
+            </div>
+            <p class="text-gray-600 text-sm">Tidak ditemukan resep dengan bahan berulang.</p>
           </div>
           <div id="audit-recipes-list" class="space-y-3">
             <!-- Injected by JS -->

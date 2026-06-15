@@ -57,23 +57,32 @@ window.runDataAudit = async () => {
 
     recipes.forEach(r => {
       if (Array.isArray(r.ingredients)) {
-        const seen = new Set();
-        const duplicates = new Set();
+        const nameMap = new Map();
         
         r.ingredients.forEach(ing => {
           if (ing && ing.name) {
             const n = ing.name.trim();
-            if (seen.has(n)) {
-              duplicates.add(n);
+            if (!nameMap.has(n)) {
+              nameMap.set(n, []);
             }
-            seen.add(n);
+            nameMap.get(n).push(ing);
           }
         });
 
-        if (duplicates.size > 0) {
+        const duplicatesObj = {};
+        let hasDuplicate = false;
+        
+        nameMap.forEach((ingList, n) => {
+          if (ingList.length > 1) {
+            duplicatesObj[n] = ingList;
+            hasDuplicate = true;
+          }
+        });
+
+        if (hasDuplicate) {
           recipeDuplicates.push({
             recipe: r,
-            duplicateNames: Array.from(duplicates)
+            duplicates: duplicatesObj
           });
         }
       }
@@ -124,21 +133,28 @@ window.runDataAudit = async () => {
       recipeDuplicates.forEach(item => {
         const r = item.recipe;
         
-        item.duplicateNames.forEach(dupName => {
+        Object.entries(item.duplicates).forEach(([dupName, ingList]) => {
           const row = document.createElement('div');
           row.className = 'flex flex-col sm:flex-row items-center justify-between p-4 bg-white border border-gray-200 rounded-xl gap-4';
           
+          let detailsHtml = '<ul class="mt-2 text-sm text-gray-500 list-disc pl-5">';
+          ingList.forEach((ing, idx) => {
+             detailsHtml += `<li>Entri ${idx + 1}: <strong>${ing.quantity || '-'} ${ing.unit || '-'}</strong></li>`;
+          });
+          detailsHtml += '</ul>';
+
           row.innerHTML = `
             <div class="flex flex-col flex-1">
               <span class="text-sm font-medium text-gray-900 mb-1">
                 Resep: <span class="text-blue-600">"${r.recipe_name}"</span>
               </span>
               <span class="text-xs text-gray-600">
-                Bahan <strong class="text-red-500">"${dupName}"</strong> disebut lebih dari 1 kali di dalam komposisi.
+                Bahan <strong class="text-red-500">"${dupName}"</strong> disebut ${ingList.length} kali di dalam komposisi:
               </span>
+              ${detailsHtml}
             </div>
-            <button onclick="removeDuplicateFromRecipe('${r.id}', '${dupName.replace(/'/g, "\\'")}')" class="px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 rounded-lg text-sm font-medium transition-colors whitespace-nowrap">
-              Hapus Gandaan
+            <button onclick="removeDuplicateFromRecipe('${r.id}', '${dupName.replace(/'/g, "\\'")}')" class="px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 rounded-lg text-sm font-medium transition-colors whitespace-nowrap self-start sm:self-auto">
+              Hapus Gandaan (Sisakan 1)
             </button>
           `;
           recipesList.appendChild(row);
