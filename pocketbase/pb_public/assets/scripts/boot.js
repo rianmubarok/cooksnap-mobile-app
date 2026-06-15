@@ -10,7 +10,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     { id: 'component-bulk-modal', url: 'assets/components/bulk-modal.html' },
     { id: 'component-edit-modal', url: 'assets/components/edit-modal.html' },
     { id: 'component-unregistered-modal', url: 'assets/components/unregistered-modal.html' },
-    { id: 'component-json-editor-modal', url: 'assets/components/json-editor-modal.html' }
+    { id: 'component-json-editor-modal', url: 'assets/components/json-editor-modal.html' },
+    { id: 'component-audit-modal', url: 'assets/components/audit-modal.html' }
   ];
 
   try {

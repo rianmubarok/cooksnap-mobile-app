@@ -139,6 +139,14 @@
                 Pindai Bahan Hilang
               </button>
               <button
+                id="btn-audit-data"
+                onclick="openAuditModal()"
+                class="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-purple-100 text-purple-800 border border-purple-200 py-2.5 px-4 rounded-xl font-medium hover:bg-purple-200 transition-all shadow-sm"
+              >
+                <i data-feather="activity" class="w-5 h-5"></i>
+                Audit Data
+              </button>
+              <button
                 id="btn-edit-json"
                 onclick="openJsonEditorModal()"
                 class="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white text-gray-700 border border-gray-200 py-2.5 px-4 rounded-xl font-medium hover:bg-gray-50 transition-all shadow-sm"
@@ -326,6 +334,9 @@
     <!-- MODAL: EDIT DATA (Injected) -->
     <div id="component-edit-modal"></div>
 
+    <!-- MODAL: AUDIT DATA (Injected) -->
+    <div id="component-audit-modal"></div>
+
     <!-- Scripts -->
     <script src="assets/scripts/utils.js"></script>
     <script src="assets/scripts/settings.js"></script>
@@ -333,6 +344,7 @@
     <script src="assets/scripts/bulk-import.js"></script>
     <script src="assets/scripts/json-editor.js"></script>
     <script src="assets/scripts/unregistered-ingredients.js"></script>
+    <script src="assets/scripts/audit-data.js"></script>
     <script src="assets/scripts/dashboard.js"></script>
     <script src="assets/scripts/boot.js"></script>
     <script>
