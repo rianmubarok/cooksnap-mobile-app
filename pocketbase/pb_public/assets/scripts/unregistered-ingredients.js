@@ -163,20 +163,41 @@ window.executeAllCorrections = async () => {
       return;
     }
 
-    appendLog(`📋 ${validCorrections.length} koreksi ditemukan. Memuat resep...`);
+    // 2. Ambil master bahan yang SUDAH terdaftar
+    statusEl.textContent = 'Memuat master bahan...';
+    const masterItems = await pb.collection('ingredients').getFullList({ fields: 'name' });
+    const masterNames = new Set(masterItems.map(m => (m.name || '').trim().toLowerCase()));
+    appendLog(`📦 ${masterNames.size} bahan terdaftar di master.`);
 
-    // 2. Ambil semua resep
+    // 3. Filter: hanya koreksi untuk nama yang BELUM ada di master
+    const correctionMap = new Map();
+    let skippedCount = 0;
+    validCorrections.forEach(c => {
+      const origLower = c.original_name.trim().toLowerCase();
+      // Jika original_name sudah ada di master → tidak perlu dikoreksi
+      if (masterNames.has(origLower)) {
+        skippedCount++;
+        return;
+      }
+      correctionMap.set(origLower, c.corrected_name.trim());
+    });
+
+    if (correctionMap.size === 0) {
+      appendLog(`✅ Semua bahan sudah terdaftar di master. Tidak ada yang perlu dikoreksi.`, 'text-green-700');
+      if (skippedCount > 0) appendLog(`   (${skippedCount} entri dilewati karena sudah terdaftar)`, 'text-gray-500');
+      statusEl.textContent = 'Selesai!';
+      barEl.style.width = '100%';
+      return;
+    }
+
+    appendLog(`📋 ${correctionMap.size} koreksi aktif (${skippedCount} dilewati — sudah terdaftar). Memuat resep...`);
+
+    // 4. Ambil semua resep
     statusEl.textContent = 'Memuat semua resep...';
     const recipes = await pb.collection('recipes').getFullList({ fields: 'id,ingredients' });
     appendLog(`📖 ${recipes.length} resep dimuat.`);
 
-    // 3. Buat lookup map: original_name (lowercase) → corrected_name
-    const correctionMap = new Map();
-    validCorrections.forEach(c => {
-      correctionMap.set(c.original_name.trim().toLowerCase(), c.corrected_name.trim());
-    });
-
-    // 4. Proses setiap resep
+    // 5. Proses setiap resep — hanya sentuh bahan yang ada di correctionMap
     let totalRecipesUpdated = 0;
     let totalCorrectionsApplied = 0;
 
