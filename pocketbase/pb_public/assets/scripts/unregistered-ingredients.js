@@ -40,11 +40,44 @@ window.applyAllCorrections = async () => {
   btn.innerHTML = `<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div> Memuat...`;
 
   try {
-    const allCorrections = await pb.collection('ingredient_corrections').getFullList({ sort: 'original_name' });
-    const validCorrections = allCorrections.filter(c => c.corrected_name && c.corrected_name.trim() !== '');
-    const blacklist = allCorrections.filter(c => !c.corrected_name || c.corrected_name.trim() === '');
+    // Ambil semua koreksi + master ingredients secara paralel
+    const [allCorrections, masterItems] = await Promise.all([
+      pb.collection('ingredient_corrections').getFullList({ sort: 'original_name' }),
+      pb.collection('ingredients').getFullList({ fields: 'name' }),
+    ]);
 
-    // Render tabel preview
+    const masterNames = new Set(masterItems.map(m => (m.name || '').trim().toLowerCase()));
+    const blacklist   = allCorrections.filter(c => !c.corrected_name || c.corrected_name.trim() === '');
+
+    // Hanya tampilkan koreksi untuk nama yang BELUM ada di master saat ini
+    const validCorrections = allCorrections.filter(c =>
+      c.corrected_name &&
+      c.corrected_name.trim() !== '' &&
+      !masterNames.has(c.original_name.trim().toLowerCase())
+    );
+
+    const skippedCount = allCorrections.filter(c =>
+      c.corrected_name &&
+      c.corrected_name.trim() !== '' &&
+      masterNames.has(c.original_name.trim().toLowerCase())
+    ).length;
+
+    if (validCorrections.length === 0) {
+      previewEl.innerHTML = `
+        <div class="bg-green-50 border border-green-100 rounded-xl p-4 flex items-center gap-3">
+          <i data-feather="check-circle" class="w-5 h-5 text-green-500 flex-shrink-0"></i>
+          <span class="text-sm text-green-700 font-medium">
+            Semua bahan dalam histori sudah terdaftar di master.
+            ${skippedCount > 0 ? `(${skippedCount} entri sudah terdaftar)` : ''}
+          </span>
+        </div>
+      `;
+      previewEl.classList.remove('hidden');
+      feather.replace();
+      return;
+    }
+
+    // Render tabel preview — hanya koreksi yang relevan
     const tableRows = validCorrections.map((c, i) => `
       <tr class="${i % 2 === 0 ? 'bg-white' : 'bg-indigo-50/30'}">
         <td class="px-3 py-1.5 text-xs text-gray-500 font-mono w-8">${i + 1}</td>
@@ -59,10 +92,14 @@ window.applyAllCorrections = async () => {
       </tr>
     `).join('');
 
+    const skippedNote = skippedCount > 0
+      ? `<div class="mt-1.5 text-xs text-gray-400">${skippedCount} entri lain dilewati karena sudah terdaftar di master.</div>`
+      : '';
+
     const blacklistRows = blacklist.length > 0 ? `
       <div class="mt-2 text-xs text-gray-500 flex items-center gap-1.5">
         <i data-feather="slash" class="w-3 h-3 text-red-400"></i>
-        <span>${blacklist.length} item blacklist (bukan bahan makanan): ${blacklist.map(b => `<span class="bg-red-50 text-red-600 px-1.5 py-0.5 rounded">${b.original_name}</span>`).join(' ')}</span>
+        <span>${blacklist.length} blacklist: ${blacklist.map(b => `<span class="bg-red-50 text-red-600 px-1.5 py-0.5 rounded">${b.original_name}</span>`).join(' ')}</span>
       </div>
     ` : '';
 
@@ -71,7 +108,7 @@ window.applyAllCorrections = async () => {
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
             <i data-feather="list" class="w-4 h-4 text-indigo-600"></i>
-            <span class="text-sm font-medium text-indigo-800">${validCorrections.length} koreksi siap diterapkan</span>
+            <span class="text-sm font-medium text-indigo-800">${validCorrections.length} koreksi relevan dengan bahan tak terdaftar saat ini</span>
           </div>
           <button onclick="executeAllCorrections()" class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded-lg transition-all">
             <i data-feather="check" class="w-3.5 h-3.5"></i>
@@ -83,7 +120,7 @@ window.applyAllCorrections = async () => {
             <thead class="bg-indigo-100 sticky top-0">
               <tr>
                 <th class="px-3 py-2 text-left text-xs font-medium text-indigo-600 w-8">#</th>
-                <th class="px-3 py-2 text-left text-xs font-medium text-indigo-600">Nama Asli</th>
+                <th class="px-3 py-2 text-left text-xs font-medium text-indigo-600">Nama Asli (Belum Terdaftar)</th>
                 <th class="px-2 py-2 w-6"></th>
                 <th class="px-3 py-2 text-left text-xs font-medium text-indigo-600">Dikoreksi Menjadi</th>
                 <th class="px-3 py-2 w-8"></th>
@@ -92,6 +129,7 @@ window.applyAllCorrections = async () => {
             <tbody>${tableRows}</tbody>
           </table>
         </div>
+        ${skippedNote}
         ${blacklistRows}
       </div>
     `;
