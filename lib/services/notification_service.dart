@@ -18,6 +18,8 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   bool _isInitialized = false;
+  bool isAppReady = false;
+  Recipe? pendingRecipe;
 
   NotificationService._internal();
 
@@ -48,6 +50,12 @@ class NotificationService {
       },
     );
 
+    // Cek detail launch jika aplikasi dibuka melalui notifikasi dari terminated state
+    final details = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+    if (details != null && details.didNotificationLaunchApp && details.notificationResponse != null) {
+      _handleNotificationTap(details.notificationResponse!.payload);
+    }
+
     _isInitialized = true;
     _refreshScheduleIfNeeded();
   }
@@ -71,14 +79,32 @@ class NotificationService {
         final recipeId = data['recipe_id'];
         if (recipeId != null) {
           final recipe = Recipe.fromMap(data['recipe']);
-          AppRoutes.navigatorKey.currentState?.pushNamed(
-            AppRoutes.recipeDetail,
-            arguments: recipe,
-          );
+          if (isAppReady && AppRoutes.navigatorKey.currentState != null) {
+            AppRoutes.navigatorKey.currentState?.pushNamed(
+              AppRoutes.recipeDetail,
+              arguments: recipe,
+            );
+          } else {
+            pendingRecipe = recipe;
+          }
         }
       } catch (e) {
         debugPrint('Error parsing notification payload: $e');
       }
+    }
+  }
+
+  void processPendingNotification() {
+    isAppReady = true;
+    if (pendingRecipe != null) {
+      final recipe = pendingRecipe!;
+      pendingRecipe = null;
+      Future.delayed(const Duration(milliseconds: 500), () {
+        AppRoutes.navigatorKey.currentState?.pushNamed(
+          AppRoutes.recipeDetail,
+          arguments: recipe,
+        );
+      });
     }
   }
 

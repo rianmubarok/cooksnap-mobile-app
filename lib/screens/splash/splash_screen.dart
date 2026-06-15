@@ -10,6 +10,7 @@ import '../../providers/user_provider.dart';
 import '../../services/app_config_service.dart';
 import '../../screens/maintenance/maintenance_screen.dart';
 import '../../widgets/app_update_dialog.dart';
+import '../../services/notification_service.dart';
 
 /// Splash Screen — menjalankan version gate, maintenance check, lalu
 /// auto-navigates berdasarkan status login dan onboarding.
@@ -125,6 +126,7 @@ class _SplashScreenState extends State<SplashScreen>
     }
 
     Navigator.pushReplacementNamed(context, route);
+    NotificationService.instance.processPendingNotification();
   }
 
   /// Membandingkan dua versi semantik (format: "MAJOR.MINOR.PATCH").
