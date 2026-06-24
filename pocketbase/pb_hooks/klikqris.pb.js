@@ -18,12 +18,14 @@ routerAdd("POST", "/api/qris/create", (c) => {
         throw new BadRequestError("Server configuration missing: KLIKQRIS_API_KEY or KLIKQRIS_MERCHANT_ID")
     }
 
+    // Call KlikQRIS API
+    let res
     try {
-        const res = $http.send({
+        res = $http.send({
             url: "https://klikqris.com/api/qris/create",
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+                "content-type": "application/json",
                 "x-api-key": apiKey,
                 "id_merchant": merchantId
             },
@@ -31,44 +33,59 @@ routerAdd("POST", "/api/qris/create", (c) => {
                 "order_id": orderId,
                 "id_merchant": merchantId,
                 "amount": amount,
-                "keterangan": "CookSnap PRO 1 Bulan"
-            })
+                "keterangan": "CookSnap PRO 1 Bulan",
+                "callback_url": "https://cooksnap-mobile-app-production.up.railway.app/api/qris/webhook"
+            }),
+            timeout: 30
         })
+    } catch (httpErr) {
+        throw new BadRequestError("KlikQRIS connection error: " + httpErr)
+    }
 
-        if (res.statusCode < 200 || res.statusCode >= 300) {
-            let errStr = "HTTP " + res.statusCode
-            try { errStr += " " + JSON.stringify(res.json) } catch(e) {}
-            throw new BadRequestError("KlikQRIS Error: " + errStr)
-        }
+    // Log full response for debugging
+    const rawBody = res.raw
+    const statusCode = res.statusCode
 
-        const jsonRes = res.json
-        if (!jsonRes.status || !jsonRes.data) {
-             throw new BadRequestError("Invalid response from KlikQRIS")
-        }
+    if (statusCode < 200 || statusCode >= 300) {
+        throw new BadRequestError("KlikQRIS HTTP " + statusCode + ": " + rawBody)
+    }
 
-        const qrisData = jsonRes.data
+    // Parse response
+    let jsonRes
+    try {
+        jsonRes = JSON.parse(rawBody)
+    } catch (parseErr) {
+        throw new BadRequestError("KlikQRIS parse error. Raw: " + rawBody)
+    }
 
-        // Create transaction
+    if (!jsonRes.data) {
+        throw new BadRequestError("KlikQRIS no data. Response: " + rawBody)
+    }
+
+    const qrisData = jsonRes.data
+
+    // Create transaction record
+    try {
         const collection = $app.findCollectionByNameOrId("transactions")
         const record = new Record(collection)
 
-        record.set("order_id", qrisData.order_id)
+        record.set("order_id", qrisData.order_id || orderId)
         record.set("user_id", userId)
-        record.set("amount", parseInt(qrisData.amount))
-        record.set("total_amount", parseInt(qrisData.total_amount))
+        record.set("amount", parseInt(amount))
+        record.set("total_amount", parseInt(qrisData.total_amount || amount))
         record.set("status", "PENDING")
-        record.set("signature", qrisData.signature)
+        record.set("signature", qrisData.signature || "")
 
         $app.save(record)
-
-        return c.json(200, {
-            "order_id": qrisData.order_id,
-            "total_amount": qrisData.total_amount,
-            "qris_image": qrisData.qris_image
-        })
-    } catch (err) {
-        throw new BadRequestError("Error processing payment: " + err)
+    } catch (dbErr) {
+        throw new BadRequestError("DB save error: " + dbErr)
     }
+
+    return c.json(200, {
+        "order_id": qrisData.order_id || orderId,
+        "total_amount": qrisData.total_amount || amount,
+        "qris_image": qrisData.qris_image || ""
+    })
 }, $apis.requireAuth())
 
 
