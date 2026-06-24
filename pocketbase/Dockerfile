@@ -18,8 +18,8 @@ COPY ./pb_public /pb/pb_public
 # Copy your javascript hooks
 COPY ./pb_hooks /pb/pb_hooks
 
-# (Opsional) Uncomment baris di bawah ini jika Anda ingin mengunggah pb_migrations juga
-# COPY ./pb_migrations /pb/pb_migrations
+# Copy migrations to automatically create transactions table
+COPY ./pb_migrations /pb/pb_migrations
 
 # Set working directory so PocketBase finds pb_hooks and pb_data correctly
 WORKDIR /pb
