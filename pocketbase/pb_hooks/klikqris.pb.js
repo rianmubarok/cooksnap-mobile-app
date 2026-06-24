@@ -68,28 +68,30 @@ routerAdd("POST", "/api/qris/create", (c) => {
     $app.logger().info("KlikQRIS data", "order_id", qrisData.order_id, "total_amount", qrisData.total_amount, "keys", Object.keys(qrisData).join(","))
 
     // Create transaction record
+    let savedRecord
     try {
         const collection = $app.findCollectionByNameOrId("transactions")
-        const record = new Record(collection)
+        savedRecord = new Record(collection)
 
         const finalOrderId = qrisData.order_id || orderId
         const finalTotal = qrisData.total_amount ? parseInt(qrisData.total_amount) : amount
 
-        record.set("order_id", finalOrderId)
-        record.set("user_id", userId)
-        record.set("amount", parseInt(amount))
-        record.set("total_amount", finalTotal)
-        record.set("status", "PENDING")
-        record.set("signature", qrisData.signature || "")
+        savedRecord.set("order_id", finalOrderId)
+        savedRecord.set("user_id", userId)
+        savedRecord.set("amount", parseInt(amount))
+        savedRecord.set("total_amount", finalTotal)
+        savedRecord.set("status", "PENDING")
+        savedRecord.set("signature", qrisData.signature || "")
 
-        $app.save(record)
+        $app.save(savedRecord)
     } catch (dbErr) {
         throw new BadRequestError("DB save error: " + dbErr)
     }
 
+    // Return total_amount from DB record (guaranteed correct, includes unique code)
     return c.json(200, {
-        "order_id": qrisData.order_id || orderId,
-        "total_amount": qrisData.total_amount || amount,
+        "order_id": savedRecord.get("order_id"),
+        "total_amount": savedRecord.get("total_amount"),
         "qris_image": qrisData.qris_image || ""
     })
 }, $apis.requireAuth())
