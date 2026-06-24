@@ -67,7 +67,7 @@ routerAdd("POST", "/api/qris/create", (c) => {
     } catch (err) {
         throw new BadRequestError("Error processing payment: " + err)
     }
-})
+}, $apis.requireAuth())
 
 
 routerAdd("POST", "/api/qris/webhook", (c) => {
@@ -157,4 +157,4 @@ routerAdd("GET", "/api/qris/status/:orderId", (c) => {
     } catch (e) {
         throw new NotFoundError("Transaction not found")
     }
-})
+}, $apis.requireAuth())
