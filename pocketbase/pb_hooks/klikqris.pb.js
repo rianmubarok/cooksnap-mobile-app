@@ -49,7 +49,7 @@ routerAdd("POST", "/api/qris/create", (c) => {
         const qrisData = jsonRes.data
 
         // Create transaction
-        const collection = $app.dao().findCollectionByNameOrId("transactions")
+        const collection = $app.findCollectionByNameOrId("transactions")
         const record = new Record(collection)
 
         record.set("order_id", qrisData.order_id)
@@ -59,7 +59,7 @@ routerAdd("POST", "/api/qris/create", (c) => {
         record.set("status", "PENDING")
         record.set("signature", qrisData.signature)
 
-        $app.dao().saveRecord(record)
+        $app.save(record)
 
         return c.json(200, {
             "order_id": qrisData.order_id,
@@ -95,7 +95,7 @@ routerAdd("POST", "/api/qris/webhook", (c) => {
     }
 
     try {
-        const record = $app.dao().findFirstRecordByData("transactions", "order_id", orderId)
+        const record = $app.findFirstRecordByData("transactions", "order_id", orderId)
         
         // Validation 1: Check Signature
         if (record.get("signature") !== signature) {
@@ -106,11 +106,11 @@ routerAdd("POST", "/api/qris/webhook", (c) => {
         if (status === "PAID" || status === "SUCCESS") {
             if (record.get("status") !== "PAID") {
                 record.set("status", "PAID")
-                $app.dao().saveRecord(record)
+                $app.save(record)
 
                 // Update User
                 const userId = record.get("user_id")
-                const userRecord = $app.dao().findRecordById("users", userId)
+                const userRecord = $app.findRecordById("users", userId)
                 
                 userRecord.set("is_premium", true)
                 
@@ -120,12 +120,12 @@ routerAdd("POST", "/api/qris/webhook", (c) => {
                 const formattedDate = now.toISOString().replace('T', ' ').substring(0, 19) + 'Z'
                 userRecord.set("premium_until", formattedDate)
 
-                $app.dao().saveRecord(userRecord)
+                $app.save(userRecord)
             }
         } else if (status === "EXPIRED") {
              if (record.get("status") !== "PAID") {
                  record.set("status", "EXPIRED")
-                 $app.dao().saveRecord(record)
+                 $app.save(record)
              }
         }
 
@@ -146,7 +146,7 @@ routerAdd("GET", "/api/qris/status/:orderId", (c) => {
     const orderId = c.pathParam("orderId")
     
     try {
-        const record = $app.dao().findFirstRecordByData("transactions", "order_id", orderId)
+        const record = $app.findFirstRecordByData("transactions", "order_id", orderId)
         
         if (record.get("user_id") !== user.id) {
              throw new ForbiddenError("Not authorized.")
