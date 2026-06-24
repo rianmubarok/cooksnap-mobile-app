@@ -37,11 +37,11 @@ routerAdd("POST", "/api/qris/create", (c) => {
 
         if (res.statusCode < 200 || res.statusCode >= 300) {
             let errStr = "HTTP " + res.statusCode
-            try { errStr += " " + JSON.stringify(res.json()) } catch(e) {}
+            try { errStr += " " + JSON.stringify(res.json) } catch(e) {}
             throw new BadRequestError("KlikQRIS Error: " + errStr)
         }
 
-        const jsonRes = res.json()
+        const jsonRes = res.json
         if (!jsonRes.status || !jsonRes.data) {
              throw new BadRequestError("Invalid response from KlikQRIS")
         }
