@@ -27,7 +27,16 @@ class UserProvider extends ChangeNotifier {
   // Expose fields from UserModel safely
   String get name => _userModel?.name ?? '';
   String get email => _userModel?.email ?? '';
-  bool get isPremium => _userModel?.isPremium ?? false;
+  bool get isPremium {
+    if (_userModel == null) return false;
+    if (!_userModel!.isPremium) return false;
+    
+    if (_userModel!.premiumUntil != null) {
+      return DateTime.now().isBefore(_userModel!.premiumUntil!);
+    }
+    return true;
+  }
+  
   int get dailyScanCount => _userModel?.dailyScanCount ?? 0;
   
   static const int freeScanLimit = 3;
@@ -173,6 +182,28 @@ class UserProvider extends ChangeNotifier {
       'is_premium': true,
     });
     pb.authStore.save(pb.authStore.token, updatedRecord);
+  }
+
+  Future<Map<String, dynamic>> createSubscription() async {
+    if (!isLoggedIn) throw Exception('Not logged in');
+    try {
+      final response = await pb.send('/api/qris/create', method: 'POST');
+      return response as Map<String, dynamic>;
+    } catch (e) {
+      debugPrint('Error creating subscription: $e');
+      rethrow;
+    }
+  }
+
+  Future<String> checkPaymentStatus(String orderId) async {
+    if (!isLoggedIn) throw Exception('Not logged in');
+    try {
+      final response = await pb.send('/api/qris/status/$orderId', method: 'GET');
+      return (response as Map<String, dynamic>)['status'] as String;
+    } catch (e) {
+      debugPrint('Error checking payment status: $e');
+      rethrow;
+    }
   }
 
   Future<void> logout() async {

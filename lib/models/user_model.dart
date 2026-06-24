@@ -5,6 +5,7 @@ class UserModel {
   final String name;
   final String avatar;
   final bool isPremium;
+  final DateTime? premiumUntil;
   final int dailyScanCount;
   final String lastScanDate;
   final List<String> pantry;
@@ -16,6 +17,7 @@ class UserModel {
     required this.name,
     required this.avatar,
     this.isPremium = false,
+    this.premiumUntil,
     this.dailyScanCount = 0,
     this.lastScanDate = '',
     this.pantry = const [],
@@ -29,6 +31,9 @@ class UserModel {
       name: map['name'] ?? '',
       avatar: map['avatar'] ?? '',
       isPremium: map['is_premium'] ?? false,
+      premiumUntil: map['premium_until'] != null && map['premium_until'].toString().isNotEmpty 
+          ? DateTime.tryParse(map['premium_until']) 
+          : null,
       dailyScanCount: map['daily_scan_count'] ?? 0,
       lastScanDate: map['last_scan_date'] ?? '',
       pantry: _parsePantryIds(map['pantry']),
@@ -61,6 +66,7 @@ class UserModel {
       'name': name,
       'avatar': avatar,
       'is_premium': isPremium,
+      'premium_until': premiumUntil?.toIso8601String() ?? '',
       'daily_scan_count': dailyScanCount,
       'last_scan_date': lastScanDate,
       'pantry': pantry,
@@ -74,6 +80,7 @@ class UserModel {
     String? name,
     String? avatar,
     bool? isPremium,
+    DateTime? premiumUntil,
     int? dailyScanCount,
     String? lastScanDate,
     List<String>? pantry,
@@ -85,6 +92,7 @@ class UserModel {
       name: name ?? this.name,
       avatar: avatar ?? this.avatar,
       isPremium: isPremium ?? this.isPremium,
+      premiumUntil: premiumUntil ?? this.premiumUntil,
       dailyScanCount: dailyScanCount ?? this.dailyScanCount,
       lastScanDate: lastScanDate ?? this.lastScanDate,
       pantry: pantry ?? this.pantry,

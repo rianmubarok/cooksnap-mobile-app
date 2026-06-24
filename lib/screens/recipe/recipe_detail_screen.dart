@@ -23,15 +23,17 @@ import '../../widgets/recipe/recipe_steps_section.dart';
 class RecipeDetailScreen extends StatefulWidget {
   const RecipeDetailScreen({super.key});
 
-  static ({String id, List<String> ingredients}) _parseArgs(Object? args) {
-    if (args is String) return (id: args, ingredients: []);
+  static ({String id, List<String> ingredients, Recipe? initialRecipe}) _parseArgs(Object? args) {
+    if (args is Recipe) return (id: args.id, ingredients: [], initialRecipe: args);
+    if (args is String) return (id: args, ingredients: [], initialRecipe: null);
     if (args is Map) {
       return (
         id: args['id'] as String,
         ingredients: (args['availableIngredients'] as List<String>?) ?? [],
+        initialRecipe: null,
       );
     }
-    return (id: '1', ingredients: []);
+    return (id: '1', ingredients: [], initialRecipe: null);
   }
 
   @override
@@ -46,9 +48,15 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   bool _isTogglingFavorite = false;
   bool _hasError = false;
 
-  void _loadRecipe() {
+  void _loadRecipe({Recipe? initialRecipe}) {
     if (_recipeId == null) return;
     setState(() => _hasError = false);
+
+    if (initialRecipe != null) {
+      _recipeFuture = Future.value(initialRecipe);
+      return;
+    }
+
     _recipeFuture =
         context.read<RecipeRepository>().getRecipeById(_recipeId!).catchError(
       (e) {
@@ -67,7 +75,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           RecipeDetailScreen._parseArgs(ModalRoute.of(context)?.settings.arguments);
       _recipeId = parsed.id;
       _availableIngredients = parsed.ingredients;
-      _loadRecipe();
+      _loadRecipe(initialRecipe: parsed.initialRecipe);
     }
   }
 

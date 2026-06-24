@@ -8,6 +8,7 @@ import 'bottom_sheet_handle.dart';
 import '../custom_button.dart';
 import 'app_text.dart';
 import '../../utils/app_snackbar.dart';
+import '../../screens/payment/qris_payment_screen.dart';
 
 void showPaywallSheet(BuildContext context, {bool isLimitReached = false}) {
   showModalBottomSheet(
@@ -88,17 +89,14 @@ void showPaywallSheet(BuildContext context, {bool isLimitReached = false}) {
             const SizedBox(height: AppConstants.spacingXl),
             PrimaryButton(
               text: 'Upgrade Sekarang',
-              onPressed: () async {
-                final userProvider = context.read<UserProvider>();
-                await userProvider.upgradeToPremium();
-                if (sheetContext.mounted) {
-                  Navigator.pop(sheetContext);
-                  showAppSnackBar(
-                    sheetContext,
-                    'Berhasil upgrade ke PRO!',
-                    variant: AppSnackBarVariant.success,
-                  );
-                }
+              onPressed: () {
+                Navigator.pop(sheetContext);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const QrisPaymentScreen(),
+                  ),
+                );
               },
             ),
             const SizedBox(height: AppConstants.spacingMd),
