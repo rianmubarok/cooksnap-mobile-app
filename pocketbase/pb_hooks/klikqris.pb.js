@@ -36,7 +36,9 @@ routerAdd("POST", "/api/qris/create", (c) => {
         })
 
         if (res.statusCode !== 200) {
-            throw new BadRequestError("Failed to create transaction with KlikQRIS")
+            let errStr = "HTTP " + res.statusCode
+            try { errStr += " " + JSON.stringify(res.json()) } catch(e) {}
+            throw new BadRequestError("KlikQRIS Error: " + errStr)
         }
 
         const jsonRes = res.json()
