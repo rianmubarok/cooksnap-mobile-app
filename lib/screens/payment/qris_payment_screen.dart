@@ -6,8 +6,7 @@ import '../../providers/user_provider.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../widgets/common/app_text.dart';
-import '../../widgets/common/primary_button.dart';
-import '../../widgets/common/custom_app_bar.dart';
+import '../../widgets/custom_button.dart';
 
 class QrisPaymentScreen extends StatefulWidget {
   const QrisPaymentScreen({super.key});
@@ -165,7 +164,7 @@ class _QrisPaymentScreenState extends State<QrisPaymentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: const CustomAppBar(title: 'Pembayaran QRIS'),
+      appBar: AppBar(title: const Text('Pembayaran QRIS')),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(AppConstants.spacingLg),
@@ -244,7 +243,7 @@ class _QrisPaymentScreenState extends State<QrisPaymentScreen> {
               borderRadius: BorderRadius.circular(AppConstants.radiusLg),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 )
@@ -262,7 +261,7 @@ class _QrisPaymentScreenState extends State<QrisPaymentScreen> {
           const AppText('Total Tagihan', color: AppColors.textSecondary),
           AppText(
             _formatCurrency(_totalAmount ?? 0),
-            variant: AppTextVariant.h2,
+            variant: AppTextVariant.h3,
             color: const Color(0xFFD97706),
           ),
           const SizedBox(height: AppConstants.spacingSm),

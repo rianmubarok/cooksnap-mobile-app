@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
-import '../../providers/user_provider.dart';
 import 'bottom_sheet_handle.dart';
 import '../custom_button.dart';
 import 'app_text.dart';
-import '../../utils/app_snackbar.dart';
 import '../../screens/payment/qris_payment_screen.dart';
 
 void showPaywallSheet(BuildContext context, {bool isLimitReached = false}) {

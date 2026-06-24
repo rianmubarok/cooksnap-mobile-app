@@ -103,7 +103,7 @@ class UserProvider extends ChangeNotifier {
     final recordAuth = await pb.collection('users').authWithPassword(email, password).timeout(const Duration(seconds: 10));
     
     // Periksa apakah email sudah diverifikasi
-    final isVerified = recordAuth.record?.getBoolValue('verified') ?? false;
+    final isVerified = recordAuth.record.getBoolValue('verified');
     if (!isVerified) {
       pb.authStore.clear(); // Hapus sesi jika belum verifikasi
       throw Exception('unverified_email');
