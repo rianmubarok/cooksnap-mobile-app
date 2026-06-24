@@ -45,12 +45,23 @@ class _QrisPaymentScreenState extends State<QrisPaymentScreen> {
     try {
       final userProvider = context.read<UserProvider>();
       final result = await userProvider.createSubscription();
+
+      debugPrint('QRIS API Result: $result');
       
       setState(() {
-        _orderId = result['order_id'];
-        _totalAmount = result['total_amount'];
+        _orderId = result['order_id']?.toString();
+        final rawAmount = result['total_amount'];
+        _totalAmount = (rawAmount != null && rawAmount.toString() != '0' && rawAmount.toString().isNotEmpty)
+            ? (rawAmount is int ? rawAmount : int.tryParse(rawAmount.toString()) ?? 15000)
+            : 15000;
         
-        final rawBase64 = result['qris_image'] as String;
+        final rawBase64 = result['qris_image']?.toString() ?? '';
+        debugPrint('qris_image raw length: ${rawBase64.length}');
+        if (rawBase64.isEmpty) {
+          _errorMessage = 'QR gagal dimuat: qris_image kosong dari server. order_id=$_orderId';
+          _isLoading = false;
+          return;
+        }
         if (rawBase64.contains(',')) {
           _qrisImageBase64 = rawBase64.split(',')[1];
         } else {
@@ -62,8 +73,17 @@ class _QrisPaymentScreenState extends State<QrisPaymentScreen> {
 
       _startPolling();
     } catch (e) {
+      debugPrint('Error creating subscription: $e');
+      // Extract meaningful message from ClientException
+      String errorMsg = e.toString();
+      try {
+        final msgMatch = RegExp(r'message: ([^,}]+)').firstMatch(errorMsg);
+        if (msgMatch != null) {
+          errorMsg = msgMatch.group(1)!.trim();
+        }
+      } catch (_) {}
       setState(() {
-        _errorMessage = 'Gagal membuat transaksi. Pastikan internet Anda lancar dan coba lagi.';
+        _errorMessage = errorMsg;
         _isLoading = false;
       });
     }
@@ -79,9 +99,7 @@ class _QrisPaymentScreenState extends State<QrisPaymentScreen> {
   Future<void> _checkStatusInternal({bool isManual = true}) async {
     if (_orderId == null || _isCheckingStatus) return;
     
-    setState(() {
-      _isCheckingStatus = true;
-    });
+    _isCheckingStatus = true; // no setState - avoid rebuilding QR image
     
     try {
       final userProvider = context.read<UserProvider>();
@@ -106,11 +124,7 @@ class _QrisPaymentScreenState extends State<QrisPaymentScreen> {
     } catch (e) {
       // Ignore errors for silent polling
     } finally {
-      if (mounted) {
-        setState(() {
-          _isCheckingStatus = false;
-        });
-      }
+      _isCheckingStatus = false;
     }
   }
 

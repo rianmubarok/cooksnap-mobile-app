@@ -199,7 +199,10 @@ class UserProvider extends ChangeNotifier {
     if (!isLoggedIn) throw Exception('Not logged in');
     try {
       final response = await pb.send('/api/qris/status/$orderId', method: 'GET');
-      return (response as Map<String, dynamic>)['status'] as String;
+      if (response is Map) {
+        return (response['status'] ?? 'PENDING').toString();
+      }
+      return 'PENDING';
     } catch (e) {
       debugPrint('Error checking payment status: $e');
       rethrow;

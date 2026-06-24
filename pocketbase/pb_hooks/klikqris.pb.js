@@ -63,16 +63,22 @@ routerAdd("POST", "/api/qris/create", (c) => {
     }
 
     const qrisData = jsonRes.data
+    
+    // Log the full KlikQRIS response for debugging
+    $app.logger().info("KlikQRIS data", "order_id", qrisData.order_id, "total_amount", qrisData.total_amount, "keys", Object.keys(qrisData).join(","))
 
     // Create transaction record
     try {
         const collection = $app.findCollectionByNameOrId("transactions")
         const record = new Record(collection)
 
-        record.set("order_id", qrisData.order_id || orderId)
+        const finalOrderId = qrisData.order_id || orderId
+        const finalTotal = qrisData.total_amount ? parseInt(qrisData.total_amount) : amount
+
+        record.set("order_id", finalOrderId)
         record.set("user_id", userId)
         record.set("amount", parseInt(amount))
-        record.set("total_amount", parseInt(qrisData.total_amount || amount))
+        record.set("total_amount", finalTotal)
         record.set("status", "PENDING")
         record.set("signature", qrisData.signature || "")
 
