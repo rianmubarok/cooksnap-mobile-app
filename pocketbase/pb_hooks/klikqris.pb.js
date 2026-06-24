@@ -1,7 +1,6 @@
 routerAdd("POST", "/api/qris/create", (c) => {
     // Auth check
-    const info = $apis.requestInfo(c)
-    const user = info.authRecord
+    const user = c.auth
     if (!user) {
         throw new ForbiddenError("Not authorized.")
     }
@@ -137,8 +136,7 @@ routerAdd("POST", "/api/qris/webhook", (c) => {
 
 // Optional route to check status manually
 routerAdd("GET", "/api/qris/status/:orderId", (c) => {
-    const info = $apis.requestInfo(c)
-    const user = info.authRecord
+    const user = c.auth
     if (!user) {
         throw new ForbiddenError("Not authorized.")
     }
