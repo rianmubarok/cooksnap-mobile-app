@@ -7,6 +7,9 @@ class IngredientProvider extends ChangeNotifier {
   bool _isLoading = true;
   bool get isLoading => _isLoading;
 
+  bool _isOfflineMode = false;
+  bool get isOfflineMode => _isOfflineMode;
+
   Map<String, List<String>> _categories = {};
   Map<String, List<String>> get categories => _categories;
 
@@ -58,6 +61,7 @@ class IngredientProvider extends ChangeNotifier {
       _categories = cats;
       _categoryIcons = catIcons;
       _items = itms;
+      _isOfflineMode = false;
 
       // Sinkronisasikan dengan resolver global
       IngredientResolver.updateCatalog(itms);
@@ -67,6 +71,7 @@ class IngredientProvider extends ChangeNotifier {
       // FALLBACK: Jika gagal terhubung ke PocketBase atau ada error API Rules
       _categories = DummyIngredients.categories;
       _categoryIcons = {}; // Akan menggunakan default emoji di UI
+      _isOfflineMode = true;
       
       // Flat list dari dummy
       final dummyItems = <String>[];
@@ -82,3 +87,4 @@ class IngredientProvider extends ChangeNotifier {
     }
   }
 }
+

@@ -19,9 +19,9 @@ class OfflineErrorView extends StatefulWidget {
   const OfflineErrorView({
     super.key,
     this.onRetry,
-    this.title = 'Tidak ada koneksi',
+    this.title = 'Gagal Terhubung ke Server',
     this.subtitle =
-        'Periksa koneksi internet kamu\nlalu coba lagi.',
+        'Koneksi ke server VPS atau jaringan internetmu terputus.\nPeriksa koneksi lalu coba beberapa saat lagi.',
   });
 
   @override

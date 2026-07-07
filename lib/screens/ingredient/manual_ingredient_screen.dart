@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_routes.dart';
 import '../../core/app_text_styles.dart';
@@ -193,6 +194,7 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
 
     final recommendationProvider = context.watch<RecommendationProvider>();
     final data = recommendationProvider.data;
+    final ingredientProvider = context.watch<IngredientProvider>();
 
     List<String> suggestions;
     if (data != null && data.suggestions.isNotEmpty) {
@@ -230,6 +232,45 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (ingredientProvider.isOfflineMode) ...[
+                  const SizedBox(height: AppConstants.spacingMd),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: AppColors.warning.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.warning.withValues(alpha: 0.4)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(LucideIcons.alertTriangle, color: AppColors.warning, size: 20),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Server VPS tidak dapat diakses. Menampilkan katalog bahan offline.',
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        TextButton(
+                          onPressed: () => ingredientProvider.loadIngredients(),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          child: const Text(
+                            'Coba Lagi',
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.primaryDark),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 const SizedBox(height: AppConstants.spacingLg),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
