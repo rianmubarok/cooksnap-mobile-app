@@ -1,6 +1,6 @@
 [build]
 # Dockerfile ada di subfolder pocketbase/
-dockerfilePath = "pocketbase/Dockerfile"
+dockerfilePath = "Dockerfile"
 buildCommand = ""
 
 [deploy]
