@@ -169,6 +169,16 @@ window.startBulkImport = async () => {
         const normalized = normalizeRecipePayload(item);
         if (normalized.errors.length > 0) throw new Error(normalized.errors.join('; '));
         payload = normalized.payload;
+      } else if (state.collection === 'ingredients') {
+        if (!payload.name || !payload.category) throw new Error('name dan category wajib diisi');
+        let category = `${payload.category}`.trim();
+        if (window.INGREDIENT_CATEGORIES) {
+          const matched = window.INGREDIENT_CATEGORIES.find(c => category === c || category.endsWith(c));
+          if (matched) category = matched;
+        }
+        category = category.replace(/^[\u1000-\uFFFF\uD800-\uDBFF\uDC00-\uDFFF\u2600-\u27BF\u2300-\u23FF\u2B50-\u2B55\s]+/, '').trim() || category;
+        payload.category = category;
+        payload.name = `${payload.name}`.trim();
       }
 
       await pb.collection(state.collection).create(payload);

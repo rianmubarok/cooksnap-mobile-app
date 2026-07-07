@@ -46,10 +46,12 @@ window.openJsonEditorModal = async () => {
         return orderA - orderB;
       });
 
+      const emojiMap = window.CATEGORY_EMOJI_MAP || {};
       const sortedGrouped = {};
       sortedKeys.forEach(k => {
         grouped[k].sort(); // urutkan bahan di dalamnya sesuai abjad
-        sortedGrouped[k] = grouped[k];
+        const icon = emojiMap[k] ? `${emojiMap[k]} ` : '';
+        sortedGrouped[`${icon}${k}`] = grouped[k];
       });
 
       jsonStr = JSON.stringify(sortedGrouped, null, 2);
@@ -59,6 +61,7 @@ window.openJsonEditorModal = async () => {
     
     jsonEditorTextarea.value = jsonStr;
     jsonEditorTextarea.disabled = false;
+    if (window.feather) feather.replace();
   } catch (err) {
     console.error(err);
     jsonEditorTextarea.value = "Gagal memuat data.";
@@ -80,10 +83,19 @@ window.saveJsonEditor = async () => {
         throw new Error('Untuk bahan, format harus berupa Object (Kategori: [Bahan...])');
       }
       parsedData = [];
-      for (const [category, names] of Object.entries(rawObj)) {
-        if (!Array.isArray(names)) throw new Error(`Kategori ${category} harus berisi Array nama bahan.`);
+      for (const [rawCategory, names] of Object.entries(rawObj)) {
+        if (!Array.isArray(names)) throw new Error(`Kategori ${rawCategory} harus berisi Array nama bahan.`);
+        let category = rawCategory.trim();
+        if (window.INGREDIENT_CATEGORIES) {
+          const matched = window.INGREDIENT_CATEGORIES.find(c => category === c || category.endsWith(c));
+          if (matched) category = matched;
+        }
+        category = category.replace(/^[\u1000-\uFFFF\uD800-\uDBFF\uDC00-\uDFFF\u2600-\u27BF\u2300-\u23FF\u2B50-\u2B55\s]+/, '').trim() || category;
+
         names.forEach(name => {
-          parsedData.push({ name: name.trim(), category: category });
+          if (name && typeof name === 'string') {
+            parsedData.push({ name: name.trim(), category: category });
+          }
         });
       }
     } else {
