@@ -70,7 +70,7 @@ class IngredientProvider extends ChangeNotifier {
       
       // FALLBACK: Jika gagal terhubung ke PocketBase atau ada error API Rules
       _categories = DummyIngredients.categories;
-      _categoryIcons = {}; // Akan menggunakan default emoji di UI
+      _categoryIcons = DummyIngredients.categoryIcons;
       _isOfflineMode = true;
       
       // Flat list dari dummy

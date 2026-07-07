@@ -50,18 +50,29 @@ async function loadIngredientCategories() {
     if (records.length === 0) {
       // Seed initial data
       const defaultCategories = [
-        { name: 'Sumber Protein', icon: '🥩', order: 1 },
-        { name: 'Seafood', icon: '🦞', order: 2 },
-        { name: 'Sayuran', icon: '🥬', order: 3 },
-        { name: 'Jamur', icon: '🍄', order: 4 },
-        { name: 'Bumbu', icon: '🧄', order: 5 },
-        { name: 'Bumbu Dasar', icon: '🧂', order: 6 },
-        { name: 'Karbohidrat', icon: '🍚', order: 7 },
-        { name: 'Kacang & Biji', icon: '🥜', order: 8 },
-        { name: 'Susu & Olahan Susu', icon: '🥛', order: 9 },
-        { name: 'Buah', icon: '🍎', order: 10 },
-        { name: 'Tepung', icon: '🌾', order: 11 },
-        { name: 'Lainnya', icon: '📦', order: 12 }
+        { name: 'Protein Hewani', icon: '🥩', order: 1 },
+        { name: 'Protein Nabati', icon: '🧈', order: 2 },
+        { name: 'Ikan & Seafood', icon: '🐟', order: 3 },
+        { name: 'Produk Olahan', icon: '🌭', order: 4 },
+        { name: 'Sayuran', icon: '🥬', order: 5 },
+        { name: 'Jamur', icon: '🍄', order: 6 },
+        { name: 'Buah', icon: '🍎', order: 7 },
+        { name: 'Karbohidrat', icon: '🍚', order: 8 },
+        { name: 'Kacang & Biji', icon: '🥜', order: 9 },
+        { name: 'Susu & Olahan Susu', icon: '🥛', order: 10 },
+        { name: 'Tepung & Pengental', icon: '🌾', order: 11 },
+        { name: 'Bumbu Segar', icon: '🧄', order: 12 },
+        { name: 'Bumbu Aromatik', icon: '🌿', order: 13 },
+        { name: 'Bumbu Kering', icon: '🧂', order: 14 },
+        { name: 'Bumbu Campuran', icon: '🥣', order: 15 },
+        { name: 'Pemanis & Penyedap', icon: '🧂', order: 16 },
+        { name: 'Saus & Kondimen', icon: '🫙', order: 17 },
+        { name: 'Minyak & Lemak', icon: '🫒', order: 18 },
+        { name: 'Produk Kelapa', icon: '🥥', order: 19 },
+        { name: 'Bahan Kue & Baking', icon: '🧁', order: 20 },
+        { name: 'Pelengkap & Topping', icon: '✨', order: 21 },
+        { name: 'Minuman', icon: '🥤', order: 22 },
+        { name: 'Lainnya', icon: '📦', order: 23 }
       ];
       for (const cat of defaultCategories) {
         await pb.collection('ingredient_categories').create(cat);
