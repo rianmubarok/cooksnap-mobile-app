@@ -16,11 +16,15 @@ RUN unzip /tmp/pb.zip -d /pb/
 COPY pocketbase/pb_public /pb/pb_public
 COPY pocketbase/pb_hooks /pb/pb_hooks
 
+# Copy startup script
+COPY start.sh /pb/start.sh
+RUN chmod +x /pb/start.sh
+
 # Set working directory
 WORKDIR /pb
 
 # Expose port 8080
 EXPOSE 8080
 
-# Mulai PocketBase
-CMD ["/pb/pocketbase", "serve", "--http=0.0.0.0:8080"]
+# Jalankan startup script (auto-create superuser jika env var tersedia, lalu start PocketBase)
+CMD ["/pb/start.sh"]
