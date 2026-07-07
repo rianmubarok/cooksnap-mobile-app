@@ -100,6 +100,19 @@ class Recipe {
     return '$hours jam $mins mnt';
   }
 
+  /// Returns a thumbnail image URL optimized for cards and grid items (lower resolution).
+  /// Automatically resizes Unsplash or PocketBase thumb URLs to ~350px to save APK cache and bandwidth.
+  String? get thumbnailUrl {
+    if (imageUrl == null || imageUrl!.trim().isEmpty) return null;
+    var url = imageUrl!.trim();
+    if (url.contains('images.unsplash.com') && url.contains('w=')) {
+      url = url.replaceAll(RegExp(r'w=\d+'), 'w=350');
+    } else if (url.contains('/api/files/') && !url.contains('?thumb=')) {
+      url = '$url?thumb=350x350';
+    }
+    return url;
+  }
+
   factory Recipe.fromMap(Map<String, dynamic> map) {
     final rawIngredients = map['ingredients'];
     final parsedIngredients = <RecipeIngredient>[];

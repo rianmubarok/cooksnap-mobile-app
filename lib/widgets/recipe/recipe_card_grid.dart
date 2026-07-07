@@ -36,8 +36,10 @@ class RecipeCardGrid extends StatelessWidget {
                   aspectRatio: 1.0,
                   child: _hasImage
                       ? Image.network(
-                          recipe.imageUrl!,
+                          recipe.thumbnailUrl!,
                           fit: BoxFit.cover,
+                          cacheWidth: 350,
+                          cacheHeight: 350,
                           errorBuilder: (_, __, ___) => Container(
                             color: AppColors.primary.withValues(alpha: 0.08),
                             child: const RecipeThumbnail(iconSize: 40),

@@ -28,8 +28,10 @@ class RecipeCardHorizontal extends StatelessWidget {
             children: [
               _hasImage
                   ? Image.network(
-                      recipe.imageUrl!,
+                      recipe.thumbnailUrl!,
                       fit: BoxFit.cover,
+                      cacheWidth: 350,
+                      cacheHeight: 350,
                       errorBuilder: (_, __, ___) => const ColoredBox(
                         color: AppColors.cardBackground,
                         child: RecipeThumbnail(),

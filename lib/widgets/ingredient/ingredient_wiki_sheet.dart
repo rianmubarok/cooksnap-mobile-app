@@ -130,6 +130,7 @@ class _IngredientWikiSheetState extends State<IngredientWikiSheet> {
                                 width: double.infinity,
                                 height: 200,
                                 fit: BoxFit.cover,
+                                cacheWidth: 600,
                               ),
                             ),
                           ),

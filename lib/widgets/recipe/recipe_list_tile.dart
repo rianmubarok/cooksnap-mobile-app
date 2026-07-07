@@ -29,7 +29,7 @@ class RecipeListTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            RecipeThumbnailBox(size: 72, imageUrl: recipe.imageUrl),
+            RecipeThumbnailBox(size: 72, imageUrl: recipe.thumbnailUrl ?? recipe.imageUrl),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
