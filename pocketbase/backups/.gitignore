@@ -1,0 +1,8 @@
+# Abaikan semua file ZIP dan database — jangan di-push ke GitHub
+*.zip
+*.db
+*.db-shm
+*.db-wal
+
+# Tapi tetap track folder ini via README
+!README.md
