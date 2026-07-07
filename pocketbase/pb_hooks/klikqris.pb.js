@@ -6,10 +6,6 @@ routerAdd("POST", "/api/qris/create", (c) => {
     }
 
     const userId = user.id
-    const orderId = "CS-PRO-" + Date.now() + "-" + $security.randomString(5)
-    
-    // Amount
-    const amount = 15000 // Rp 15.000 for CookSnap PRO 1 month
 
     const apiKey = $os.getenv("KLIKQRIS_API_KEY")
     const merchantId = $os.getenv("KLIKQRIS_MERCHANT_ID")
@@ -17,6 +13,39 @@ routerAdd("POST", "/api/qris/create", (c) => {
     if (!apiKey || !merchantId) {
         throw new BadRequestError("Server configuration missing: KLIKQRIS_API_KEY or KLIKQRIS_MERCHANT_ID")
     }
+
+    // === CEK: Apakah user sudah punya transaksi PENDING? ===
+    try {
+        const existingRecords = $app.findRecordsByFilter(
+            "transactions",
+            "user_id = {:userId} && status = 'PENDING'",
+            "-created",
+            1,
+            0,
+            { userId: userId }
+        )
+
+        if (existingRecords.length > 0) {
+            const existing = existingRecords[0]
+            $app.logger().info("Returning existing PENDING transaction", "order_id", existing.get("order_id"), "user_id", userId)
+            return c.json(200, {
+                "order_id": existing.get("order_id"),
+                "total_amount": existing.get("total_amount"),
+                "qris_image": existing.get("qris_image") || ""
+            })
+        }
+    } catch (checkErr) {
+        // Jika tidak ditemukan, lanjut buat baru
+    }
+
+    const orderId = "CS-PRO-" + Date.now() + "-" + $security.randomString(5)
+    const amount = 15000 // Rp 15.000 for CookSnap PRO 1 month
+
+    // Callback URL dari env var agar fleksibel di setiap environment
+    const baseUrl = $os.getenv("RAILWAY_PUBLIC_DOMAIN")
+        ? "https://" + $os.getenv("RAILWAY_PUBLIC_DOMAIN")
+        : ($os.getenv("POCKETBASE_URL") || "https://cooksnap-mobile-app-production.up.railway.app")
+    const callbackUrl = baseUrl + "/api/qris/webhook"
 
     // Call KlikQRIS API
     let res
@@ -34,7 +63,7 @@ routerAdd("POST", "/api/qris/create", (c) => {
                 "id_merchant": merchantId,
                 "amount": amount,
                 "keterangan": "CookSnap PRO 1 Bulan",
-                "callback_url": "https://cooksnap-mobile-app-production.up.railway.app/api/qris/webhook"
+                "callback_url": callbackUrl
             }),
             timeout: 30
         })
@@ -42,7 +71,6 @@ routerAdd("POST", "/api/qris/create", (c) => {
         throw new BadRequestError("KlikQRIS connection error: " + httpErr)
     }
 
-    // Log full response for debugging
     const rawBody = res.raw
     const statusCode = res.statusCode
 
@@ -50,7 +78,6 @@ routerAdd("POST", "/api/qris/create", (c) => {
         throw new BadRequestError("KlikQRIS HTTP " + statusCode + ": " + rawBody)
     }
 
-    // Parse response
     let jsonRes
     try {
         jsonRes = JSON.parse(rawBody)
@@ -63,9 +90,7 @@ routerAdd("POST", "/api/qris/create", (c) => {
     }
 
     const qrisData = jsonRes.data
-    
-    // Log the full KlikQRIS response for debugging
-    $app.logger().info("KlikQRIS data", "order_id", qrisData.order_id, "total_amount", qrisData.total_amount, "keys", Object.keys(qrisData).join(","))
+    $app.logger().info("KlikQRIS data", "order_id", qrisData.order_id, "total_amount", qrisData.total_amount)
 
     // Create transaction record
     let savedRecord
@@ -82,19 +107,20 @@ routerAdd("POST", "/api/qris/create", (c) => {
         savedRecord.set("total_amount", finalTotal)
         savedRecord.set("status", "PENDING")
         savedRecord.set("signature", qrisData.signature || "")
+        savedRecord.set("qris_image", qrisData.qris_image || "")
 
         $app.save(savedRecord)
     } catch (dbErr) {
         throw new BadRequestError("DB save error: " + dbErr)
     }
 
-    // Return total_amount from DB record (guaranteed correct, includes unique code)
     return c.json(200, {
         "order_id": savedRecord.get("order_id"),
         "total_amount": savedRecord.get("total_amount"),
         "qris_image": qrisData.qris_image || ""
     })
 }, $apis.requireAuth())
+
 
 
 routerAdd("POST", "/api/qris/webhook", (c) => {
