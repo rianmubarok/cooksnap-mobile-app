@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 
@@ -15,23 +16,31 @@ class AuthScreenLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: AppColors.background,
-        child: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(AppConstants.paddingScreen),
-                  child: child,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        body: Container(
+          color: AppColors.background,
+          child: SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(AppConstants.paddingScreen),
+                    child: child,
+                  ),
                 ),
-              ),
-              if (footer != null) footer!,
-            ],
+                if (footer != null) footer!,
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
+

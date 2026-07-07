@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
@@ -44,14 +45,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     final page = _pages[_currentPage];
 
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: AppColors.onboardingGradient,
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: AppColors.onboardingGradient,
+          ),
+          child: SafeArea(
+            child: Column(
+              children: [
               const Spacer(flex: 2),
               SizedBox(
                 height: 240,
@@ -108,6 +115,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ],
           ),
         ),
+      ),
       ),
     );
   }
