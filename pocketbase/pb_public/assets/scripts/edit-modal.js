@@ -194,17 +194,14 @@ function renderIngredientRepeater(container, rows) {
     const nameInput = row.querySelector(`#${idPrefix}-name`);
     const sugList   = row.querySelector(`#${idPrefix}-suggestions`);
 
-    const masterNames = () => {
-      // Prefer globally cached list of ingredient names
-      if (window._ingredientMasterNames) return window._ingredientMasterNames;
-      return [];
-    };
+    const getSuggestions = () =>
+      window._ingredientAllNames || window._ingredientMasterNames || [];
 
     nameInput.addEventListener('input', () => {
       const q = nameInput.value.trim().toLowerCase();
       if (!q) { sugList.classList.add('hidden'); return; }
 
-      const matches = masterNames()
+      const matches = getSuggestions()
         .filter(n => n.toLowerCase().includes(q))
         .slice(0, 20);
 
@@ -269,13 +266,30 @@ function collectIngredientRepeater(container) {
   return result;
 }
 
-// ─── Cache master ingredient names for autocomplete ───────────────────────────
+// ─── Cache ingredient names for autocomplete ─────────────────────────────────
+// Combines: master catalog + original aliases + corrected names from ingredient_corrections
+// Sorted alphabetically so autocomplete feels natural.
 (async () => {
   try {
-    const items = await pb.collection('ingredients').getFullList({ fields: 'name', sort: 'name' });
-    window._ingredientMasterNames = items.map(i => i.name).filter(Boolean);
+    const [masterItems, correctionItems] = await Promise.all([
+      pb.collection('ingredients').getFullList({ fields: 'name', sort: 'name' }),
+      pb.collection('ingredient_corrections').getFullList({ fields: 'original_name,corrected_name' }).catch(() => []),
+    ]);
+
+    const masterNames = masterItems.map(i => i.name).filter(Boolean);
+    window._ingredientMasterNames = masterNames; // keep backward compat
+
+    const correctionNames = correctionItems.flatMap(c => [
+      c.original_name,
+      c.corrected_name,
+    ]).filter(Boolean);
+
+    // Union: master + corrections, sorted A-Z
+    window._ingredientAllNames = Array.from(new Set([...masterNames, ...correctionNames]))
+      .sort((a, b) => a.localeCompare(b, 'id'));
   } catch (e) {
     window._ingredientMasterNames = [];
+    window._ingredientAllNames = [];
   }
 })();
 
