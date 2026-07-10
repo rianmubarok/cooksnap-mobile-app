@@ -36,7 +36,7 @@ class _QrisPaymentScreenState extends State<QrisPaymentScreen> {
     super.dispose();
   }
 
-  Future<void> _createTransaction() async {
+  Future<void> _createTransaction({bool retryIfEmpty = true}) async {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -47,27 +47,41 @@ class _QrisPaymentScreenState extends State<QrisPaymentScreen> {
       final result = await userProvider.createSubscription();
 
       debugPrint('QRIS API Result: $result');
-      
+
+      final rawBase64 = result['qris_image']?.toString() ?? '';
+      debugPrint('qris_image raw length: ${rawBase64.length}');
+      if (rawBase64.isEmpty) {
+        if (retryIfEmpty) {
+          // Reset transaksi PENDING lama yang kosong gambar QR-nya lalu coba buat baru 1x
+          await userProvider.resetPendingTransactions();
+          return _createTransaction(retryIfEmpty: false);
+        }
+        setState(() {
+          _orderId = result['order_id']?.toString();
+          _errorMessage =
+              'QR gagal dimuat dari server. Silakan klik Coba Lagi untuk membuat kode QR baru.';
+          _isLoading = false;
+        });
+        return;
+      }
+
       setState(() {
         _orderId = result['order_id']?.toString();
         final rawAmount = result['total_amount'];
-        _totalAmount = (rawAmount != null && rawAmount.toString() != '0' && rawAmount.toString().isNotEmpty)
-            ? (rawAmount is int ? rawAmount : int.tryParse(rawAmount.toString()) ?? 15000)
+        _totalAmount = (rawAmount != null &&
+                rawAmount.toString() != '0' &&
+                rawAmount.toString().isNotEmpty)
+            ? (rawAmount is int
+                ? rawAmount
+                : int.tryParse(rawAmount.toString()) ?? 15000)
             : 15000;
-        
-        final rawBase64 = result['qris_image']?.toString() ?? '';
-        debugPrint('qris_image raw length: ${rawBase64.length}');
-        if (rawBase64.isEmpty) {
-          _errorMessage = 'QR gagal dimuat: qris_image kosong dari server. order_id=$_orderId';
-          _isLoading = false;
-          return;
-        }
+
         if (rawBase64.contains(',')) {
           _qrisImageBase64 = rawBase64.split(',')[1];
         } else {
           _qrisImageBase64 = rawBase64;
         }
-        
+
         _isLoading = false;
       });
 

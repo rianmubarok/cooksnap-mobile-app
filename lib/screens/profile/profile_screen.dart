@@ -13,10 +13,16 @@ import '../../widgets/profile/profile_menu_tile.dart';
 import '../../widgets/common/app_text.dart';
 import '../../services/notification_service.dart';
 import '../../utils/app_snackbar.dart';
+import 'notification_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final user = context.watch<UserProvider>();
@@ -126,20 +132,24 @@ class ProfileScreen extends StatelessWidget {
                 iconColor: const Color(0xFFD97706),
                 onTap: () {},
               ),
-            ProfileMenuTile(
-              icon: LucideIcons.bell,
-              title: AppStrings.notificationSettings,
-              onTap: () async {
-                final granted = await NotificationService.instance.requestPermissions();
-                if (granted && context.mounted) {
-                  showAppSnackBar(context, 'Mengatur pengingat masak harian...');
-                  await NotificationService.instance.scheduleDailyMealReminders();
-                  if (context.mounted) {
-                    showAppSnackBar(context, 'Pengingat sarapan, siang, dan malam aktif!');
-                  }
-                } else if (context.mounted) {
-                  showAppSnackBar(context, 'Izin notifikasi ditolak.');
-                }
+            FutureBuilder<bool>(
+              future: NotificationService.instance.hasUnreadNotifications(),
+              builder: (context, snapshot) {
+                final hasUnread = snapshot.data ?? false;
+                return ProfileMenuTile(
+                  icon: LucideIcons.bell,
+                  title: AppStrings.notificationSettings,
+                  hasBadge: hasUnread,
+                  onTap: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const NotificationScreen(),
+                      ),
+                    );
+                    if (mounted) setState(() {});
+                  },
+                );
               },
             ),
             ProfileMenuTile(

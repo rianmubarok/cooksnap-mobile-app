@@ -11,6 +11,7 @@ import '../../providers/user_provider.dart';
 import '../../widgets/auth/auth_footer_link.dart';
 import '../../widgets/auth/auth_header.dart';
 import '../../widgets/auth/auth_screen_layout.dart';
+import '../../widgets/common/app_confirm_dialog.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
 
@@ -98,20 +99,38 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushReplacementNamed(context, AppRoutes.home);
     } catch (e) {
       if (!mounted) return;
-      
-      String errorMessage = 'Login gagal. Periksa kembali email dan kata sandi Anda.';
-      if (e is ClientException && e.statusCode == 0) {
-        errorMessage = 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.';
-      } else if (e.toString().contains('unverified_email')) {
-        errorMessage = 'Email Anda belum diverifikasi. Silakan periksa kotak masuk email Anda terlebih dahulu.';
+
+      final isServerDown = (e is ClientException && e.statusCode == 0) ||
+          e is TimeoutException ||
+          e.toString().toLowerCase().contains('connection') ||
+          e.toString().toLowerCase().contains('timeout') ||
+          e.toString().toLowerCase().contains('socket') ||
+          e.toString().toLowerCase().contains('failed host lookup');
+
+      if (isServerDown) {
+        await AppConfirmDialog.show(
+          context,
+          title: 'Server Tidak Merespons',
+          message:
+              'Saat ini server Cooksnap sedang tidak dapat diakses atau periksa kembali koneksi internet Anda.\n\nSilakan coba beberapa saat lagi.',
+          confirmText: 'Mengerti',
+          cancelText: 'Tutup',
+        );
+      } else {
+        String errorMessage =
+            'Login gagal. Periksa kembali email dan kata sandi Anda.';
+        if (e.toString().contains('unverified_email')) {
+          errorMessage =
+              'Email Anda belum diverifikasi. Silakan periksa kotak masuk email Anda terlebih dahulu.';
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errorMessage),
-          backgroundColor: Colors.red,
-        ),
-      );
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);

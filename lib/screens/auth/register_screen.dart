@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import '../../widgets/auth/auth_footer_link.dart';
 import '../../widgets/auth/auth_header.dart';
 import '../../widgets/auth/auth_screen_layout.dart';
 import '../../widgets/auth/terms_conditions_sheet.dart';
+import '../../widgets/common/app_confirm_dialog.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/navigation/circular_header_button.dart';
@@ -83,28 +85,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      
-      String errorMessage = 'Gagal mendaftar. Silakan coba lagi.';
-      if (e is ClientException) {
-        if (e.statusCode == 0) {
-          errorMessage = 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.';
-        } else {
+
+      final isServerDown = (e is ClientException && e.statusCode == 0) ||
+          e is TimeoutException ||
+          e.toString().toLowerCase().contains('connection') ||
+          e.toString().toLowerCase().contains('timeout') ||
+          e.toString().toLowerCase().contains('socket') ||
+          e.toString().toLowerCase().contains('failed host lookup');
+
+      if (isServerDown) {
+        await AppConfirmDialog.show(
+          context,
+          title: 'Server Tidak Merespons',
+          message:
+              'Saat ini server Cooksnap sedang tidak dapat diakses atau periksa kembali koneksi internet Anda.\n\nSilakan coba beberapa saat lagi.',
+          confirmText: 'Mengerti',
+          cancelText: 'Tutup',
+        );
+      } else {
+        String errorMessage = 'Gagal mendaftar. Silakan coba lagi.';
+        if (e is ClientException) {
           final data = e.response['data'] as Map<String, dynamic>?;
           if (data != null && data['email'] != null) {
-            errorMessage = 'Email ini sudah terdaftar. Silakan gunakan email lain atau Masuk.';
+            errorMessage =
+                'Email ini sudah terdaftar. Silakan gunakan email lain atau Masuk.';
           } else {
-            errorMessage = e.response['message']?.toString() ?? 'Pendaftaran gagal';
+            errorMessage =
+                e.response['message']?.toString() ?? 'Pendaftaran gagal';
           }
         }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
+        );
       }
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errorMessage),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 5),
-        ),
-      );
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);

@@ -10,6 +10,7 @@ class ProfileMenuTile extends StatelessWidget {
   final VoidCallback onTap;
   final bool isDestructive;
   final Color? iconColor;
+  final bool hasBadge;
 
   const ProfileMenuTile({
     super.key,
@@ -18,6 +19,7 @@ class ProfileMenuTile extends StatelessWidget {
     required this.onTap,
     this.isDestructive = false,
     this.iconColor,
+    this.hasBadge = false,
   });
 
   @override
@@ -34,10 +36,29 @@ class ProfileMenuTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              size: 20,
-              color: iconColor ?? (isDestructive ? AppColors.error : AppColors.textHint),
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Icon(
+                  icon,
+                  size: 20,
+                  color: iconColor ??
+                      (isDestructive ? AppColors.error : AppColors.textHint),
+                ),
+                if (hasBadge)
+                  Positioned(
+                    top: 2,
+                    right: 2,
+                    child: Container(
+                      width: 5,
+                      height: 5,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFD97706),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+              ],
             ),
             const SizedBox(width: AppConstants.spacingMd),
             Expanded(

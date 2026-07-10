@@ -27,12 +27,20 @@ routerAdd("POST", "/api/qris/create", (c) => {
 
         if (existingRecords.length > 0) {
             const existing = existingRecords[0]
-            $app.logger().info("Returning existing PENDING transaction", "order_id", existing.get("order_id"), "user_id", userId)
-            return c.json(200, {
-                "order_id": existing.get("order_id"),
-                "total_amount": existing.get("total_amount"),
-                "qris_image": existing.get("qris_image") || ""
-            })
+            const existingQrisImage = existing.get("qris_image") || ""
+            if (existingQrisImage !== "") {
+                $app.logger().info("Returning existing PENDING transaction", "order_id", existing.get("order_id"), "user_id", userId)
+                return c.json(200, {
+                    "order_id": existing.get("order_id"),
+                    "total_amount": existing.get("total_amount"),
+                    "qris_image": existingQrisImage
+                })
+            } else {
+                try {
+                    existing.set("status", "EXPIRED")
+                    $app.save(existing)
+                } catch (expireErr) {}
+            }
         }
     } catch (checkErr) {
         // Jika tidak ditemukan, lanjut buat baru

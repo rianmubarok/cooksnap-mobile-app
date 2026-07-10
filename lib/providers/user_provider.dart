@@ -195,6 +195,20 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> resetPendingTransactions() async {
+    if (!isLoggedIn) return;
+    try {
+      final records = await pb.collection('transactions').getList(
+        filter: 'user_id = "${_userModel!.id}" && status = "PENDING"',
+      );
+      for (final rec in records.items) {
+        await pb.collection('transactions').update(rec.id, body: {
+          'status': 'EXPIRED',
+        });
+      }
+    } catch (_) {}
+  }
+
   Future<String> checkPaymentStatus(String orderId) async {
     if (!isLoggedIn) throw Exception('Not logged in');
     try {
