@@ -84,9 +84,14 @@ class NotificationService {
   Future<void> _refreshScheduleIfNeeded() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      if (prefs.getBool('meal_reminders_enabled') == true) {
+      final isEnabled = prefs.getBool('meal_reminders_enabled') == true;
+      if (isEnabled) {
         // Do not await to avoid blocking app startup
         scheduleDailyMealReminders();
+      } else {
+        // Bersihkan dummy history lama jika notifikasi tidak aktif
+        // (menangani kasus data orphan dari versi app sebelumnya)
+        await prefs.remove('notification_history_log');
       }
     } catch (e) {
       debugPrint('Error refreshing schedule: $e');

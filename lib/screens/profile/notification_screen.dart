@@ -19,7 +19,7 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  bool _isEnabled = true;
+  bool _isEnabled = false;
   bool _isLoading = true;
   List<Map<String, dynamic>> _deliveredList = [];
 
@@ -32,13 +32,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Future<void> _loadData() async {
     setState(() => _isLoading = true);
     final enabled = await NotificationService.instance.isRemindersEnabled();
-    var delivered =
-        await NotificationService.instance.getDeliveredNotifications();
-    if (delivered.isEmpty) {
-      await NotificationService.instance.scheduleDailyMealReminders();
-      delivered =
-          await NotificationService.instance.getDeliveredNotifications();
-    }
+    // Hanya tampilkan history yang sudah benar-benar ada — jangan auto-buat dummy
+    final delivered = await NotificationService.instance.getDeliveredNotifications();
     if (mounted) {
       setState(() {
         _isEnabled = enabled;
