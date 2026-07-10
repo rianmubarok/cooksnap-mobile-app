@@ -441,10 +441,21 @@ window.scanUnregisteredIngredients = async () => {
             </button>
           </div>
           <div class="flex items-center gap-2 justify-between sm:justify-end">
-            <select id="map-sel-${idSafe}" class="px-3 py-2 border border-gray-200 rounded-lg bg-white text-sm outline-none focus:ring-2 focus:ring-amber-500 w-full sm:w-40 flex-1">
-              <option value="" disabled selected>Koreksi ke Bahan...</option>
-              ${masterIngredientOptions}
-            </select>
+            <div class="relative flex-1 sm:w-48" id="combobox-wrap-${idSafe}">
+              <input
+                type="text"
+                id="map-search-${idSafe}"
+                placeholder="Koreksi ke bahan..."
+                autocomplete="off"
+                value="${recommendedName}"
+                class="w-full px-3 py-2 border border-amber-300 bg-white rounded-lg text-sm outline-none focus:ring-2 focus:ring-amber-400 transition-all"
+              >
+              <input type="hidden" id="map-sel-${idSafe}" value="${recommendedName}">
+              <ul
+                id="map-list-${idSafe}"
+                class="absolute z-50 left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-lg mt-1 max-h-52 overflow-y-auto hidden text-sm"
+              ></ul>
+            </div>
             <button onclick="correctMissingIngredient('${name.replace(/'/g, "\\'")}', '${idSafe}')" class="px-4 py-2 bg-amber-500 text-white rounded-lg text-sm font-medium hover:bg-amber-600 transition-colors whitespace-nowrap">
               Koreksi
             </button>
@@ -457,6 +468,9 @@ window.scanUnregisteredIngredients = async () => {
         </div>
       `;
       listContainer.appendChild(row);
+
+      // ── Wire up searchable combobox for "Koreksi ke Bahan" ──
+      _wireCorrectCombobox(idSafe, recommendedName, sortedMasterNames, correctionsHistory);
     });
 
     listContainer.classList.remove('hidden');
@@ -467,6 +481,77 @@ window.scanUnregisteredIngredients = async () => {
     loadingState.classList.add('hidden');
   }
 };
+
+// ─── Searchable Combobox for "Koreksi ke Bahan" ───────────────────────────────
+/**
+ * Wire up a searchable combobox for the "Koreksi ke Bahan" field.
+ * Suggestions are built from corrections history first, then catalog (master names).
+ * The selected value is written to the hidden <input id="map-sel-{idSafe}">.
+ *
+ * @param {string} idSafe             – row ID suffix
+ * @param {string} initialValue       – recommended / pre-filled value
+ * @param {Array<string>} masterNames – sorted list of registered ingredient names
+ * @param {Array}  correctionsHistory – records from ingredient_corrections collection
+ */
+function _wireCorrectCombobox(idSafe, initialValue, masterNames, correctionsHistory) {
+  const searchInput  = document.getElementById(`map-search-${idSafe}`);
+  const hiddenInput  = document.getElementById(`map-sel-${idSafe}`);
+  const listEl       = document.getElementById(`map-list-${idSafe}`);
+  if (!searchInput || !hiddenInput || !listEl) return;
+
+  // Build ordered suggestion list: corrections history first, then master names
+  const correctionNames = correctionsHistory
+    .map(c => (c.corrected_name || '').trim())
+    .filter(n => n && masterNames.includes(n));
+  const correctionSet = new Set(correctionNames);
+  const allSuggestions = [
+    ...correctionNames,
+    ...masterNames.filter(n => !correctionSet.has(n)),
+  ];
+
+  function renderList(query) {
+    const q = query.trim().toLowerCase();
+    let filtered = q
+      ? allSuggestions.filter(n => n.toLowerCase().includes(q))
+      : allSuggestions;
+
+    if (!filtered.length) { listEl.classList.add('hidden'); return; }
+    filtered = filtered.slice(0, 30);
+
+    listEl.innerHTML = filtered.map((n, i) => {
+      const isFromHistory = correctionSet.has(n);
+      const badge = isFromHistory
+        ? `<span class="ml-1.5 text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full font-medium">Histori</span>`
+        : '';
+      return `<li class="px-3 py-2 cursor-pointer hover:bg-amber-50 flex items-center gap-1 transition-colors" data-value="${n.replace(/"/g, '&quot;')}">
+                ${n}${badge}
+              </li>`;
+    }).join('');
+
+    listEl.classList.remove('hidden');
+
+    listEl.querySelectorAll('li').forEach(li => {
+      li.addEventListener('mousedown', e => {
+        e.preventDefault();
+        const val = li.dataset.value;
+        searchInput.value = val;
+        hiddenInput.value = val;
+        listEl.classList.add('hidden');
+      });
+    });
+  }
+
+  searchInput.addEventListener('input', () => {
+    hiddenInput.value = searchInput.value; // keep hidden in sync while typing
+    renderList(searchInput.value);
+  });
+
+  searchInput.addEventListener('focus', () => renderList(searchInput.value));
+  searchInput.addEventListener('blur',  () => setTimeout(() => listEl.classList.add('hidden'), 200));
+  searchInput.addEventListener('keydown', e => {
+    if (e.key === 'Escape') listEl.classList.add('hidden');
+  });
+}
 
 window.registerMissingIngredient = async (originalName, rowIdSafe) => {
   const select = document.getElementById(`sel-${rowIdSafe}`);
@@ -537,8 +622,9 @@ window.registerMissingIngredient = async (originalName, rowIdSafe) => {
 };
 
 window.correctMissingIngredient = async (unregisteredName, rowIdSafe) => {
-  const select = document.getElementById(`map-sel-${rowIdSafe}`);
-  const targetIngredientName = select.value;
+  // Nilai dipilih via searchable combobox; disimpan di hidden input
+  const hiddenInput = document.getElementById(`map-sel-${rowIdSafe}`);
+  const targetIngredientName = (hiddenInput?.value || '').trim();
   if (!targetIngredientName) {
     showToast(`Pilih bahan pengganti untuk ${unregisteredName} terlebih dahulu!`, 'error');
     return;

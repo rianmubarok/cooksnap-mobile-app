@@ -124,9 +124,160 @@ async function updateRecipesIngredientName(oldName, newName) {
     }
 }
 
+// ─── Ingredient Unit Options ──────────────────────────────────────────────────
+const UNIT_OPTIONS = [
+  'gram', 'kg', 'ml', 'liter', 'sdm', 'sdt', 'cangkir',
+  'siung', 'buah', 'batang', 'lembar', 'butir', 'ikat', 'potong', 'slice',
+  'sachet', 'bungkus', 'kaleng', 'botol',
+  'secukupnya', 'sesuai selera',
+];
+
 function isSystemField(key) {
   return ['id', 'created', 'updated', 'collectionId', 'collectionName', 'expand'].includes(key);
 }
+
+// ─── Ingredient Repeater ──────────────────────────────────────────────────────
+
+/**
+ * Render ingredient repeater rows (name autocomplete + quantity + unit dropdown).
+ * @param {HTMLElement} container  – the wrapper element
+ * @param {Array}       rows       – array of {name, quantity, unit}
+ */
+function renderIngredientRepeater(container, rows) {
+  container.innerHTML = '';
+
+  const addRow = (ing = {}) => {
+    const idx      = container.children.length;
+    const idPrefix = `ing-row-${idx}`;
+
+    const unitOpts = UNIT_OPTIONS
+      .map(u => `<option value="${u}" ${u === (ing.unit ?? '') ? 'selected' : ''}>${u}</option>`)
+      .join('');
+
+    const row = document.createElement('div');
+    row.className = 'ing-repeater-row flex items-center gap-2 mb-2';
+    row.innerHTML = `
+      <div class="flex-1 relative">
+        <input
+          type="text"
+          id="${idPrefix}-name"
+          value="${(ing.name ?? '').replace(/"/g, '&quot;')}"
+          placeholder="Nama bahan..."
+          autocomplete="off"
+          class="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-cookgreen-500 outline-none transition-all"
+        >
+        <ul id="${idPrefix}-suggestions"
+            class="absolute z-50 left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-lg mt-1 max-h-44 overflow-y-auto hidden text-sm"></ul>
+      </div>
+      <input
+        type="number"
+        id="${idPrefix}-qty"
+        value="${ing.quantity ?? ''}"
+        placeholder="Jml"
+        min="0" step="any"
+        class="w-20 px-2 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-cookgreen-500 outline-none transition-all text-center"
+      >
+      <select id="${idPrefix}-unit"
+              class="w-36 px-2 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-cookgreen-500 outline-none bg-white transition-all">
+        <option value="">– satuan –</option>
+        ${unitOpts}
+      </select>
+      <button type="button" onclick="this.closest('.ing-repeater-row').remove()"
+              class="text-red-400 hover:text-red-600 p-1 rounded-lg hover:bg-red-50 transition-all flex-shrink-0" title="Hapus baris">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      </button>
+    `;
+
+    container.appendChild(row);
+
+    // ── Autocomplete wiring ──
+    const nameInput = row.querySelector(`#${idPrefix}-name`);
+    const sugList   = row.querySelector(`#${idPrefix}-suggestions`);
+
+    const masterNames = () => {
+      // Prefer globally cached list of ingredient names
+      if (window._ingredientMasterNames) return window._ingredientMasterNames;
+      return [];
+    };
+
+    nameInput.addEventListener('input', () => {
+      const q = nameInput.value.trim().toLowerCase();
+      if (!q) { sugList.classList.add('hidden'); return; }
+
+      const matches = masterNames()
+        .filter(n => n.toLowerCase().includes(q))
+        .slice(0, 20);
+
+      if (!matches.length) { sugList.classList.add('hidden'); return; }
+
+      sugList.innerHTML = matches.map(n =>
+        `<li class="px-3 py-2 cursor-pointer hover:bg-cookgreen-50 hover:text-cookgreen-900 transition-colors">${n}</li>`
+      ).join('');
+      sugList.classList.remove('hidden');
+
+      sugList.querySelectorAll('li').forEach(li => {
+        li.addEventListener('mousedown', e => {
+          e.preventDefault();
+          nameInput.value = li.textContent;
+          sugList.classList.add('hidden');
+        });
+      });
+    });
+
+    nameInput.addEventListener('blur', () => setTimeout(() => sugList.classList.add('hidden'), 150));
+    nameInput.addEventListener('keydown', e => {
+      if (e.key === 'Escape') sugList.classList.add('hidden');
+    });
+  };
+
+  if (Array.isArray(rows) && rows.length > 0) {
+    rows.forEach(r => addRow(r));
+  } else {
+    addRow(); // one empty row to start
+  }
+
+  // ── "Tambah Bahan" button ──
+  const addBtn = document.createElement('button');
+  addBtn.type = 'button';
+  addBtn.className = 'mt-1 flex items-center gap-1.5 text-sm text-cookgreen-700 hover:text-cookgreen-900 font-medium px-3 py-1.5 rounded-lg hover:bg-cookgreen-50 transition-all';
+  addBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Tambah Bahan`;
+  addBtn.addEventListener('click', () => addRow());
+  container.appendChild(addBtn);
+}
+
+/**
+ * Collect ingredients from the repeater rows.
+ * @param {HTMLElement} container
+ * @returns {Array} array of {name, quantity, unit}
+ */
+function collectIngredientRepeater(container) {
+  const result = [];
+  container.querySelectorAll('.ing-repeater-row').forEach((row, idx) => {
+    const nameEl = row.querySelector(`[id$="-name"]`);
+    const qtyEl  = row.querySelector(`[id$="-qty"]`);
+    const unitEl = row.querySelector(`[id$="-unit"]`);
+    if (!nameEl) return;
+
+    const name = (nameEl.value || '').trim();
+    if (!name) return; // skip empty rows
+
+    const qty  = qtyEl?.value !== '' && qtyEl?.value != null ? Number(qtyEl.value) : null;
+    const unit = (unitEl?.value || '').trim();
+
+    result.push({ name, quantity: qty, unit });
+  });
+  return result;
+}
+
+// ─── Cache master ingredient names for autocomplete ───────────────────────────
+(async () => {
+  try {
+    const items = await pb.collection('ingredients').getFullList({ fields: 'name', sort: 'name' });
+    window._ingredientMasterNames = items.map(i => i.name).filter(Boolean);
+  } catch (e) {
+    window._ingredientMasterNames = [];
+  }
+})();
 
 window.renderDynamicEditFields = function(record) {
   editFieldsContainer.innerHTML = '';
@@ -136,7 +287,15 @@ window.renderDynamicEditFields = function(record) {
     .filter((key) => !isSystemField(key))
     .forEach((key) => {
       const value     = record[key];
-      const isComplex = typeof value === 'object' && value !== null;
+      const isArray   = Array.isArray(value);
+      // Detect ingredients field: array of objects with a 'name' property
+      const isIngredientsField =
+        window.currentEditCollection === 'recipes' &&
+        key === 'ingredients' &&
+        isArray &&
+        (value.length === 0 || (typeof value[0] === 'object' && value[0] !== null && 'name' in value[0]));
+      const isComplex = typeof value === 'object' && value !== null && !isIngredientsField;
+
       const wrapper   = document.createElement('div');
       wrapper.className = 'mb-4';
 
@@ -145,7 +304,25 @@ window.renderDynamicEditFields = function(record) {
       label.textContent = key.replace(/_/g, ' ');
 
       let fieldEl;
-      if (isComplex) {
+
+      if (isIngredientsField) {
+        // ── Ingredient Repeater ──
+        fieldEl = document.createElement('div');
+        fieldEl.id = `edit-field-${key}`;
+        fieldEl.className = 'ingredient-repeater-container';
+
+        // Column headers
+        const header = document.createElement('div');
+        header.className = 'flex items-center gap-2 mb-2 text-xs text-gray-500 font-medium px-1';
+        header.innerHTML = `<span class="flex-1">Nama Bahan</span><span class="w-20 text-center">Jml</span><span class="w-36 text-center">Satuan</span><span class="w-6"></span>`;
+        wrapper.appendChild(label);
+        wrapper.appendChild(header);
+        wrapper.appendChild(fieldEl);
+        editFieldsContainer.appendChild(wrapper);
+        editFieldMeta.push({ key, isComplex: false, isIngredients: true });
+        renderIngredientRepeater(fieldEl, value);
+        return; // skip default append below
+      } else if (isComplex) {
         fieldEl          = document.createElement('textarea');
         fieldEl.rows     = 4;
         fieldEl.className = 'w-full p-3 border border-gray-200 rounded-xl font-mono text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-cookgreen-500 focus:border-cookgreen-500 outline-none transition-all';
@@ -153,17 +330,16 @@ window.renderDynamicEditFields = function(record) {
       } else if (window.currentEditCollection === 'ingredients' && key === 'category') {
         fieldEl          = document.createElement('select');
         fieldEl.className = 'w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cookgreen-500 focus:border-cookgreen-500 outline-none transition-all bg-white';
-        
+
         const categories = window.INGREDIENT_CATEGORIES || [];
         let optionsHtml = '';
-        
-        // Pastikan nilai saat ini ada dalam opsi
+
         if (value && !categories.includes(value)) {
           optionsHtml += `<option value="${value}">${value}</option>`;
         }
-        
+
         optionsHtml += categories.map(c => `<option value="${c}">${c}</option>`).join('');
-        
+
         fieldEl.innerHTML = optionsHtml;
         fieldEl.value = value ?? '';
       } else {
@@ -177,13 +353,21 @@ window.renderDynamicEditFields = function(record) {
       wrapper.appendChild(label);
       wrapper.appendChild(fieldEl);
       editFieldsContainer.appendChild(wrapper);
-      editFieldMeta.push({ key, isComplex });
+      editFieldMeta.push({ key, isComplex, isIngredients: false });
     });
 }
 
 window.collectDynamicEditPayload = function() {
   const payload = {};
   for (const field of editFieldMeta) {
+    if (field.isIngredients) {
+      const container = document.getElementById(`edit-field-${field.key}`);
+      if (container) {
+        payload[field.key] = collectIngredientRepeater(container);
+      }
+      continue;
+    }
+
     const inputEl = document.getElementById(`edit-field-${field.key}`);
     if (!inputEl) continue;
     const rawValue = inputEl.value;
