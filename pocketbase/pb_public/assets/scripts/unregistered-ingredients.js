@@ -325,6 +325,7 @@ window.scanUnregisteredIngredients = async () => {
     }
     
     // 3. Extract unique ingredient names from all recipes and their usages
+    //    Store as Map<ingredientName, Map<recipeId, recipeName>> to preserve IDs for edit links
     const recipeIngredientMap = new Map();
     recipes.forEach(r => {
       if (Array.isArray(r.ingredients)) {
@@ -332,10 +333,10 @@ window.scanUnregisteredIngredients = async () => {
           if (ing && ing.name) {
             const n = ing.name.trim();
             if (!recipeIngredientMap.has(n)) {
-              recipeIngredientMap.set(n, new Set());
+              recipeIngredientMap.set(n, new Map());
             }
-            if (r.recipe_name) {
-              recipeIngredientMap.get(n).add(r.recipe_name);
+            if (r.id && r.recipe_name) {
+              recipeIngredientMap.get(n).set(r.id, r.recipe_name);
             }
           }
         });
@@ -344,9 +345,11 @@ window.scanUnregisteredIngredients = async () => {
 
     // 4. Find the difference
     const unregistered = [];
-    recipeIngredientMap.forEach((recipesSet, name) => {
+    recipeIngredientMap.forEach((recipeMap, name) => {
       if (!masterNames.has(name.toLowerCase())) {
-        unregistered.push({ name, usages: Array.from(recipesSet) });
+        // usages is an array of {id, name} objects
+        const usages = Array.from(recipeMap.entries()).map(([id, rName]) => ({ id, name: rName }));
+        unregistered.push({ name, usages });
       }
     });
 
@@ -355,6 +358,9 @@ window.scanUnregisteredIngredients = async () => {
       if (diff !== 0) return diff;
       return a.name.localeCompare(b.name);
     });
+
+    // Build a lookup of recipe name → id for the usages chips
+    const recipeNameToId = new Map(recipes.map(r => [r.recipe_name, r.id]));
 
     loadingState.classList.add('hidden');
 
@@ -412,12 +418,17 @@ window.scanUnregisteredIngredients = async () => {
         .map(n => `<option value="${n.replace(/"/g, '&quot;')}" ${n === recommendedName ? 'selected' : ''}>${n}</option>`)
         .join('');
       
-      const usagesHtml = usages.length > 0 
+      const usagesHtml = usages.length > 0
         ? `<div class="text-[11px] text-gray-500 mt-2 flex flex-wrap items-center gap-1.5 w-full">
-             <i data-feather="book-open" class="w-3 h-3 text-gray-400"></i> 
+             <i data-feather="book-open" class="w-3 h-3 text-gray-400"></i>
              <span class="mr-1">Digunakan di:</span>
-             ${usages.map(u => `<span class="bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded leading-none">${u}</span>`).join('')}
-           </div>` 
+             ${usages.map(u => `<button
+               type="button"
+               onclick="closeUnregisteredModal(); openEditModal('${u.id}', 'recipes')"
+               class="bg-gray-200 hover:bg-cookgreen-100 hover:text-cookgreen-900 text-gray-700 px-1.5 py-0.5 rounded leading-none transition-colors cursor-pointer underline-offset-2 hover:underline"
+               title="Buka form edit resep ini"
+             >${u.name}</button>`).join('')}
+           </div>`
         : '';
 
       const idSafe = 'ing-' + btoa(name).replace(/[^a-zA-Z0-9]/g, '');
