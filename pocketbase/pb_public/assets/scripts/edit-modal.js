@@ -329,16 +329,32 @@ window.ensureIngredientNamesLoaded = async function() {
       pb.collection('ingredient_corrections').getFullList({ fields: 'original_name,corrected_name' }).catch(() => []),
     ]);
 
+    const deduplicateCaseInsensitive = (arr) => {
+      const map = new Map();
+      arr.forEach(raw => {
+        const trimmed = (raw || '').trim();
+        if (!trimmed) return;
+        const lower = trimmed.toLowerCase();
+        if (!map.has(lower)) {
+          map.set(lower, trimmed);
+        } else {
+          if (trimmed[0] && trimmed[0] === trimmed[0].toUpperCase()) {
+            map.set(lower, trimmed);
+          }
+        }
+      });
+      return Array.from(map.values()).sort((a, b) => a.localeCompare(b, 'id'));
+    };
+
     const masterNames = masterItems.map(i => i.name).filter(Boolean);
-    window._ingredientMasterNames = masterNames;
+    window._ingredientMasterNames = deduplicateCaseInsensitive(masterNames);
 
     const correctionNames = correctionItems.flatMap(c => [
       c.original_name,
       c.corrected_name,
     ]).filter(Boolean);
 
-    window._ingredientAllNames = Array.from(new Set([...masterNames, ...correctionNames]))
-      .sort((a, b) => a.localeCompare(b, 'id'));
+    window._ingredientAllNames = deduplicateCaseInsensitive([...masterNames, ...correctionNames]);
 
     setTimeout(() => {
       document.querySelectorAll('.ing-repeater-row input[id$="-name"]').forEach(inp => {
@@ -355,6 +371,114 @@ window.ensureIngredientNamesLoaded = async function() {
 };
 window.ensureIngredientNamesLoaded();
 
+function renderStepsRepeater(container, steps = []) {
+  container.innerHTML = '';
+  const rows = Array.isArray(steps) ? steps : [];
+
+  const updateNumbering = () => {
+    container.querySelectorAll('.step-row-num').forEach((el, idx) => {
+      el.textContent = `${idx + 1}`;
+    });
+  };
+
+  const addStepRow = (text = '') => {
+    const row = document.createElement('div');
+    row.className = 'step-repeater-row flex items-start gap-2.5 mb-2.5';
+    row.innerHTML = `
+      <div class="step-row-num w-7 h-9 rounded-xl bg-cookgreen-100 text-cookgreen-800 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5"></div>
+      <textarea
+        rows="2"
+        placeholder="Tulis instruksi langkah memasak..."
+        class="step-text flex-1 px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-cookgreen-500 outline-none transition-all"
+      >${(text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+      <button type="button" class="text-red-400 hover:text-red-600 p-1.5 rounded-lg hover:bg-red-50 transition-all flex-shrink-0 mt-1" title="Hapus langkah">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      </button>
+    `;
+    row.querySelector('button').addEventListener('click', () => {
+      row.remove();
+      updateNumbering();
+    });
+    container.appendChild(row);
+    updateNumbering();
+  };
+
+  if (rows.length > 0) {
+    rows.forEach(s => addStepRow(typeof s === 'string' ? s : JSON.stringify(s)));
+  } else {
+    addStepRow();
+  }
+
+  const addBtn = document.createElement('button');
+  addBtn.type = 'button';
+  addBtn.className = 'mt-1 flex items-center gap-1.5 text-sm text-cookgreen-700 hover:text-cookgreen-900 font-medium px-3 py-1.5 rounded-lg hover:bg-cookgreen-50 transition-all';
+  addBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Tambah Langkah`;
+  addBtn.addEventListener('click', () => addStepRow());
+  container.appendChild(addBtn);
+}
+
+function collectStepsRepeater(container) {
+  const steps = [];
+  container.querySelectorAll('.step-repeater-row .step-text').forEach(tx => {
+    const val = tx.value.trim();
+    if (val) steps.push(val);
+  });
+  return steps;
+}
+
+function renderTagsEditor(container, tags = []) {
+  container.innerHTML = '';
+  let items = Array.isArray(tags) ? [...tags] : [];
+
+  const wrap = document.createElement('div');
+  wrap.className = 'flex flex-wrap gap-2 p-3 border border-gray-200 rounded-xl bg-white min-h-[46px] items-center';
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.placeholder = '+ Ketik tag lalu ketuk Enter atau koma...';
+  input.className = 'flex-1 min-w-[180px] px-2 py-1 text-sm outline-none bg-transparent';
+
+  const renderChips = () => {
+    wrap.querySelectorAll('.tag-chip-item').forEach(el => el.remove());
+    items.forEach((tag, idx) => {
+      const chip = document.createElement('span');
+      chip.className = 'tag-chip-item inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-cookgreen-50 text-cookgreen-800 text-xs font-semibold border border-cookgreen-200';
+      chip.innerHTML = `
+        <span>${tag}</span>
+        <button type="button" class="hover:text-red-600 font-bold ml-1" title="Hapus tag">×</button>
+      `;
+      chip.querySelector('button').addEventListener('click', () => {
+        items.splice(idx, 1);
+        renderChips();
+      });
+      input.before(chip);
+    });
+  };
+
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      const val = input.value.trim().replace(/,/g, '');
+      if (val && !items.includes(val)) {
+        items.push(val);
+        input.value = '';
+        renderChips();
+      } else {
+        input.value = '';
+      }
+    }
+  });
+
+  wrap.appendChild(input);
+  container.appendChild(wrap);
+  renderChips();
+  container._getTags = () => items;
+}
+
+function collectTagsEditor(container) {
+  return typeof container._getTags === 'function' ? container._getTags() : [];
+}
+
 window.renderDynamicEditFields = function(record) {
   editFieldsContainer.innerHTML = '';
   editFieldMeta = []; // assumes editFieldMeta is global
@@ -362,15 +486,28 @@ window.renderDynamicEditFields = function(record) {
   Object.keys(record)
     .filter((key) => !isSystemField(key))
     .forEach((key) => {
+      // Hilangkan input category untuk recipes
+      if (window.currentEditCollection === 'recipes' && key === 'category') {
+        return;
+      }
+
       const value     = record[key];
       const isArray   = Array.isArray(value);
-      // Detect ingredients field: array of objects with a 'name' property
       const isIngredientsField =
         window.currentEditCollection === 'recipes' &&
         key === 'ingredients' &&
         isArray &&
         (value.length === 0 || (typeof value[0] === 'object' && value[0] !== null && 'name' in value[0]));
-      const isComplex = typeof value === 'object' && value !== null && !isIngredientsField;
+
+      const isStepsField =
+        window.currentEditCollection === 'recipes' &&
+        key === 'steps';
+
+      const isTagsField =
+        window.currentEditCollection === 'recipes' &&
+        key === 'tags';
+
+      const isComplex = typeof value === 'object' && value !== null && !isIngredientsField && !isStepsField && !isTagsField;
 
       const wrapper   = document.createElement('div');
       wrapper.className = 'mb-4';
@@ -382,12 +519,10 @@ window.renderDynamicEditFields = function(record) {
       let fieldEl;
 
       if (isIngredientsField) {
-        // ── Ingredient Repeater ──
         fieldEl = document.createElement('div');
         fieldEl.id = `edit-field-${key}`;
         fieldEl.className = 'ingredient-repeater-container';
 
-        // Column headers
         const header = document.createElement('div');
         header.className = 'flex items-center gap-2 mb-2 text-xs text-gray-500 font-medium px-1';
         header.innerHTML = `<span class="flex-1">Nama Bahan</span><span class="w-20 text-center">Jml</span><span class="w-36 text-center">Satuan</span><span class="w-6"></span>`;
@@ -397,7 +532,25 @@ window.renderDynamicEditFields = function(record) {
         editFieldsContainer.appendChild(wrapper);
         editFieldMeta.push({ key, isComplex: false, isIngredients: true });
         renderIngredientRepeater(fieldEl, value);
-        return; // skip default append below
+        return;
+      } else if (isStepsField) {
+        fieldEl = document.createElement('div');
+        fieldEl.id = `edit-field-${key}`;
+        wrapper.appendChild(label);
+        wrapper.appendChild(fieldEl);
+        editFieldsContainer.appendChild(wrapper);
+        editFieldMeta.push({ key, isComplex: false, isSteps: true });
+        renderStepsRepeater(fieldEl, value);
+        return;
+      } else if (isTagsField) {
+        fieldEl = document.createElement('div');
+        fieldEl.id = `edit-field-${key}`;
+        wrapper.appendChild(label);
+        wrapper.appendChild(fieldEl);
+        editFieldsContainer.appendChild(wrapper);
+        editFieldMeta.push({ key, isComplex: false, isTags: true });
+        renderTagsEditor(fieldEl, value);
+        return;
       } else if (isComplex) {
         fieldEl          = document.createElement('textarea');
         fieldEl.rows     = 4;
@@ -440,6 +593,20 @@ window.collectDynamicEditPayload = function() {
       const container = document.getElementById(`edit-field-${field.key}`);
       if (container) {
         payload[field.key] = collectIngredientRepeater(container);
+      }
+      continue;
+    }
+    if (field.isSteps) {
+      const container = document.getElementById(`edit-field-${field.key}`);
+      if (container) {
+        payload[field.key] = collectStepsRepeater(container);
+      }
+      continue;
+    }
+    if (field.isTags) {
+      const container = document.getElementById(`edit-field-${field.key}`);
+      if (container) {
+        payload[field.key] = collectTagsEditor(container);
       }
       continue;
     }
