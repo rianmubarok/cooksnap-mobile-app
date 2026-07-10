@@ -63,8 +63,25 @@ class IngredientProvider extends ChangeNotifier {
       _items = itms;
       _isOfflineMode = false;
 
+      // Muat pemetaan koreksi bahan jika koleksi 'ingredient_corrections' tersedia
+      final Map<String, String> correctionsMap = {};
+      try {
+        final corrRecords = await pb.collection('ingredient_corrections').getFullList();
+        for (final r in corrRecords) {
+          final aliasField = r.getStringValue('alias').trim();
+          final inputField = r.getStringValue('input').trim();
+          final alias = (aliasField.isNotEmpty ? aliasField : inputField).toLowerCase();
+          final canonical = r.getStringValue('canonical').trim();
+          if (alias.isNotEmpty && canonical.isNotEmpty) {
+            correctionsMap[alias] = canonical;
+          }
+        }
+      } catch (_) {
+        // Abaikan jika koleksi ingredient_corrections belum ada di PocketBase
+      }
+
       // Sinkronisasikan dengan resolver global
-      IngredientResolver.updateCatalog(itms);
+      IngredientResolver.updateCatalog(itms, newCorrections: correctionsMap);
     } catch (e) {
       debugPrint('Error loading ingredients: $e');
       
