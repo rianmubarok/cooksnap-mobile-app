@@ -148,7 +148,7 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
       return;
     }
 
-    final pantryItems = context.read<PantryProvider>().items;
+    final pantryItems = context.read<PantryProvider>().activeItems;
     final allIngredients = <String>{..._ingredients, ...pantryItems}.toList();
 
     final result = await Navigator.pushNamed(
@@ -189,7 +189,8 @@ class _ManualIngredientScreenState extends State<ManualIngredientScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final pantryItems = context.watch<PantryProvider>().items;
+    final pantryProvider = context.watch<PantryProvider>();
+    final pantryItems = pantryProvider.activeItems;
     _scheduleRecommendationSync(pantryItems);
 
     final recommendationProvider = context.watch<RecommendationProvider>();

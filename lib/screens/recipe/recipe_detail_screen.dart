@@ -123,7 +123,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
         final isFavorite =
             context.watch<FavoritesProvider>().isFavorite(recipe.id);
         
-        final pantryItems = context.watch<PantryProvider>().items;
+        final pantryItems = context.watch<PantryProvider>().activeItems;
         final allAvailableIngredients = _availableIngredients.isNotEmpty
             ? [..._availableIngredients, ...pantryItems]
             : <String>[];

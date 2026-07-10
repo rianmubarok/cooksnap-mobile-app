@@ -77,7 +77,7 @@ class _RecipeRecommendationScreenState
 
   @override
   Widget build(BuildContext context) {
-    final pantryItems = context.watch<PantryProvider>().items;
+    final pantryItems = context.watch<PantryProvider>().activeItems;
     _scheduleRecommendationSync(pantryItems);
 
     final recommendationProvider = context.watch<RecommendationProvider>();

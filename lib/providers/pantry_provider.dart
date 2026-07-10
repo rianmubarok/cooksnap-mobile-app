@@ -5,7 +5,8 @@ import '../core/pocketbase_client.dart';
 import '../utils/string_utils.dart';
 
 class PantryProvider extends ChangeNotifier {
-  static const String _prefsKey = 'pantry_essentials';
+  static const String _prefsKey       = 'pantry_essentials';
+  static const String _prefsKeyActive = 'pantry_essentials_active';
 
   static const List<String> _defaultEssentials = [
     'Air',
@@ -21,10 +22,17 @@ class PantryProvider extends ChangeNotifier {
   final pb = PocketBaseClient.instance;
 
   List<String> _items = [];
+  bool _isPantryActive = true;
   final Map<String, String> _allIngredientsCache = {};
   bool _isSyncing = false;
 
   List<String> get items => _items;
+
+  /// Whether the pantry is currently contributing to recipe searches.
+  bool get isPantryActive => _isPantryActive;
+
+  /// Returns [items] when the pantry is active, empty list otherwise.
+  List<String> get activeItems => _isPantryActive ? _items : const [];
 
   PantryProvider() {
     _loadItems();
@@ -122,12 +130,24 @@ class PantryProvider extends ChangeNotifier {
     } else {
       _items = savedItems;
     }
+
+    // Load pantry active state (default: true)
+    _isPantryActive = prefs.getBool(_prefsKeyActive) ?? true;
+
     notifyListeners();
   }
 
   Future<void> _saveItemsToPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList(_prefsKey, _items);
+  }
+
+  /// Toggle the global pantry on/off state and persist the preference.
+  Future<void> togglePantryActive() async {
+    _isPantryActive = !_isPantryActive;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_prefsKeyActive, _isPantryActive);
   }
 
   void add(String item) {
