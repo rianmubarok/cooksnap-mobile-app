@@ -382,10 +382,25 @@ window.scanUnregisteredIngredients = async () => {
     listContainer.innerHTML = '';
     const categoryOptions = (window.INGREDIENT_CATEGORIES || []).map(c => `<option value="${c}">${c}</option>`).join('');
     
-    const sortedMasterNames = masterItems
-      .map(m => (m.name || '').trim())
-      .filter(n => n)
-      .sort();
+    const deduplicateNames = (names) => {
+      const map = new Map();
+      names.forEach(raw => {
+        const trimmed = (raw || '').trim();
+        if (!trimmed) return;
+        const lower = trimmed.toLowerCase();
+        if (!map.has(lower)) {
+          map.set(lower, trimmed);
+        } else {
+          const existing = map.get(lower);
+          if (trimmed[0] && trimmed[0] === trimmed[0].toUpperCase()) {
+            map.set(lower, trimmed);
+          }
+        }
+      });
+      return Array.from(map.values()).sort((a, b) => a.localeCompare(b, 'id'));
+    };
+
+    const sortedMasterNames = deduplicateNames(masterItems.map(m => m.name));
 
     unregistered.forEach(item => {
       const name = item.name;
@@ -510,22 +525,35 @@ function _wireCorrectCombobox(idSafe, initialValue, masterNames, correctionsHist
   const listEl       = document.getElementById(`map-list-${idSafe}`);
   if (!searchInput || !hiddenInput || !listEl) return;
 
-  // Build suggestion list: union of master names and corrected names, sorted alphabetically
   const correctionNames = correctionsHistory
     .map(c => (c.corrected_name || '').trim())
     .filter(n => n);
-  const allSuggestions = Array.from(new Set([...masterNames, ...correctionNames])).sort((a, b) =>
+
+  const deduplicateMap = new Map();
+  [...masterNames, ...correctionNames].forEach(raw => {
+    const trimmed = (raw || '').trim();
+    if (!trimmed) return;
+    const lower = trimmed.toLowerCase();
+    if (!deduplicateMap.has(lower)) {
+      deduplicateMap.set(lower, trimmed);
+    } else {
+      if (trimmed[0] && trimmed[0] === trimmed[0].toUpperCase()) {
+        deduplicateMap.set(lower, trimmed);
+      }
+    }
+  });
+
+  const allSuggestions = Array.from(deduplicateMap.values()).sort((a, b) =>
     a.localeCompare(b, 'id')
   );
 
   function renderList(query) {
-    const q = query.trim().toLowerCase();
-    let filtered = q
+    const q = (query || '').trim().toLowerCase();
+    const filtered = q
       ? allSuggestions.filter(n => n.toLowerCase().includes(q))
       : allSuggestions;
 
     if (!filtered.length) { listEl.classList.add('hidden'); return; }
-    filtered = filtered.slice(0, 30);
 
     listEl.innerHTML = filtered.map(n =>
       `<li class="px-3 py-2 cursor-pointer hover:bg-amber-50 transition-colors" data-value="${n.replace(/"/g, '&quot;')}">${n}</li>`
@@ -545,11 +573,12 @@ function _wireCorrectCombobox(idSafe, initialValue, masterNames, correctionsHist
   }
 
   searchInput.addEventListener('input', () => {
-    hiddenInput.value = searchInput.value; // keep hidden in sync while typing
+    hiddenInput.value = searchInput.value;
     renderList(searchInput.value);
   });
 
-  searchInput.addEventListener('focus', () => renderList(searchInput.value));
+  searchInput.addEventListener('focus', () => renderList(''));
+  searchInput.addEventListener('click', () => renderList(''));
   searchInput.addEventListener('blur',  () => setTimeout(() => listEl.classList.add('hidden'), 200));
   searchInput.addEventListener('keydown', e => {
     if (e.key === 'Escape') listEl.classList.add('hidden');

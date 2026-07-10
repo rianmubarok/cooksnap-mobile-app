@@ -145,13 +145,16 @@ function isSystemField(key) {
  */
 function renderIngredientRepeater(container, rows) {
   container.innerHTML = '';
+  if (window.ensureIngredientNamesLoaded) {
+    window.ensureIngredientNamesLoaded();
+  }
 
   const addRow = (ing = {}) => {
     const idx      = container.children.length;
     const idPrefix = `ing-row-${idx}`;
 
     const unitOpts = UNIT_OPTIONS
-      .map(u => `<option value="${u}" ${u === (ing.unit ?? '') ? 'selected' : ''}>${u}</option>`)
+      .map(u => `<option value="${u}"></option>`)
       .join('');
 
     const row = document.createElement('div');
@@ -177,11 +180,17 @@ function renderIngredientRepeater(container, rows) {
         min="0" step="any"
         class="w-20 px-2 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-cookgreen-500 outline-none transition-all text-center"
       >
-      <select id="${idPrefix}-unit"
-              class="w-36 px-2 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-cookgreen-500 outline-none bg-white transition-all">
-        <option value="">– satuan –</option>
+      <input
+        type="text"
+        id="${idPrefix}-unit"
+        list="${idPrefix}-unit-list"
+        value="${(ing.unit ?? '').replace(/"/g, '&quot;')}"
+        placeholder="Satuan..."
+        class="w-36 px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-cookgreen-500 outline-none transition-all"
+      >
+      <datalist id="${idPrefix}-unit-list">
         ${unitOpts}
-      </select>
+      </datalist>
       <button type="button" onclick="this.closest('.ing-repeater-row').remove()"
               class="text-red-400 hover:text-red-600 p-1 rounded-lg hover:bg-red-50 transition-all flex-shrink-0" title="Hapus baris">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
@@ -190,22 +199,45 @@ function renderIngredientRepeater(container, rows) {
 
     container.appendChild(row);
 
-    // ── Autocomplete wiring ──
+    // ── Autocomplete wiring & unregistered highlight ──
     const nameInput = row.querySelector(`#${idPrefix}-name`);
     const sugList   = row.querySelector(`#${idPrefix}-suggestions`);
 
     const getSuggestions = () =>
       window._ingredientAllNames || window._ingredientMasterNames || [];
 
-    nameInput.addEventListener('input', () => {
+    const checkRegistrationStatus = () => {
+      const val = nameInput.value.trim();
+      if (!val) {
+        nameInput.classList.remove('border-amber-400', 'bg-amber-50', 'text-amber-900', 'font-medium');
+        nameInput.classList.add('border-gray-200', 'bg-white');
+        nameInput.title = '';
+        return;
+      }
+      const allKnown = getSuggestions();
+      const isRegistered = allKnown.some(n => n.toLowerCase() === val.toLowerCase());
+      if (!isRegistered) {
+        nameInput.classList.remove('border-gray-200', 'bg-white');
+        nameInput.classList.add('border-amber-400', 'bg-amber-50', 'text-amber-900', 'font-medium');
+        nameInput.title = 'Bahan ini belum terdaftar di database utama';
+      } else {
+        nameInput.classList.remove('border-amber-400', 'bg-amber-50', 'text-amber-900', 'font-medium');
+        nameInput.classList.add('border-gray-200', 'bg-white');
+        nameInput.title = 'Bahan terdaftar di database';
+      }
+    };
+
+    const showSuggestions = () => {
       const q = nameInput.value.trim().toLowerCase();
-      if (!q) { sugList.classList.add('hidden'); return; }
+      const allSuggestions = getSuggestions();
+      const matches = q
+        ? allSuggestions.filter(n => n.toLowerCase().includes(q)).slice(0, 20)
+        : allSuggestions.slice(0, 20);
 
-      const matches = getSuggestions()
-        .filter(n => n.toLowerCase().includes(q))
-        .slice(0, 20);
-
-      if (!matches.length) { sugList.classList.add('hidden'); return; }
+      if (!matches.length) {
+        sugList.classList.add('hidden');
+        return;
+      }
 
       sugList.innerHTML = matches.map(n =>
         `<li class="px-3 py-2 cursor-pointer hover:bg-cookgreen-50 hover:text-cookgreen-900 transition-colors">${n}</li>`
@@ -216,15 +248,32 @@ function renderIngredientRepeater(container, rows) {
         li.addEventListener('mousedown', e => {
           e.preventDefault();
           nameInput.value = li.textContent;
+          checkRegistrationStatus();
           sugList.classList.add('hidden');
         });
       });
+    };
+
+    nameInput.addEventListener('input', () => {
+      showSuggestions();
+      checkRegistrationStatus();
     });
 
-    nameInput.addEventListener('blur', () => setTimeout(() => sugList.classList.add('hidden'), 150));
+    nameInput.addEventListener('focus', () => {
+      showSuggestions();
+      checkRegistrationStatus();
+    });
+
+    nameInput.addEventListener('blur', () => {
+      setTimeout(() => sugList.classList.add('hidden'), 150);
+      checkRegistrationStatus();
+    });
+
     nameInput.addEventListener('keydown', e => {
       if (e.key === 'Escape') sugList.classList.add('hidden');
     });
+
+    setTimeout(checkRegistrationStatus, 50);
   };
 
   if (Array.isArray(rows) && rows.length > 0) {
@@ -266,10 +315,10 @@ function collectIngredientRepeater(container) {
   return result;
 }
 
-// ─── Cache ingredient names for autocomplete ─────────────────────────────────
-// Combines: master catalog + original aliases + corrected names from ingredient_corrections
-// Sorted alphabetically so autocomplete feels natural.
-(async () => {
+window.ensureIngredientNamesLoaded = async function() {
+  if (window._ingredientAllNames && window._ingredientAllNames.length > 0) {
+    return window._ingredientAllNames;
+  }
   try {
     const [masterItems, correctionItems] = await Promise.all([
       pb.collection('ingredients').getFullList({ fields: 'name', sort: 'name' }),
@@ -277,21 +326,23 @@ function collectIngredientRepeater(container) {
     ]);
 
     const masterNames = masterItems.map(i => i.name).filter(Boolean);
-    window._ingredientMasterNames = masterNames; // keep backward compat
+    window._ingredientMasterNames = masterNames;
 
     const correctionNames = correctionItems.flatMap(c => [
       c.original_name,
       c.corrected_name,
     ]).filter(Boolean);
 
-    // Union: master + corrections, sorted A-Z
     window._ingredientAllNames = Array.from(new Set([...masterNames, ...correctionNames]))
       .sort((a, b) => a.localeCompare(b, 'id'));
+    return window._ingredientAllNames;
   } catch (e) {
     window._ingredientMasterNames = [];
     window._ingredientAllNames = [];
+    return [];
   }
-})();
+};
+window.ensureIngredientNamesLoaded();
 
 window.renderDynamicEditFields = function(record) {
   editFieldsContainer.innerHTML = '';

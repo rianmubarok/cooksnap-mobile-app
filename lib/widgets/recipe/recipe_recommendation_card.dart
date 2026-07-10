@@ -41,9 +41,10 @@ class RecipeRecommendationCard extends StatelessWidget {
               child: recipe.imageUrl != null && recipe.imageUrl!.trim().isNotEmpty
                   ? Image.network(
                       recipe.thumbnailUrl!,
+                      width: double.infinity,
+                      height: double.infinity,
                       fit: BoxFit.cover,
-                      cacheWidth: 400,
-                      cacheHeight: 400,
+                      cacheWidth: 500,
                       loadingBuilder: (context, child, loadingProgress) {
                         if (loadingProgress == null) return child;
                         return Center(

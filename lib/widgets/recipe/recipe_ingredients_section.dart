@@ -101,7 +101,7 @@ class _RecipeIngredientsSectionState extends State<RecipeIngredientsSection> {
                         onTap: () =>
                             showIngredientWikiSheet(context, ing.name),
                         child: AppText(
-                          ing.name,
+                          StringUtils.capitalizeWords(ing.name),
                           variant: AppTextVariant.bodyMedium,
                           decoration: TextDecoration.underline,
                           color: AppColors.textPrimary,

@@ -100,9 +100,9 @@ class _PantryEssentialsSheetState extends State<PantryEssentialsSheet> {
                       AppStrings.pantryEssentialsTitle,
                       variant: AppTextVariant.sectionTitle,
                     ),
-                    _PantryToggleChip(
-                      isActive: isActive,
-                      onTap: pantryProvider.togglePantryActive,
+                    _ChipStyledSlider(
+                      value: isActive,
+                      onChanged: (_) => pantryProvider.togglePantryActive(),
                     ),
                   ],
                 ),
@@ -188,7 +188,7 @@ class _PantryEssentialsSheetState extends State<PantryEssentialsSheet> {
                     ),
                   ],
                 ),
-                const SizedBox(height: AppConstants.spacingLg),
+                const SizedBox(height: 12),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -225,56 +225,53 @@ class _PantryEssentialsSheetState extends State<PantryEssentialsSheet> {
   }
 }
 
-class _PantryToggleChip extends StatelessWidget {
-  final bool isActive;
-  final VoidCallback onTap;
+class _ChipStyledSlider extends StatelessWidget {
+  final bool value;
+  final ValueChanged<bool> onChanged;
 
-  const _PantryToggleChip({
-    required this.isActive,
-    required this.onTap,
+  const _ChipStyledSlider({
+    required this.value,
+    required this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () => onChanged(!value),
+      behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        height: AppConstants.chipHeight,
-        padding: const EdgeInsets.symmetric(horizontal: 14),
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeInOut,
+        width: 56,
+        height: 28,
+        padding: const EdgeInsets.all(3),
         decoration: BoxDecoration(
-          color: isActive ? AppColors.primary : AppColors.cardBackground,
+          color: value ? AppColors.primary : AppColors.cardBackground,
           borderRadius: BorderRadius.circular(AppConstants.radiusRound),
-          border: isActive
-              ? null
-              : Border.all(color: AppColors.border),
+          border: Border.all(
+            color: value ? AppColors.primary : AppColors.border,
+            width: 1.2,
+          ),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              isActive ? 'Aktif' : 'Nonaktif',
-              style: AppTextStyles.bodySmall.copyWith(
-                color: isActive ? AppColors.white : AppColors.textSecondary,
-                fontWeight: FontWeight.w600,
-              ),
+        child: AnimatedAlign(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeInOut,
+          alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+          child: Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              color: value ? AppColors.white : AppColors.border,
+              shape: BoxShape.circle,
             ),
-            const SizedBox(width: 6),
-            Container(
-              padding: const EdgeInsets.all(3),
-              decoration: BoxDecoration(
-                color: isActive
-                    ? AppColors.chipBackground
-                    : AppColors.border.withValues(alpha: 0.5),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                isActive ? LucideIcons.check : LucideIcons.power,
-                size: 13,
-                color: isActive ? AppColors.primary : AppColors.textSecondary,
-              ),
-            ),
-          ],
+            child: value
+                ? const Icon(
+                    LucideIcons.check,
+                    size: 12,
+                    color: AppColors.primary,
+                  )
+                : null,
+          ),
         ),
       ),
     );

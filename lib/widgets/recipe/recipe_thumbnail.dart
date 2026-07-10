@@ -51,8 +51,7 @@ class RecipeThumbnailBox extends StatelessWidget {
                 width: size,
                 height: size,
                 fit: BoxFit.cover,
-                cacheWidth: (size * 2.5).toInt(),
-                cacheHeight: (size * 2.5).toInt(),
+                cacheWidth: (size * 3).toInt(),
                 errorBuilder: (_, __, ___) => RecipeThumbnail(
                   iconSize: iconSize ?? size * 0.44,
                 ),

@@ -5,6 +5,7 @@ import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_text_styles.dart';
 import '../../services/wikipedia_service.dart';
+import '../../utils/string_utils.dart';
 import '../common/bottom_sheet_handle.dart';
 
 class IngredientWikiSheet extends StatefulWidget {
@@ -82,7 +83,7 @@ class _IngredientWikiSheetState extends State<IngredientWikiSheet> {
           children: [
             const Center(child: BottomSheetHandle()),
             Text(
-              widget.ingredientName,
+              StringUtils.capitalizeWords(widget.ingredientName),
               style: AppTextStyles.h3,
             ),
             const SizedBox(height: AppConstants.spacingMd),
