@@ -206,7 +206,7 @@ function renderIngredientRepeater(container, rows) {
     const getSuggestions = () =>
       window._ingredientAllNames || window._ingredientMasterNames || [];
 
-    const checkRegistrationStatus = () => {
+    const checkRegistrationStatus = async () => {
       const val = nameInput.value.trim();
       if (!val) {
         nameInput.classList.remove('border-amber-400', 'bg-amber-50', 'text-amber-900', 'font-medium');
@@ -214,7 +214,10 @@ function renderIngredientRepeater(container, rows) {
         nameInput.title = '';
         return;
       }
-      const allKnown = getSuggestions();
+      let allKnown = getSuggestions();
+      if (!allKnown.length && window.ensureIngredientNamesLoaded) {
+        allKnown = await window.ensureIngredientNamesLoaded();
+      }
       const isRegistered = allKnown.some(n => n.toLowerCase() === val.toLowerCase());
       if (!isRegistered) {
         nameInput.classList.remove('border-gray-200', 'bg-white');
@@ -226,6 +229,7 @@ function renderIngredientRepeater(container, rows) {
         nameInput.title = 'Bahan terdaftar di database';
       }
     };
+    nameInput.addEventListener('check-status', () => checkRegistrationStatus());
 
     const showSuggestions = () => {
       const q = nameInput.value.trim().toLowerCase();
@@ -335,6 +339,13 @@ window.ensureIngredientNamesLoaded = async function() {
 
     window._ingredientAllNames = Array.from(new Set([...masterNames, ...correctionNames]))
       .sort((a, b) => a.localeCompare(b, 'id'));
+
+    setTimeout(() => {
+      document.querySelectorAll('.ing-repeater-row input[id$="-name"]').forEach(inp => {
+        inp.dispatchEvent(new Event('check-status'));
+      });
+    }, 10);
+
     return window._ingredientAllNames;
   } catch (e) {
     window._ingredientMasterNames = [];
