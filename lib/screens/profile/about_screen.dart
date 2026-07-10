@@ -1,12 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_constants.dart';
 import '../../widgets/common/app_text.dart';
 import '../../widgets/navigation/circular_header_button.dart';
 
-class AboutScreen extends StatelessWidget {
+class AboutScreen extends StatefulWidget {
   const AboutScreen({super.key});
+
+  @override
+  State<AboutScreen> createState() => _AboutScreenState();
+}
+
+class _AboutScreenState extends State<AboutScreen> {
+  String _versionString = 'Memuat versi...';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPackageInfo();
+  }
+
+  Future<void> _loadPackageInfo() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      if (mounted) {
+        setState(() {
+          final buildNum =
+              info.buildNumber.isNotEmpty ? ' (${info.buildNumber})' : '';
+          _versionString = 'Versi ${info.version}$buildNum';
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _versionString = 'Versi 1.1.0';
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,30 +64,30 @@ class AboutScreen extends StatelessWidget {
         backgroundColor: AppColors.background,
         elevation: 0,
       ),
-      body: const SingleChildScrollView(
-        padding: EdgeInsets.all(AppConstants.paddingScreen),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(AppConstants.paddingScreen),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 24),
-            AppText(
+            const SizedBox(height: 24),
+            const AppText(
               AppConstants.appName,
               variant: AppTextVariant.headlineDisplay,
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             AppText(
-              'Versi 1.0.0',
+              _versionString,
               variant: AppTextVariant.bodyMedium,
               color: AppColors.textSecondary,
             ),
-            SizedBox(height: 32),
-            AppText(
+            const SizedBox(height: 32),
+            const AppText(
               'Cooksnap adalah aplikasi resep masakan yang memudahkan Anda menemukan inspirasi memasak berdasarkan bahan-bahan yang Anda miliki di dapur. Dengan fitur pemindai cerdas, Anda dapat dengan mudah mengetahui resep apa saja yang bisa dibuat dari bahan-bahan tersebut.',
               variant: AppTextVariant.bodyMedium,
               height: 1.6,
             ),
-            SizedBox(height: 48),
-            AppText(
+            const SizedBox(height: 48),
+            const AppText(
               '© 2026 Cooksnap Team.\nHak Cipta Dilindungi.',
               variant: AppTextVariant.caption,
               color: AppColors.textHint,

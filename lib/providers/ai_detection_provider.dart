@@ -27,7 +27,7 @@ class AiDetectionProvider extends ChangeNotifier {
   bool get hasError => _state == DetectionState.error;
   bool get hasResult => _state == DetectionState.success && _scanResult != null;
 
-  Future<void> scanIngredients(XFile image) async {
+  Future<bool> scanIngredients(XFile image) async {
     _state = DetectionState.loading;
     _errorMessage = null;
     notifyListeners();
@@ -39,17 +39,22 @@ class AiDetectionProvider extends ChangeNotifier {
       if (result.isSuccess) {
         _state = DetectionState.success;
         _errorMessage = null;
+        notifyListeners();
+        return true;
       } else {
         _state = DetectionState.error;
-        _errorMessage = result.errorMessage ?? 'Terjadi kesalahan tidak diketahui';
+        _errorMessage =
+            result.errorMessage ?? 'Terjadi kesalahan tidak diketahui';
+        notifyListeners();
+        return false;
       }
     } catch (e) {
       _state = DetectionState.error;
       _errorMessage = 'Gagal memproses gambar: ${e.toString()}';
       _scanResult = ScanResult.error(_errorMessage!);
+      notifyListeners();
+      return false;
     }
-
-    notifyListeners();
   }
 
   void reset() {

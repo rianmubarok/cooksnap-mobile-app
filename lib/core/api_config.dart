@@ -8,4 +8,7 @@ class ApiConfig {
 
   static String get geminiVisionEndpoint =>
       '$geminiApiBaseUrl/models/$geminiModel:generateContent?key=$geminiApiKey';
+
+  static String getGeminiEndpointForModel(String model) =>
+      '$geminiApiBaseUrl/models/$model:generateContent?key=$geminiApiKey';
 }

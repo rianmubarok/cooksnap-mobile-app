@@ -51,17 +51,53 @@ Format output: JSON array of strings. Contoh: ["wortel", "bawang putih", "ayam"]
         }
       };
 
-      debugPrint('Calling Gemini API: ${ApiConfig.geminiVisionEndpoint}');
+      final modelsToTry = [
+        ApiConfig.geminiModel, // 'gemini-3.5-flash'
+        'gemini-2.5-flash',
+        'gemini-2.0-flash',
+        'gemini-1.5-flash',
+      ];
 
-      final response = await http.post(
-        Uri.parse(ApiConfig.geminiVisionEndpoint),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(requestBody),
-      );
+      http.Response? lastResponse;
+      for (final modelName in modelsToTry) {
+        final endpoint = ApiConfig.getGeminiEndpointForModel(modelName);
+        debugPrint('Trying Gemini API model: $modelName -> $endpoint');
 
-      debugPrint('Gemini response status: ${response.statusCode}');
+        try {
+          var response = await http
+              .post(
+                Uri.parse(endpoint),
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: jsonEncode(requestBody),
+              )
+              .timeout(const Duration(seconds: 25));
+
+          lastResponse = response;
+          debugPrint('Model $modelName status: ${response.statusCode}');
+
+          // Jika model sibuk (429) atau tidak ditemukan (404), langsung coba model berikutnya
+          if (response.statusCode == 429 || response.statusCode == 404) {
+            debugPrint(
+                'Model $modelName returned status ${response.statusCode}, trying next fallback model...');
+            continue;
+          }
+
+          break;
+        } catch (e) {
+          debugPrint(
+              'Model $modelName connection/network error ($e), trying next fallback model...');
+          continue;
+        }
+      }
+
+      if (lastResponse == null) {
+        return ScanResult.error(
+            'Koneksi terputus saat mengirim foto ke AI. Periksa koneksi internet Anda dan coba lagi.');
+      }
+
+      final response = lastResponse;
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
@@ -121,7 +157,17 @@ Format output: JSON array of strings. Contoh: ["wortel", "bawang putih", "ayam"]
               'Kunci API tidak valid atau tidak memiliki akses');
         }
       } else if (response.statusCode == 429) {
-        return ScanResult.error('Terlalu banyak permintaan. Coba lagi nanti');
+        return ScanResult.error(
+            'Server AI sedang sibuk (terlalu banyak permintaan). Silakan tunggu beberapa detik dan coba lagi.');
+      } else if (response.statusCode == 404) {
+        String errorMsg = 'Model AI tidak ditemukan (kode 404)';
+        try {
+          final errorBody = jsonDecode(response.body);
+          if (errorBody['error']?['message'] != null) {
+            errorMsg = 'Kesalahan 404: ${errorBody['error']['message']}';
+          }
+        } catch (_) {}
+        return ScanResult.error(errorMsg);
       } else {
         return ScanResult.error(
             'Gagal mendeteksi bahan (kode ${response.statusCode})');
@@ -130,11 +176,14 @@ Format output: JSON array of strings. Contoh: ["wortel", "bawang putih", "ayam"]
       return ScanResult.error('Gagal memproses respons: ${e.message}');
     } catch (e) {
       final errorMessage = e.toString();
-      if (errorMessage.contains('XMLHttpRequest')) {
+      if (errorMessage.contains('XMLHttpRequest') ||
+          errorMessage.toLowerCase().contains('connection abort') ||
+          errorMessage.toLowerCase().contains('timeout') ||
+          errorMessage.toLowerCase().contains('socket')) {
         return ScanResult.error(
-            'Tidak dapat terhubung ke layanan AI. Gunakan aplikasi seluler atau hubungi pengembang.');
+            'Koneksi terputus saat mengirim foto ke AI. Periksa koneksi internet Anda dan coba lagi.');
       }
-      return ScanResult.error('Terjadi kesalahan: $errorMessage');
+      return ScanResult.error('Terjadi kesalahan saat menganalisis gambar.');
     }
   }
 }

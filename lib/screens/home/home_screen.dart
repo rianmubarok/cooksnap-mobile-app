@@ -125,21 +125,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final tagQuery = _displayTags[_selectedTagIndex].query;
       
-      // Resep Populer: Newest recipes
+      // Resep Populer: Direfresh setiap harinya (@random) agar selalu segar
       final popular = await repo.getRecipes(
-        page: 1, 
-        perPage: _kPopularLimit, 
-        tag: tagQuery,
-        sort: '-created',
-      );
-
-      // Untuk Kamu: Random recipes
-      final forYou = await repo.getRecipes(
-        page: 1, 
-        perPage: _kPerPage, 
+        page: 1,
+        perPage: _kPopularLimit,
         tag: tagQuery,
         sort: '@random',
       );
+
+      // Untuk Kamu: Ambil resep lainnya & pastikan tidak duplikat dengan Resep Populer
+      final popularIds = popular.map((e) => e.id).toSet();
+      final forYouRaw = await repo.getRecipes(
+        page: 1,
+        perPage: _kPerPage + _kPopularLimit,
+        tag: tagQuery,
+        sort: '@random',
+      );
+      final forYou = forYouRaw
+          .where((r) => !popularIds.contains(r.id))
+          .take(_kPerPage)
+          .toList();
 
       if (!mounted) return;
       setState(() {

@@ -44,7 +44,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
       if (_cameras!.isNotEmpty) {
         _cameraController = CameraController(
           _cameras!.first,
-          ResolutionPreset.high,
+          ResolutionPreset.medium,
           enableAudio: false,
         );
         await _cameraController!.initialize();
@@ -158,8 +158,11 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
     aiProvider.reset();
     _openScanResultsSheet();
-    userProvider.recordScan();
-    aiProvider.scanIngredients(_selectedImage!);
+    aiProvider.scanIngredients(_selectedImage!).then((success) {
+      if (success && mounted) {
+        userProvider.recordScan();
+      }
+    });
   }
 
   @override
