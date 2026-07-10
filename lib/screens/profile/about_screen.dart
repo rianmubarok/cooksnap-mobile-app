@@ -35,7 +35,7 @@ class _AboutScreenState extends State<AboutScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _versionString = 'Versi 1.1.0';
+          _versionString = 'Versi 1.2.0';
         });
       }
     }
