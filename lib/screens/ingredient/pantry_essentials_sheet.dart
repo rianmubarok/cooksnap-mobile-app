@@ -97,65 +97,22 @@ class _PantryEssentialsSheetState extends State<PantryEssentialsSheet> {
                   onAction: pantryProvider.resetToDefault,
                 ),
                 const SizedBox(height: AppConstants.spacingSm),
-
-                // ── Global Toggle ─────────────────────────────────────────
-                GestureDetector(
-                  onTap: pantryProvider.togglePantryActive,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: isActive
-                          ? AppColors.primaryDark.withValues(alpha: 0.08)
-                          : AppColors.border.withValues(alpha: 0.4),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(
-                        color: isActive
-                            ? AppColors.primaryDark.withValues(alpha: 0.25)
-                            : AppColors.border,
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Bahan-bahan di bawah ini diasumsikan selalu tersedia di dapurmu.',
+                        style: AppTextStyles.bodyMedium.copyWith(height: 1.5),
                       ),
                     ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                isActive
-                                    ? 'Bahan dasar aktif'
-                                    : 'Bahan dasar tidak aktif',
-                                style: AppTextStyles.bodyMedium.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: isActive
-                                      ? AppColors.primaryDark
-                                      : AppColors.textSecondary,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                isActive
-                                    ? 'Bahan-bahan ini diasumsikan selalu tersedia dan ikut disertakan saat mencari resep.'
-                                    : 'Bahan-bahan ini diabaikan saat mencari resep.',
-                                style: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.textSecondary,
-                                  height: 1.4,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Switch(
-                          value: isActive,
-                          onChanged: (_) => pantryProvider.togglePantryActive(),
-                          activeThumbColor: AppColors.primaryDark,
-                        ),
-                      ],
+                    const SizedBox(width: 8),
+                    Switch(
+                      value: isActive,
+                      onChanged: (_) => pantryProvider.togglePantryActive(),
+                      activeThumbColor: AppColors.primaryDark,
                     ),
-                  ),
+                  ],
                 ),
-
                 const SizedBox(height: AppConstants.spacingLg),
                 Row(
                   children: [
@@ -235,22 +192,17 @@ class _PantryEssentialsSheetState extends State<PantryEssentialsSheet> {
                 ),
                 const SizedBox(height: AppConstants.spacingLg),
 
-                // ── Ingredient chips (dimmed when pantry is off) ──────────
-                AnimatedOpacity(
-                  opacity: isActive ? 1.0 : 0.45,
-                  duration: const Duration(milliseconds: 200),
-                  child: Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: essentials
-                        .map(
-                          (item) => RemovableIngredientChip(
-                            label: item,
-                            onRemove: () => pantryProvider.remove(item),
-                          ),
-                        )
-                        .toList(),
-                  ),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: essentials
+                      .map(
+                        (item) => RemovableIngredientChip(
+                          label: item,
+                          onRemove: () => pantryProvider.remove(item),
+                        ),
+                      )
+                      .toList(),
                 ),
 
                 const SizedBox(height: AppConstants.spacingXl),
