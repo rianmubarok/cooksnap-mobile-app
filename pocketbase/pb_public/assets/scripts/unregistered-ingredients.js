@@ -510,15 +510,13 @@ function _wireCorrectCombobox(idSafe, initialValue, masterNames, correctionsHist
   const listEl       = document.getElementById(`map-list-${idSafe}`);
   if (!searchInput || !hiddenInput || !listEl) return;
 
-  // Build ordered suggestion list: corrections history first, then master names
+  // Build suggestion list: union of master names and corrected names, sorted alphabetically
   const correctionNames = correctionsHistory
     .map(c => (c.corrected_name || '').trim())
-    .filter(n => n && masterNames.includes(n));
-  const correctionSet = new Set(correctionNames);
-  const allSuggestions = [
-    ...correctionNames,
-    ...masterNames.filter(n => !correctionSet.has(n)),
-  ];
+    .filter(n => n);
+  const allSuggestions = Array.from(new Set([...masterNames, ...correctionNames])).sort((a, b) =>
+    a.localeCompare(b, 'id')
+  );
 
   function renderList(query) {
     const q = query.trim().toLowerCase();
@@ -529,15 +527,9 @@ function _wireCorrectCombobox(idSafe, initialValue, masterNames, correctionsHist
     if (!filtered.length) { listEl.classList.add('hidden'); return; }
     filtered = filtered.slice(0, 30);
 
-    listEl.innerHTML = filtered.map((n, i) => {
-      const isFromHistory = correctionSet.has(n);
-      const badge = isFromHistory
-        ? `<span class="ml-1.5 text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full font-medium">Histori</span>`
-        : '';
-      return `<li class="px-3 py-2 cursor-pointer hover:bg-amber-50 flex items-center gap-1 transition-colors" data-value="${n.replace(/"/g, '&quot;')}">
-                ${n}${badge}
-              </li>`;
-    }).join('');
+    listEl.innerHTML = filtered.map(n =>
+      `<li class="px-3 py-2 cursor-pointer hover:bg-amber-50 transition-colors" data-value="${n.replace(/"/g, '&quot;')}">${n}</li>`
+    ).join('');
 
     listEl.classList.remove('hidden');
 
