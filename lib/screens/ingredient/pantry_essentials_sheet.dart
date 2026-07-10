@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_strings.dart';
 import '../../core/app_constants.dart';
 import '../../core/app_text_styles.dart';
 import '../../providers/pantry_provider.dart';
+import '../../widgets/common/app_text.dart';
 import '../../widgets/common/bottom_sheet_handle.dart';
-import '../../widgets/common/section_header_row.dart';
+import '../../widgets/common/section_action_link.dart';
 import '../../widgets/common/square_icon_button.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/ingredient/removable_ingredient_chip.dart';
@@ -91,27 +93,23 @@ class _PantryEssentialsSheetState extends State<PantryEssentialsSheet> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const BottomSheetHandle(),
-                SectionHeaderRow(
-                  title: AppStrings.pantryEssentialsTitle,
-                  actionLabel: AppStrings.resetToDefault,
-                  onAction: pantryProvider.resetToDefault,
-                ),
-                const SizedBox(height: AppConstants.spacingSm),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: Text(
-                        'Bahan-bahan di bawah ini diasumsikan selalu tersedia di dapurmu.',
-                        style: AppTextStyles.bodyMedium.copyWith(height: 1.5),
-                      ),
+                    const AppText(
+                      AppStrings.pantryEssentialsTitle,
+                      variant: AppTextVariant.sectionTitle,
                     ),
-                    const SizedBox(width: 8),
-                    Switch(
-                      value: isActive,
-                      onChanged: (_) => pantryProvider.togglePantryActive(),
-                      activeThumbColor: AppColors.primaryDark,
+                    _PantryToggleChip(
+                      isActive: isActive,
+                      onTap: pantryProvider.togglePantryActive,
                     ),
                   ],
+                ),
+                const SizedBox(height: AppConstants.spacingSm),
+                Text(
+                  'Bahan-bahan di bawah ini diasumsikan selalu tersedia di dapurmu.',
+                  style: AppTextStyles.bodyMedium.copyWith(height: 1.5),
                 ),
                 const SizedBox(height: AppConstants.spacingLg),
                 Row(
@@ -192,6 +190,18 @@ class _PantryEssentialsSheetState extends State<PantryEssentialsSheet> {
                 ),
                 const SizedBox(height: AppConstants.spacingLg),
 
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const AppText('Dipilih', variant: AppTextVariant.sectionTitle),
+                    SectionActionLink(
+                      label: AppStrings.resetToDefault,
+                      onTap: pantryProvider.resetToDefault,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppConstants.spacingMd),
+
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -210,6 +220,62 @@ class _PantryEssentialsSheetState extends State<PantryEssentialsSheet> {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class _PantryToggleChip extends StatelessWidget {
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const _PantryToggleChip({
+    required this.isActive,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        height: AppConstants.chipHeight,
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        decoration: BoxDecoration(
+          color: isActive ? AppColors.primary : AppColors.cardBackground,
+          borderRadius: BorderRadius.circular(AppConstants.radiusRound),
+          border: isActive
+              ? null
+              : Border.all(color: AppColors.border),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              isActive ? 'Aktif' : 'Nonaktif',
+              style: AppTextStyles.bodySmall.copyWith(
+                color: isActive ? AppColors.white : AppColors.textSecondary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Container(
+              padding: const EdgeInsets.all(3),
+              decoration: BoxDecoration(
+                color: isActive
+                    ? AppColors.chipBackground
+                    : AppColors.border.withValues(alpha: 0.5),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                isActive ? LucideIcons.check : LucideIcons.power,
+                size: 13,
+                color: isActive ? AppColors.primary : AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
