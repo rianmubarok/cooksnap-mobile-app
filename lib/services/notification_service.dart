@@ -88,10 +88,6 @@ class NotificationService {
       if (isEnabled) {
         // Do not await to avoid blocking app startup
         scheduleDailyMealReminders();
-      } else {
-        // Bersihkan dummy history lama jika notifikasi tidak aktif
-        // (menangani kasus data orphan dari versi app sebelumnya)
-        await prefs.remove('notification_history_log');
       }
     } catch (e) {
       debugPrint('Error refreshing schedule: $e');
@@ -105,6 +101,8 @@ class NotificationService {
         final recipeId = data['recipe_id'];
         if (recipeId != null) {
           final recipe = Recipe.fromMap(data['recipe']);
+          // Catat ke history saat notifikasi di-tap (bukan saat dijadwalkan)
+          _appendToHistory(data, recipe);
           if (isAppReady && AppRoutes.navigatorKey.currentState != null) {
             AppRoutes.navigatorKey.currentState?.pushNamed(
               AppRoutes.recipeDetail,
@@ -117,6 +115,43 @@ class NotificationService {
       } catch (e) {
         debugPrint('Error parsing notification payload: $e');
       }
+    }
+  }
+
+  /// Menambahkan satu entri ke history saat notifikasi di-tap.
+  Future<void> _appendToHistory(
+    Map<String, dynamic> data,
+    Recipe recipe,
+  ) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final existing = await getNotificationHistory();
+
+      // Hindari duplikat berdasarkan id notifikasi
+      final notifId = data['notif_id'] as int? ?? dart_math.Random().nextInt(100000);
+      if (existing.any((e) => e['id'] == notifId)) return;
+
+      final entry = {
+        'id': notifId,
+        'mealType': data['meal_type'] ?? '',
+        'emoji': data['emoji'] ?? '🔔',
+        'timeString': data['time_string'] ?? '',
+        'timestamp': DateTime.now().toIso8601String(),
+        'title': data['title'] ?? '',
+        'body': data['body'] ?? '',
+        'isRead': true, // Langsung read karena user sudah tap
+        'recipeId': recipe.id,
+        'recipeName': recipe.recipeName,
+        'description': recipe.description,
+        'imageUrl': recipe.imageUrl,
+        'thumbnailUrl': recipe.thumbnailUrl,
+        'recipe': recipe.toMap(),
+      };
+
+      final updated = [entry, ...existing];
+      await prefs.setString('notification_history_log', jsonEncode(updated));
+    } catch (e) {
+      debugPrint('Error appending notification history: $e');
     }
   }
 
@@ -237,6 +272,9 @@ class NotificationService {
       body: bBody,
       recipe: recipes[0],
       scheduledTime: t7,
+      mealType: 'Sarapan Pagi',
+      emoji: '🍳',
+      timeString: '07:00',
     );
 
     final t12 = _nextInstanceOfTime(12, 0, now);
@@ -248,6 +286,9 @@ class NotificationService {
       body: lBody,
       recipe: recipes[1],
       scheduledTime: t12,
+      mealType: 'Makan Siang',
+      emoji: '🍱',
+      timeString: '12:00',
     );
 
     final t18 = _nextInstanceOfTime(18, 0, now);
@@ -259,83 +300,11 @@ class NotificationService {
       body: dBody,
       recipe: recipes[2],
       scheduledTime: t18,
+      mealType: 'Makan Malam',
+      emoji: '🌙',
+      timeString: '18:00',
     );
-
-    final yesterday = now.subtract(const Duration(days: 1));
-    final twoDaysAgo = now.subtract(const Duration(days: 2));
-
-    final r0 = recipes[0];
-    final r1 = recipes.length > 1 ? recipes[1] : recipes[0];
-    final r2 = recipes.length > 2 ? recipes[2] : recipes[0];
-    final r3 = recipes.length > 3 ? recipes[3] : recipes[0];
-
-    final historyList = [
-      {
-        'id': 1,
-        'mealType': 'Sarapan Pagi',
-        'emoji': '🍳',
-        'timeString': '07:00',
-        'timestamp': DateTime(now.year, now.month, now.day, 7, 0).toIso8601String(),
-        'title': bTitle,
-        'body': bBody,
-        'isRead': false,
-        'recipeId': r0.id,
-        'recipeName': r0.recipeName,
-        'description': r0.description,
-        'imageUrl': r0.imageUrl,
-        'thumbnailUrl': r0.thumbnailUrl,
-        'recipe': r0.toMap(),
-      },
-      {
-        'id': 2,
-        'mealType': 'Makan Malam',
-        'emoji': '🌙',
-        'timeString': '18:30',
-        'timestamp': DateTime(yesterday.year, yesterday.month, yesterday.day, 18, 30).toIso8601String(),
-        'title': dinnerTitles[1],
-        'body': dinnerBodies[1].replaceAll('[RECIPE]', r1.recipeName),
-        'isRead': true,
-        'recipeId': r1.id,
-        'recipeName': r1.recipeName,
-        'description': r1.description,
-        'imageUrl': r1.imageUrl,
-        'thumbnailUrl': r1.thumbnailUrl,
-        'recipe': r1.toMap(),
-      },
-      {
-        'id': 3,
-        'mealType': 'Makan Siang',
-        'emoji': '🍱',
-        'timeString': '12:15',
-        'timestamp': DateTime(yesterday.year, yesterday.month, yesterday.day, 12, 15).toIso8601String(),
-        'title': lunchTitles[1],
-        'body': lunchBodies[1].replaceAll('[RECIPE]', r2.recipeName),
-        'isRead': true,
-        'recipeId': r2.id,
-        'recipeName': r2.recipeName,
-        'description': r2.description,
-        'imageUrl': r2.imageUrl,
-        'thumbnailUrl': r2.thumbnailUrl,
-        'recipe': r2.toMap(),
-      },
-      {
-        'id': 4,
-        'mealType': 'Sarapan Pagi',
-        'emoji': '🍳',
-        'timeString': '07:30',
-        'timestamp': DateTime(twoDaysAgo.year, twoDaysAgo.month, twoDaysAgo.day, 7, 30).toIso8601String(),
-        'title': breakfastTitles[1],
-        'body': breakfastBodies[1].replaceAll('[RECIPE]', r3.recipeName),
-        'isRead': true,
-        'recipeId': r3.id,
-        'recipeName': r3.recipeName,
-        'description': r3.description,
-        'imageUrl': r3.imageUrl,
-        'thumbnailUrl': r3.thumbnailUrl,
-        'recipe': r3.toMap(),
-      },
-    ];
-    await prefs.setString('notification_history_log', jsonEncode(historyList));
+    // History TIDAK dibuat di sini — akan dicatat saat user men-tap notifikasi
   }
 
   Future<bool> isRemindersEnabled() async {
@@ -413,10 +382,20 @@ class NotificationService {
     required String body,
     required Recipe recipe,
     required tz.TZDateTime scheduledTime,
+    required String mealType,
+    required String emoji,
+    required String timeString,
   }) async {
+    // Sertakan metadata di payload agar history bisa direkonstruksi saat notifikasi di-tap
     final payload = jsonEncode({
+      'notif_id': id,
       'recipe_id': recipe.id,
       'recipe': recipe.toMap(),
+      'title': title,
+      'body': body,
+      'meal_type': mealType,
+      'emoji': emoji,
+      'time_string': timeString,
     });
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
