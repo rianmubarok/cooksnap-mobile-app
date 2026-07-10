@@ -335,7 +335,7 @@ class NotificationService {
 
   Future<bool> isRemindersEnabled() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('meal_reminders_enabled') ?? true;
+    return prefs.getBool('meal_reminders_enabled') ?? false;
   }
 
   Future<void> setRemindersEnabled(bool enabled) async {
