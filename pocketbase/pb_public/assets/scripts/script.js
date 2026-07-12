@@ -22,6 +22,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// Global Mobile Menu Toggle
+window.toggleMobileMenu = function() {
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuOpenIcon = document.getElementById('menu-open-icon');
+    const menuCloseIcon = document.getElementById('menu-close-icon');
+
+    if (!mobileMenu) return;
+
+    const isOpen = mobileMenu.classList.contains('menu-open');
+    if (!isOpen) {
+        mobileMenu.classList.add('menu-open');
+        if (menuOpenIcon) menuOpenIcon.classList.add('hidden');
+        if (menuCloseIcon) menuCloseIcon.classList.remove('hidden');
+    } else {
+        window.closeMobileMenu();
+    }
+};
+
+window.closeMobileMenu = function() {
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuOpenIcon = document.getElementById('menu-open-icon');
+    const menuCloseIcon = document.getElementById('menu-close-icon');
+
+    if (!mobileMenu) return;
+
+    if (mobileMenu.classList.contains('menu-open')) {
+        mobileMenu.classList.remove('menu-open');
+        if (menuOpenIcon) menuOpenIcon.classList.remove('hidden');
+        if (menuCloseIcon) menuCloseIcon.classList.add('hidden');
+    }
+};
+
 function revealElements() {
     const reveals = document.querySelectorAll('.reveal, .reveal-right');
     const windowHeight = window.innerHeight;
