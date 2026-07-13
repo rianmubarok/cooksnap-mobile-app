@@ -71,5 +71,5 @@ Kami dapat memperbarui Kebijakan Privasi ini sewaktu-waktu seiring dengan penamb
 Jika Anda memiliki pertanyaan, saran, atau permintaan terkait Kebijakan Privasi ini maupun pengelolaan data Anda di CookSnap, silakan hubungi kami melalui:
 
 - **Pengembang**: Rian Mubarok / Tim CookSnap
-- **Email**: `rianmubarok@cooksnap.app` (atau email pengembang yang terdaftar di Google Play Store)
+- **Email**: `rupacode0@gmail.com`
 - **GitHub Repository**: [https://github.com/rianmubarok/cooksnap-mobile-app](https://github.com/rianmubarok/cooksnap-mobile-app)
